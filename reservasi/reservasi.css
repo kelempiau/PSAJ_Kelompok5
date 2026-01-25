@@ -1,0 +1,335 @@
+/* 1. VARIABLE & BASE RESET */
+:root {
+    --primary-pink: #ffb7c5;
+    --soft-pink: #fff0f3;
+    --dark-pink: #ff85a1;
+    --text-color: #4a4a4a;
+    --white: #ffffff;
+    --transition: all 0.3s ease;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, var(--soft-pink) 0%, var(--primary-pink) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+}
+
+/* 2. CONTAINER */
+.container {
+    background: var(--white);
+    width: 100%;
+    max-width: 550px;
+    padding: 40px;
+    border-radius: 25px;
+    box-shadow: 0 15px 35px rgba(255, 133, 161, 0.2);
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* 3. NAVIGATION & TYPOGRAPHY */
+.back-btn {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    text-decoration: none;
+    color: var(--dark-pink);
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.back-btn:hover {
+    transform: translateX(-5px);
+    opacity: 0.8;
+}
+
+h2 {
+    text-align: center;
+    color: var(--dark-pink);
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+}
+
+/* 4. FORM ELEMENTS */
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    margin-left: 5px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--dark-pink);
+    letter-spacing: 0.3px;
+}
+
+/* Unified Styling for Input & Select */
+input, select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--soft-pink);
+    border-radius: 12px;
+    outline: none;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    background-color: var(--white);
+    transition: var(--transition);
+}
+
+input:focus, select:focus {
+    border-color: var(--dark-pink);
+    background-color: #fffafb;
+    box-shadow: 0 0 12px rgba(255, 133, 161, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Specific Dropdown Styling (The Arrow) */
+select {
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ff85a1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 18px;
+}
+
+/* 5. PRICE & PAYMENT INFO */
+.price-display {
+    background: var(--soft-pink);
+    padding: 18px;
+    border-radius: 15px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--dark-pink);
+    font-size: 1.3rem;
+    margin: 25px 0;
+    border: 1px dashed var(--dark-pink);
+}
+
+.payment-info {
+    background: #fdfdfd;
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid var(--soft-pink);
+    margin-bottom: 20px;
+    animation: fadeIn 0.5s ease;
+}
+
+.bank-box {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--white);
+    border-left: 5px solid var(--dark-pink);
+    font-size: 0.95rem;
+    border-radius: 4px;
+}
+
+.qris-img {
+    display: block;
+    margin: 15px auto 0;
+    width: 200px;
+    height: 270px;
+    border-radius: 12px;
+    border: 1px solid var(--soft-pink);
+}
+
+/* 6. UPLOAD SECTION */
+.upload-section {
+    background: #fafafa;
+    border: 2px dashed var(--primary-pink);
+    padding: 15px;
+    border-radius: 12px;
+    transition: var(--transition);
+}
+
+.upload-section:hover {
+    background: var(--soft-pink);
+    border-color: var(--dark-pink);
+}
+
+/* 7. BUTTON SUBMIT */
+.btn-submit {
+    width: 100%;
+    padding: 16px;
+    background: var(--dark-pink);
+    color: var(--white);
+    border: none;
+    border-radius: 15px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(255, 133, 161, 0.4);
+    transition: var(--transition);
+    margin-top: 10px;
+}
+
+.btn-submit:hover {
+    background: #ff5c8a;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(255, 133, 161, 0.5);
+}
+
+/* 8. ANIMATIONS & RESPONSIVE */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 30px 20px;
+    }
+    
+    h2 {
+        font-size: 1.4rem;
+    }
+
+    input, select, .btn-submit {
+        padding: 12px;
+    }
+}
+/* --- FLOATING CHAT STYLE --- */
+.chat-icon-bubble {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background: #ff85a1; /* Senada dengan var --dark-pink */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(255, 133, 161, 0.4);
+    z-index: 9999;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.chat-icon-bubble:hover { transform: scale(1.1); background: #ff5c8a; }
+
+.chat-icon-bubble img { width: 30px; filter: brightness(0) invert(1); }
+
+.notification-badge {
+    position: absolute;
+    top: 0; right: 0;
+    background: white;
+    color: #ff85a1;
+    font-size: 12px; font-weight: bold;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+}
+
+.chat-container {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    width: 320px;
+    height: 450px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    display: none; /* Sembunyi awal */
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 9999;
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.chat-header {
+    background: #ff85a1;
+    padding: 15px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-info { display: flex; align-items: center; gap: 10px; }
+.admin-avatar { position: relative; width: 40px; height: 40px; background: white; border-radius: 50%; padding: 5px; }
+.admin-avatar img { width: 100%; }
+.online-status {
+    position: absolute; bottom: 2px; right: 2px;
+    width: 10px; height: 10px; background: #4df14d;
+    border-radius: 50%; border: 2px solid #ff85a1;
+}
+
+.chat-box {
+    flex: 1;
+    padding: 15px;
+    background: #fffafa;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message {
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.message.admin {
+    background: white;
+    color: #444;
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.message.user {
+    background: #ff85a1;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+}
+
+.chat-input-area {
+    padding: 15px;
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid #eee;
+}
+
+.chat-input-area input {
+    flex: 1;
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 20px;
+    outline: none;
+}
+
+.chat-input-area button {
+    background: #ff85a1;
+    border: none;
+    color: white;
+    width: 35px; height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.close-chat { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
