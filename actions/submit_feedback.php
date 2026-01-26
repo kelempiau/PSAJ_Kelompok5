@@ -1,10 +1,10 @@
 <?php
-require 'config.php';
+require '../core/config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Force Login to submit feedback
     if (!isset($_SESSION['user_id'])) {
-        echo "<script>alert('Silakan login terlebih dahulu untuk mengirim masukan.'); window.location.href='login.php';</script>";
+        echo "<script>alert('Silakan login terlebih dahulu untuk mengirim masukan.'); window.location.href='../auth/login.php';</script>";
         exit();
     }
     
@@ -18,11 +18,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("isss", $user_id, $name, $whatsapp, $message);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Terima kasih atas masukannya! ✨'); window.location.href='index.php';</script>";
+        echo "<script>alert('Terima kasih atas masukannya! ✨'); window.location.href='../index.php';</script>";
     } else {
-        echo "<script>alert('Gagal mengirim masukan. Silakan coba lagi.'); window.location.href='index.php';</script>";
+        echo "<script>alert('Gagal mengirim masukan. Silakan coba lagi.'); window.location.href='../index.php';</script>";
     }
 } else {
-    header("Location: index.php");
+    header("Location: ../index.php");
 }
 ?>

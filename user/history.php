@@ -1,9 +1,9 @@
 <?php
-require 'config.php';
+require '../core/config.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: ../auth/login.php");
     exit();
 }
 
@@ -12,7 +12,7 @@ $username = $_SESSION['username'];
 
 // Strict Access Control: Admin cannot access user pages
 if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
-    header("Location: admin/dashboard.php");
+    header("Location: ../admin/dashboard.php");
     exit();
 }
 
@@ -295,7 +295,7 @@ $result = $stmt->get_result();
             <h1>📋 Riwayat Transaksi</h1>
             <div style="display: flex; gap: 10px;">
                 <a href="refund_status.php" class="btn" style="background: #ea3671; color: white;">🔄 Status Refund</a>
-                <a href="index.php" class="btn btn-back">← Kembali</a>
+                <a href="../index.php" class="btn btn-back">← Kembali</a>
             </div>
         </div>
 
@@ -372,7 +372,7 @@ $result = $stmt->get_result();
                         </button>
 
                         <?php if ($booking['payment_proof']): ?>
-                            <a href="<?= $booking['payment_proof'] ?>" target="_blank" class="btn btn-back" style="background: #e8f5e9; color: #2e7d32; text-decoration: none;">
+                            <a href="../<?= $booking['payment_proof'] ?>" target="_blank" class="btn btn-back" style="background: #e8f5e9; color: #2e7d32; text-decoration: none;">
                                 📄 Lihat Bukti
                             </a>
                         <?php endif; ?>

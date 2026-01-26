@@ -1,9 +1,9 @@
 <?php
-require '../config.php';
+require '../core/config.php';
 
 // Check Admin Access
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: ../login.php");
+    header("Location: ../auth/login.php");
     exit();
 }
 
@@ -176,7 +176,7 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
         <a href="#refunds">Refund Requests</a>
         <a href="#slots">Kelola Jadwal</a>
         <a href="#feedback">Kritik & Saran</a>
-        <a href="../logout.php" style="color: #e74c3c; margin-top: 50px;">Logout</a>
+        <a href="../auth/logout.php" style="color: #e74c3c; margin-top: 50px;">Logout</a>
     </div>
 
     <div class="main-content">

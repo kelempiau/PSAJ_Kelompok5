@@ -1,15 +1,15 @@
 <?php
-require 'config.php';
+require '../core/config.php';
 
 // Redirect if not logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: ../auth/login.php");
     exit();
 }
 
 // Strict Access Control: Admin cannot access user pages
 if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
-    header("Location: admin/dashboard.php");
+    header("Location: ../admin/dashboard.php");
     exit();
 }
 
@@ -81,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservasi Nail Art - Glamour Nails</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="reservasi/reservasi.css">
+    <link rel="stylesheet" href="../assets/css/reservasi.css">
     <style>
         .alert { padding: 15px; margin-bottom: 20px; border-radius: 4px; text-align: center; }
         .alert.error { background-color: #f8d7da; color: #721c24; }
@@ -91,7 +91,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <a href="index.php" class="back-btn">← Kembali</a>
+            <a href="../index.php" class="back-btn">← Kembali</a>
             <div style="font-size: 0.9rem; color: #666;">
                 Login: <strong><?= htmlspecialchars($_SESSION['username'] ?? 'User') ?></strong>
                 <?php if(($_SESSION['role'] ?? '') === 'admin'): ?>
@@ -188,7 +188,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div id="detail-qris" class="payment-info" style="display: none; text-align: center;">
                 <p>Scan kode QRIS di bawah ini:</p>
                 <!-- Check image path -->
-                <img src="reservasi/img/qris.jpeg" alt="QRIS" class="qris-img" onerror="this.src='https://via.placeholder.com/200?text=QRIS+Placeholder'">
+                <img src="../assets/img/qris.jpeg" alt="QRIS" class="qris-img" onerror="this.src='https://via.placeholder.com/200?text=QRIS+Placeholder'">
             </div>
 
             <div class="form-group">
@@ -235,6 +235,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <!-- Main scripts: Unified AI Assistant (Handles Form Logic + Smart Chatbot) -->
-    <script src="reservasi/ai_assistant.js"></script>
+    <script src="../assets/js/ai_assistant.js"></script>
 </body>
 </html>

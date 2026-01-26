@@ -1,32 +1,37 @@
 <?php
-require 'config.php';
+require '../core/config.php';
 
 $message = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    $phone = $_POST['phone'];
+    $identifier = $_POST['identifier']; // Username or Email
+    $password = $_POST['password'];
 
-    // Check if email or username already exists
-    $check = $conn->query("SELECT id FROM users WHERE email = '$email' OR username = '$username'");
-    if ($check->num_rows > 0) {
-        $message = "Username atau Email sudah terdaftar!";
-    } else {
-        $sql = "INSERT INTO users (username, email, password, phone) VALUES (?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssss", $username, $email, $password, $phone);
+    $sql = "SELECT * FROM users WHERE email = ? OR username = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ss", $identifier, $identifier);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-        if ($stmt->execute()) {
-            $_SESSION['username'] = $username;
-            $_SESSION['role'] = 'user';
-            $_SESSION['user_id'] = $conn->insert_id;
-            header("Location: index.php");
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        if (password_verify($password, $user['password'])) {
+            session_regenerate_id(true); // Prevent session fixation
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['role'] = $user['role'];
+            
+            if($user['role'] == 'admin'){
+                header("Location: ../admin/dashboard.php");
+            } else {
+                header("Location: ../index.php");
+            }
             exit();
         } else {
-            $message = "Terjadi kesalahan: " . $conn->error;
+            $message = "Password salah!";
         }
+    } else {
+        $message = "Akun tidak ditemukan!";
     }
 }
 ?>
@@ -35,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Ney Dream</title>
+    <title>Login - Ney Dream</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -162,26 +167,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
     <div class="auth-container">
-        <h2>Join Us! ✨</h2>
-        <p class="subtitle">Buat akun baru di Ney Dream</p>
+        <h2>Welcome Back! 👋</h2>
+        <p class="subtitle">Login ke akun Anda</p>
         
         <?php if($message): ?>
             <div class="alert"><?= $message ?></div>
         <?php endif; ?>
         
         <form method="POST">
-            <input type="text" name="username" placeholder="Username" required autofocus>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="tel" name="phone" placeholder="Nomor HP (08xx)" required>
-            <input type="password" name="password" placeholder="Password" required minlength="6">
-            <button type="submit">Daftar Sekarang</button>
+            <input type="text" name="identifier" placeholder="Username atau Email" required autofocus>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Masuk</button>
         </form>
         
         <div class="link">
-            Sudah punya akun? <a href="login.php">Log In disini</a>
+            Belum punya akun? <a href="register.php">Daftar disini</a>
         </div>
         
-        <a href="index.php" class="back-link">← Kembali ke Home</a>
+        <a href="../index.php" class="back-link">← Kembali ke Home</a>
     </div>
 </body>
 </html>

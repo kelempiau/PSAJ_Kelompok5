@@ -1,5 +1,5 @@
 <?php
-require 'config.php';
+require 'core/config.php';
 $isLoggedIn = isset($_SESSION['user_id']);
 $username = $isLoggedIn ? $_SESSION['username'] : '';
 $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
@@ -18,7 +18,8 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             box-sizing: border-box;
         }
 
-        html {
+        html, body {
+            overflow-x: hidden;
             width: 100%;
             position: relative;
         }
@@ -27,16 +28,16 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             font-family: 'Poppins', sans-serif;
             background: #fff;
             color: #333;
-            overflow-x: hidden;
-            width: 100%;
-            position: relative;
+            padding-top: 90px; /* Offset for fixed navbar */
         }
 
         /* Navbar Reset & Premium Desktop Style */
         nav {
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 1500;
+            left: 0;
+            width: 100%;
+            z-index: 2000; /* Higher than overlay (1650) */
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             padding: 10px 5%;
@@ -209,20 +210,25 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             #mobileMenu {
                 position: fixed;
                 top: 0;
-                right: -320px; /* Use fixed negative width matching sidebar */
+                right: 0;
                 width: 300px;
                 height: 100vh;
                 background: white;
                 flex-direction: column;
                 padding: 100px 30px;
-                transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
                 box-shadow: -10px 0 30px rgba(0,0,0,0.1);
-                z-index: 1100;
+                z-index: 1700;
                 display: flex;
                 gap: 25px;
+                transform: translateX(100%);
+                visibility: hidden;
             }
 
-            #mobileMenu.active { right: 0; }
+            #mobileMenu.active { 
+                transform: translateX(0);
+                visibility: visible;
+            }
 
             .nav-center, .nav-right { display: none; } /* Hide default nav for mobile */
 
@@ -259,6 +265,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             padding: 50px 5%;
             gap: 50px;
             flex-wrap: wrap;
+            overflow: hidden;
         }
 
         .hero-content {
@@ -560,7 +567,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <nav>
         <!-- Left: Logo + User Greeting -->
         <div class="nav-left">
-            <img src="home/img/588237789-17951033973048360-6209016104075046821-n-removebg-preview-1.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+            <img src="assets/img/588237789-17951033973048360-6209016104075046821-n-removebg-preview-1.png" alt="Logo" class="logo" onerror="this.style.display='none'">
             <?php if ($isLoggedIn): ?>
                 <span class="user-greeting">Hi, <?= htmlspecialchars($username) ?>!</span>
             <?php endif; ?>
@@ -573,9 +580,8 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             <span></span>
         </div>
         
-        <!-- Mobile Menu Container (Consolidated) -->
         <div id="mobileMenu">
-            <a href="#home" class="mobile-link active">Home</a>
+            <a href="#home" class="mobile-link">Home</a>
             <a href="#layanan" class="mobile-link">Layanan</a>
             <a href="#katalog" class="mobile-link">Katalog</a>
             <a href="#faq" class="mobile-link">FAQ</a>
@@ -586,22 +592,21 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                         <a href="admin/dashboard.php" class="btn btn-primary">Go to Dashboard</a>
                         <a href="logout.php" class="btn btn-logout">Logout</a>
                     <?php else: ?>
-                        <a href="history.php" class="btn btn-outline" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        <a href="user/history.php" class="btn btn-outline" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
                             <span style="font-size: 1.3rem;">📋</span> Riwayat Transaksi
                         </a>
-                        <a href="reservasi.php" class="btn btn-primary">Booking Sekarang</a>
-                        <a href="logout.php" class="btn btn-logout">Logout</a>
+                        <a href="user/reservasi.php" class="btn btn-primary">Booking Sekarang</a>
+                        <a href="auth/logout.php" class="btn btn-logout">Logout</a>
                     <?php endif; ?>
                 <?php else: ?>
-                    <a href="login.php" class="btn btn-outline">Log In</a>
-                    <a href="register.php" class="btn btn-primary">Sign Up</a>
+                    <a href="auth/login.php" class="btn btn-outline">Log In</a>
+                    <a href="auth/register.php" class="btn btn-primary">Sign Up</a>
                 <?php endif; ?>
             </div>
         </div>
 
-        <!-- Center: Main Navigation Links (Desktop) -->
         <div class="nav-center">
-            <a href="#home" class="active">Home</a>
+            <a href="#home">Home</a>
             <a href="#layanan">Layanan</a>
             <a href="#katalog">Katalog</a>
             <a href="#faq">FAQ</a>
@@ -612,15 +617,15 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             <?php if ($isLoggedIn): ?>
                 <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                     <a href="admin/dashboard.php" class="btn btn-primary">Go to Dashboard</a>
-                    <a href="logout.php" class="btn btn-logout">Logout</a>
+                    <a href="auth/logout.php" class="btn btn-logout">Logout</a>
                 <?php else: ?>
-                    <a href="history.php" class="btn btn-icon" title="Riwayat Transaksi">📋</a>
-                    <a href="<?= 'reservasi.php' ?>" class="btn btn-primary">Reservasi</a>
-                    <a href="logout.php" class="btn btn-logout">Logout</a>
+                    <a href="user/history.php" class="btn btn-icon" title="Riwayat Transaksi">📋</a>
+                    <a href="<?= 'user/reservasi.php' ?>" class="btn btn-primary">Reservasi</a>
+                    <a href="auth/logout.php" class="btn btn-logout">Logout</a>
                 <?php endif; ?>
             <?php else: ?>
-                <a href="login.php" class="btn btn-outline">Log In</a>
-                <a href="register.php" class="btn btn-primary">Sign Up</a>
+                <a href="auth/login.php" class="btn btn-outline">Log In</a>
+                <a href="auth/register.php" class="btn btn-primary">Sign Up</a>
             <?php endif; ?>
         </div>
     </nav>
@@ -645,9 +650,9 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                     Leave the shine of your hands to us...
                 </p>
                 <a href="<?php 
-                    if (!$isLoggedIn) echo 'login.php';
+                    if (!$isLoggedIn) echo 'auth/login.php';
                     elseif ($isAdmin) echo 'admin/dashboard.php';
-                    else echo 'reservasi.php';
+                    else echo 'user/reservasi.php';
                 ?>" class="btn btn-primary" style="padding: 15px 50px; font-size: 1.2rem; border-radius: 50px; box-shadow: 0 10px 25px rgba(234, 54, 113, 0.4);">
                     Book Now
                 </a>
@@ -656,9 +661,9 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             <!-- Right Image -->
             <div class="hero-images" style="flex: 1; height: 100%; position: relative; display: flex; align-items: flex-end; justify-content: center;">
                 <!-- Main Featured Image (Composition of existing images) -->
-                <div style="position: relative; width: 80%; height: 85%; background: url('home/img/img1.jpg') no-repeat center center/cover; border-radius: 200px 200px 0 0; box-shadow: -20px 20px 50px rgba(0,0,0,0.1);">
+                <div style="position: relative; width: 80%; height: 85%; background: url('assets/img/img1.jpg') no-repeat center center/cover; border-radius: 200px 200px 0 0; box-shadow: -20px 20px 50px rgba(0,0,0,0.1);">
                     <!-- Floating Accent Image -->
-                    <div style="position: absolute; bottom: 50px; left: -80px; width: 220px; height: 280px; background: url('home/img/img3.jpg') no-repeat center center/cover; border: 10px solid white; border-radius: 20px; transform: rotate(-10deg); box-shadow: 0 15px 40px rgba(0,0,0,0.15);"></div>
+                    <div style="position: absolute; bottom: 50px; left: -80px; width: 220px; height: 280px; background: url('assets/img/img3.jpg') no-repeat center center/cover; border: 10px solid white; border-radius: 20px; transform: rotate(-10deg); box-shadow: 0 15px 40px rgba(0,0,0,0.15);"></div>
                     
                     <!-- Decorative Circle -->
                     <div style="position: absolute; top: 50px; right: -30px; width: 100px; height: 100px; background: #ea3671; border-radius: 50%; opacity: 0.1;"></div>
@@ -694,8 +699,8 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         </div>
 
         <div class="services-grid" style="position: relative; z-index: 1;">
-            <a href="service_detail.php?type=nailart" class="service-card">
-                <img src="home/img/img4.png" alt="Nail Art" onerror="this.src='https://via.placeholder.com/250x200/ea3671/ffffff?text=Nail+Art'">
+            <a href="services/service_detail.php?type=nailart" class="service-card">
+                <img src="assets/img/img4.png" alt="Nail Art" onerror="this.src='https://via.placeholder.com/250x200/ea3671/ffffff?text=Nail+Art'">
                 <div class="service-card-content">
                     <h3>Nail Art</h3>
                     <p>Kreasi seni pada kuku dengan berbagai desain yang dapat disesuaikan dengan keinginan anda.</p>
@@ -703,8 +708,8 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                 </div>
             </a>
 
-            <a href="service_detail.php?type=extension" class="service-card">
-                <img src="home/img/img5.png" alt="Extension" onerror="this.src='https://via.placeholder.com/250x200/ffd9e2/333333?text=Extension'">
+            <a href="services/service_detail.php?type=extension" class="service-card">
+                <img src="assets/img/img5.png" alt="Extension" onerror="this.src='https://via.placeholder.com/250x200/ffd9e2/333333?text=Extension'">
                 <div class="service-card-content">
                     <h3>Extension</h3>
                     <p>Memberikan tambahan detail dan desain pada NailArt anda agar terlihat lebih menarik lagi.</p>
@@ -712,8 +717,8 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                 </div>
             </a>
 
-            <a href="service_detail.php?type=nailart_kaki" class="service-card">
-                <img src="home/img/img6.png" alt="Nail Art Kaki" onerror="this.src='https://via.placeholder.com/250x200/ea3671/ffffff?text=Pedicure'">
+            <a href="services/service_detail.php?type=nailart_kaki" class="service-card">
+                <img src="assets/img/img6.png" alt="Nail Art Kaki" onerror="this.src='https://via.placeholder.com/250x200/ea3671/ffffff?text=Pedicure'">
                 <div class="service-card-content">
                     <h3>Nail Art Kaki</h3>
                     <p>Kreasi seni pada kuku kaki dengan berbagai desain yang dapat disesuaikan dengan keinginan anda.</p>
@@ -721,8 +726,8 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                 </div>
             </a>
 
-            <a href="service_detail.php?type=addons" class="service-card">
-                <img src="home/img/img7.png" alt="Add Ons" onerror="this.src='https://via.placeholder.com/250x200/ffd9e2/333333?text=Add+Ons'">
+            <a href="services/service_detail.php?type=addons" class="service-card">
+                <img src="assets/img/img7.png" alt="Add Ons" onerror="this.src='https://via.placeholder.com/250x200/ffd9e2/333333?text=Add+Ons'">
                 <div class="service-card-content">
                     <h3>Add Ons</h3>
                     <p>Memberi tambahan pada NailArt sesuai keinginan anda dengan tambahan biaya yang tersedia.</p>
@@ -751,9 +756,9 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         </div>
 
         <div class="gallery-grid" style="position: relative; z-index: 1;">
-            <img src="home/img/img8.jpeg" alt="Gallery" onerror="this.src='https://via.placeholder.com/400x350/ea3671/ffffff?text=Gallery+1'">
-            <img src="home/img/img9.jpeg" alt="Gallery" onerror="this.src='https://via.placeholder.com/400x350/ffd9e2/333333?text=Gallery+2'">
-            <img src="home/img/img10.jpeg" alt="Gallery" onerror="this.src='https://via.placeholder.com/400x350/ea3671/ffffff?text=Gallery+3'">
+            <img src="assets/img/img8.jpeg" alt="Gallery" onerror="this.src='https://via.placeholder.com/400x350/ea3671/ffffff?text=Gallery+1'">
+            <img src="assets/img/img9.jpeg" alt="Gallery" onerror="this.src='https://via.placeholder.com/400x350/ffd9e2/333333?text=Gallery+2'">
+            <img src="assets/img/img10.jpeg" alt="Gallery" onerror="this.src='https://via.placeholder.com/400x350/ea3671/ffffff?text=Gallery+3'">
         </div>
     </section>
 
@@ -985,11 +990,11 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             </p>
             <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
                 <?php if (!$isLoggedIn): ?>
-                    <a href="register.php" class="btn btn-primary" style="padding: 18px 50px; font-size: 1.2rem; border-radius: 50px; box-shadow: 0 10px 25px rgba(234, 54, 113, 0.4);">
+                    <a href="auth/register.php" class="btn btn-primary" style="padding: 18px 50px; font-size: 1.2rem; border-radius: 50px; box-shadow: 0 10px 25px rgba(234, 54, 113, 0.4);">
                         Daftar Akun Sekarang
                     </a>
                 <?php else: ?>
-                    <a href="<?php echo $isAdmin ? 'admin/dashboard.php' : 'reservasi.php'; ?>" class="btn btn-primary" style="padding: 18px 50px; font-size: 1.2rem; border-radius: 50px; box-shadow: 0 10px 25px rgba(234, 54, 113, 0.4);">
+                    <a href="<?php echo $isAdmin ? 'admin/dashboard.php' : 'user/reservasi.php'; ?>" class="btn btn-primary" style="padding: 18px 50px; font-size: 1.2rem; border-radius: 50px; box-shadow: 0 10px 25px rgba(234, 54, 113, 0.4);">
                         Booking Sekarang
                     </a>
                 <?php endif; ?>
@@ -1007,7 +1012,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
         <div style="max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
             <?php if ($isLoggedIn): ?>
-                <form action="submit_feedback.php" method="POST">
+                <form action="actions/submit_feedback.php" method="POST">
                     <div style="margin-bottom: 20px;">
                         <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #5f162e;">Nama Lengkap</label>
                         <input type="text" name="name" value="<?= htmlspecialchars($username) ?>" readonly placeholder="Masukkan nama Anda" required style="width: 100%; padding: 12px 15px; border: 2px solid #f9f9f9; border-radius: 10px; font-family: 'Poppins', sans-serif; background: #fdfdfd;">
@@ -1027,7 +1032,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             <?php else: ?>
                 <div style="text-align: center; padding: 20px 0;">
                     <p style="margin-bottom: 20px; color: #666;">Anda harus login terlebih dahulu untuk mengirim kritik dan saran.</p>
-                    <a href="login.php" class="btn btn-primary" style="display: inline-block; padding: 12px 35px; border-radius: 30px;">Login Sekarang</a>
+                    <a href="auth/login.php" class="btn btn-primary" style="display: inline-block; padding: 12px 35px; border-radius: 30px;">Login Sekarang</a>
                 </div>
             <?php endif; ?>
         </div>
@@ -1065,12 +1070,12 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         <img src="https://cdn-icons-png.flaticon.com/512/5968/5968841.png" alt="Chat">
     </div>
 
-    <script src="reservasi/ai_assistant.js"></script>
+    <script src="assets/js/ai_assistant.js"></script>
     
     <script>
         // Modal / Overlay Background for Mobile Menu
         const overlay = document.createElement('div');
-        overlay.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.15); z-index:1000; display:none; transition: opacity 0.3s;";
+        overlay.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.15); z-index:1650; display:none; transition: opacity 0.3s;";
         document.body.appendChild(overlay);
 
         const hamburger = document.getElementById('hamburger');
@@ -1099,13 +1104,59 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             });
         });
 
+        // Simple & Robust Active Link Highlight (Center Offset)
+        function updateActiveLink() {
+            const scrollPos = window.scrollY + 100;
+            const sections = document.querySelectorAll('section[id]');
+            const links = document.querySelectorAll('.nav-center a, .mobile-link');
+            
+            let found = false;
+            
+            // Loop through sections backwards to find the one we are currently in
+            for (let i = sections.length - 1; i >= 0; i--) {
+                const section = sections[i];
+                if (scrollPos >= section.offsetTop) {
+                    const id = section.getAttribute('id');
+                    links.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === '#' + id) {
+                            link.classList.add('active');
+                        }
+                    });
+                    found = true;
+                    break;
+                }
+            }
+            
+            // Fallback: If at top of page, highlight Home
+            if (!found || window.scrollY < 100) {
+                links.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#home') {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        }
+
+        window.addEventListener('scroll', updateActiveLink);
+        window.addEventListener('load', updateActiveLink);
+
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
+                const targetId = this.getAttribute('href');
+                const target = document.querySelector(targetId);
+                
                 if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    window.scrollTo({
+                        top: target.offsetTop - 90,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Force active update after scroll
+                    setTimeout(updateActiveLink, 800);
                 }
             });
         });

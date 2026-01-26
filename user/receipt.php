@@ -1,9 +1,9 @@
 <?php
-require 'config.php';
+require '../core/config.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: ../auth/login.php");
     exit();
 }
 

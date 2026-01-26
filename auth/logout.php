@@ -1,5 +1,5 @@
 <?php
-require 'config.php';
+require '../core/config.php';
 
 // Clear all session variables
 $_SESSION = array();
@@ -16,6 +16,6 @@ if (ini_get("session.use_cookies")) {
 // Finally, destroy the session.
 session_destroy();
 
-header("Location: index.php");
+header("Location: ../index.php");
 exit();
 ?>

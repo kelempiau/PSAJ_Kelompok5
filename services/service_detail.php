@@ -1,5 +1,5 @@
 <?php
-require 'config.php';
+require '../core/config.php';
 $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 $type = isset($_GET['type']) ? $_GET['type'] : 'unknown';
 
@@ -224,15 +224,15 @@ $data = isset($services[$type]) ? $services[$type] : null;
                 </div>
 
                 <div class="buttons">
-                    <a href="index.php#katalog" class="btn btn-back">← Kembali</a>
-                    <a href="<?php echo $isAdmin ? 'admin/dashboard.php' : 'reservasi.php'; ?>" class="btn btn-reserve">Booking Sekarang</a>
+                    <a href="../index.php#katalog" class="btn btn-back">← Kembali</a>
+                    <a href="<?php echo $isAdmin ? '../admin/dashboard.php' : '../user/reservasi.php'; ?>" class="btn btn-reserve">Booking Sekarang</a>
                 </div>
             </div>
         <?php else: ?>
             <div class="not-found">
                 <h1>Layanan tidak ditemukan</h1>
                 <p style="margin-bottom: 30px; color: #666;">Maaf, layanan yang Anda cari tidak tersedia.</p>
-                <a href="index.php#katalog" class="btn btn-back">← Kembali ke Katalog</a>
+                <a href="../index.php#katalog" class="btn btn-back">← Kembali ke Katalog</a>
             </div>
         <?php endif; ?>
     </div>

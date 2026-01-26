@@ -1,9 +1,9 @@
 <?php
-require 'config.php';
+require '../core/config.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: ../auth/login.php");
     exit();
 }
 
@@ -11,7 +11,7 @@ $user_id = $_SESSION['user_id'];
 
 // Strict Access Control: Admin cannot access user pages
 if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
-    header("Location: admin/dashboard.php");
+    header("Location: ../admin/dashboard.php");
     exit();
 }
 
