@@ -68,6 +68,19 @@ h2 {
     flex-direction: column;
 }
 
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 500px) {
+    .form-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
 label {
     display: block;
     margin-bottom: 8px;
@@ -201,6 +214,11 @@ select {
 
     input, select, .btn-submit {
         padding: 12px;
+        font-size: 0.9rem; /* Slightly smaller for mobile */
+    }
+
+    input[type="date"] {
+        min-height: 48px; /* Ensure enough touch target area */
     }
 }
 /* --- FLOATING CHAT STYLE --- */

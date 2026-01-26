@@ -477,37 +477,50 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
         @media (max-width: 768px) {
             .hero {
-                flex-direction: column;
+                flex-direction: column-reverse; /* Put images above text for better mobile hook */
                 text-align: center;
                 height: auto;
                 min-height: 100vh;
-                padding-top: 100px;
-                padding-bottom: 50px;
+                padding: 120px 20px 60px; /* Better padding for fixed navbar */
             }
             .hero::before { display: block; }
             .hero > div[style*="background: #fdfbfd"] { display: none; }
             .hero > div[style*="background: linear-gradient"] { display: none; }
             
             .hero-content {
-                padding: 40px !important;
-                margin-bottom: 40px;
+                padding: 0 !important;
+                margin-top: 40px;
+                width: 100%;
             }
             .hero-content h2 {
-                font-size: 2.8rem !important;
+                font-size: clamp(1.8rem, 8vw, 2.5rem) !important;
             }
             .hero-content h2 span:nth-child(2) {
-                font-size: 3.5rem !important;
+                font-size: clamp(2.2rem, 10vw, 3.2rem) !important;
             }
             .hero-images {
-                height: 400px !important;
-                width: 90% !important;
+                height: auto !important;
+                width: 100% !important;
+                max-width: 400px;
                 margin: 0 auto;
+                padding-top: 20px;
+                display: flex;
+                flex-wrap: wrap; /* Allow images to share space if possible */
+                gap: 10px;
             }
+            .hero-images img {
+                width: 45% !important; /* Side by side on small screens */
+                height: auto !important;
+                aspect-ratio: 2/3;
+            }
+            /* Adjust the absolute positioned elements for mobile */
             .hero-images div[style*="left: -80px"] {
-                left: -20px !important;
-                bottom: 20px !important;
-                width: 140px !important;
-                height: 180px !important;
+                position: relative !important;
+                left: 0 !important;
+                bottom: 0 !important;
+                width: 45% !important;
+                height: auto !important;
+                margin-top: 0 !important;
             }
         }
         .dots-grid {
