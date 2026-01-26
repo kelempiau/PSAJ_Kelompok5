@@ -266,6 +266,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             gap: 50px;
             flex-wrap: wrap;
             overflow: hidden;
+            image-rendering: -webkit-optimize-contrast; /* Fix blurriness */
         }
 
         .hero-content {
@@ -361,6 +362,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             width: 100%;
             height: 200px;
             object-fit: cover;
+            image-rendering: -webkit-optimize-contrast;
         }
 
         .service-card-content {
@@ -402,6 +404,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             transition: transform 0.3s;
+            image-rendering: auto; /* Ensure high quality */
         }
 
         .gallery-grid img:hover {
@@ -581,7 +584,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         </div>
         
         <div id="mobileMenu">
-            <a href="#home" class="mobile-link">Home</a>
+            <a href="#home" class="mobile-link">Beranda</a>
             <a href="#layanan" class="mobile-link">Layanan</a>
             <a href="#katalog" class="mobile-link">Katalog</a>
             <a href="#faq" class="mobile-link">FAQ</a>
@@ -606,7 +609,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         </div>
 
         <div class="nav-center">
-            <a href="#home">Home</a>
+            <a href="#home">Beranda</a>
             <a href="#layanan">Layanan</a>
             <a href="#katalog">Katalog</a>
             <a href="#faq">FAQ</a>

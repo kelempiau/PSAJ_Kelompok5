@@ -49,12 +49,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Handle File Upload
         $proofPath = "";
         if (!empty($_FILES["Lampiran_Bukti_Bayar"]["name"])) {
-            $targetDir = "uploads/";
+            $targetDir = "../uploads/"; // Save to root uploads folder
             if (!file_exists($targetDir)) { mkdir($targetDir, 0777, true); }
             $fileName = basename($_FILES["Lampiran_Bukti_Bayar"]["name"]);
+            $fileName = preg_replace("/[^a-zA-Z0-9._-]/", "_", $fileName); // Clean filename
             $targetFilePath = $targetDir . time() . "_" . $fileName;
             if(move_uploaded_file($_FILES["Lampiran_Bukti_Bayar"]["tmp_name"], $targetFilePath)){
-                $proofPath = $targetFilePath;
+                $proofPath = "uploads/" . time() . "_" . $fileName; // Store path relative to root
             }
         }
 
@@ -80,22 +81,69 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservasi Nail Art - Glamour Nails</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/reservasi.css">
     <style>
-        .alert { padding: 15px; margin-bottom: 20px; border-radius: 4px; text-align: center; }
-        .alert.error { background-color: #f8d7da; color: #721c24; }
-        .alert.success { background-color: #d4edda; color: #155724; }
+        .alert { padding: 15px; margin-bottom: 20px; border-radius: 12px; text-align: center; }
+        .alert.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .alert.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .back-link-icon {
+            text-decoration: none;
+            color: #999;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .back-link-icon:hover { color: #ea3671; }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #fffafa;
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid #ffe6f0;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .user-badge .dot {
+            width: 8px;
+            height: 8px;
+            background: #2ecc71;
+            border-radius: 50%;
+        }
+
+        .admin-tag {
+            background: #ea3671;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <a href="../index.php" class="back-btn">← Kembali</a>
-            <div style="font-size: 0.9rem; color: #666;">
-                Login: <strong><?= htmlspecialchars($_SESSION['username'] ?? 'User') ?></strong>
+        <div class="header-nav">
+            <a href="../index.php" class="back-link-icon" title="Kembali ke Beranda">✕</a>
+            <div class="user-badge">
+                <span class="dot"></span>
+                <span>Login: <strong><?= htmlspecialchars($_SESSION['username'] ?? 'User') ?></strong></span>
                 <?php if(($_SESSION['role'] ?? '') === 'admin'): ?>
-                    <span style="background: #dc3545; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-left: 5px;">ADMIN</span>
+                    <span class="admin-tag">ADMIN</span>
                 <?php endif; ?>
             </div>
         </div>

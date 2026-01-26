@@ -149,6 +149,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color: #666;
         }
 
+        .close-auth {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-decoration: none;
+            color: #ccc;
+            font-size: 1.5rem;
+            line-height: 1;
+            transition: color 0.3s;
+        }
+
+        .close-auth:hover {
+            color: #ea3671;
+        }
+
         @media (max-width: 480px) {
             .auth-container {
                 padding: 40px 25px;
@@ -161,7 +176,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </style>
 </head>
 <body>
-    <div class="auth-container">
+    <div class="auth-container" style="position: relative;">
+        <!-- Close Button (X) -->
+        <a href="../index.php" class="close-auth" title="Kembali ke Beranda">✕</a>
+
         <h2>Join Us! ✨</h2>
         <p class="subtitle">Buat akun baru di Ney Dream</p>
         
@@ -178,10 +196,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
         
         <div class="link">
-            Sudah punya akun? <a href="login.php">Log In disini</a>
+            Sudah punya akun? <a href="login.php">Masuk disini</a>
         </div>
-        
-        <a href="../index.php" class="back-link">← Kembali ke Home</a>
     </div>
 </body>
 </html>

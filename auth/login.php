@@ -154,6 +154,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color: #666;
         }
 
+        .close-auth {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-decoration: none;
+            color: #ccc;
+            font-size: 1.5rem;
+            line-height: 1;
+            transition: color 0.3s;
+        }
+
+        .close-auth:hover {
+            color: #ea3671;
+        }
+
         @media (max-width: 480px) {
             .auth-container {
                 padding: 40px 25px;
@@ -166,9 +181,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </style>
 </head>
 <body>
-    <div class="auth-container">
+    <div class="auth-container" style="position: relative;">
+        <!-- Close Button (X) -->
+        <a href="../index.php" class="close-auth" title="Kembali ke Beranda">✕</a>
+
         <h2>Welcome Back! 👋</h2>
-        <p class="subtitle">Login ke akun Anda</p>
+        <p class="subtitle">Masuk ke akun Anda</p>
         
         <?php if($message): ?>
             <div class="alert"><?= $message ?></div>
@@ -183,8 +201,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="link">
             Belum punya akun? <a href="register.php">Daftar disini</a>
         </div>
-        
-        <a href="../index.php" class="back-link">← Kembali ke Home</a>
     </div>
 </body>
 </html>
