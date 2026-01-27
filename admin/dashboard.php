@@ -103,29 +103,71 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
     <title>Admin Dashboard - Ney Dream</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f4f7f6; margin: 0; display: flex; }
-        .sidebar { width: 250px; background-color: #2c3e50; color: white; min-height: 100vh; padding: 20px; box-sizing: border-box; }
-        .sidebar h2 { margin-top: 0; color: #ecf0f1; }
-        .sidebar a { display: block; color: #bdc3c7; text-decoration: none; padding: 10px 0; border-bottom: 1px solid #34495e; transition: 0.3s; }
-        .sidebar a:hover { color: white; padding-left: 10px; }
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; height: 100vh; }
+        body { font-family: 'Poppins', sans-serif; background-color: #f4f7f6; margin: 0; display: flex; flex-direction: row; transition: all 0.3s; }
         
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 30px; }
-        h3 { margin-top: 0; border-bottom: 2px solid #d63384; padding-bottom: 10px; display: inline-block; }
+        /* Sidebar Styling */
+        .sidebar { 
+            width: 260px; 
+            background-color: #2c3e50; 
+            color: white; 
+            min-height: 100vh; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            transition: transform 0.3s ease; 
+            z-index: 2000;
+        }
+        .sidebar h2 { margin-top: 0; color: #ecf0f1; font-size: 1.5rem; margin-bottom: 30px; }
+        .sidebar a { display: block; color: #bdc3c7; text-decoration: none; padding: 12px 15px; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; }
+        .sidebar a:hover { background: rgba(255,255,255,0.1); color: white; padding-left: 20px; }
+        .sidebar a.active { background: #d63384; color: white; }
+
+        /* Main Content */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; height: 100vh; width: 100%; }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #ddd; }
-        th { background-color: #f8f9fa; color: #333; }
-        tr:hover { background-color: #f1f1f1; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        h3 { margin-top: 0; border-bottom: 2px solid #d63384; padding-bottom: 10px; color: #2c3e50; margin-bottom: 20px; }
         
-        .btn { padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 12px; }
+        /* Table Responsiveness */
+        .table-container { overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #eee; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th, td { text-align: left; padding: 15px; border-bottom: 1px solid #eee; }
+        th { background-color: #f8f9fa; color: #2c3e50; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; }
+        tr:hover { background-color: #fcfcfc; }
+        
+        .btn { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; color: white; font-size: 13px; font-weight: 500; transition: 0.2s; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
         .btn-del { background-color: #e74c3c; }
         .btn-edit { background-color: #f39c12; }
         .btn-lock { background-color: #3498db; }
         
-        select { padding: 5px; border-radius: 4px; border: 1px solid #ddd; }
+        select { padding: 6px; border-radius: 6px; border: 1px solid #ddd; outline: none; }
         
-        .msg { background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 20px; }
+        .msg { background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #28a745; }
+
+        /* Mobile Adjustments */
+        .sidebar-toggle { display: none; background: #2c3e50; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; position: fixed; top: 15px; right: 15px; z-index: 3000; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+
+        @media (max-width: 992px) {
+            body { flex-direction: column; }
+            .sidebar { 
+                position: fixed; 
+                left: 0; 
+                top: 0; 
+                transform: translateX(-100%); 
+                width: 280px; 
+                height: 100%; 
+                box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+            }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-toggle { display: block; }
+            .main-content { padding: 80px 15px 30px; }
+            .card { padding: 15px; }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.5rem; }
+            .btn { padding: 8px 10px; font-size: 11px; }
+        }
 
         .time-slot-form { 
             display: flex; 
@@ -168,10 +210,11 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
     </style>
 </head>
 <body>
-    <div class="sidebar">
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰ Menu</button>
+    <div class="sidebar" id="sidebar">
         <h2>Admin Panel</h2>
-        <a href="../index.php" style="background: rgba(255,255,255,0.1); border-radius: 4px; padding-left: 10px;">🏠 Halaman Utama</a>
-        <a href="#users">Kelola User</a>
+        <a href="../index.php">🏠 Halaman Utama</a>
+        <a href="#users" class="active">Kelola User</a>
         <a href="#reservations">Data Reservasi</a>
         <a href="#refunds">Refund Requests</a>
         <a href="#slots">Kelola Jadwal</a>
@@ -186,7 +229,8 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
         <!-- USERS SECTION -->
         <div class="card" id="users">
             <h3>Daftar Pengguna</h3>
-            <table>
+            <div class="table-container">
+                <table>
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -225,12 +269,13 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
                     <?php endwhile; ?>
                 </tbody>
             </table>
+            </div>
         </div>
 
         <!-- RESERVATIONS SECTION -->
         <div class="card" id="reservations">
             <h3>Data Reservasi Masuk</h3>
-            <div style="overflow-x:auto;">
+            <div class="table-container">
                 <table>
                     <thead>
                         <tr>
@@ -292,7 +337,7 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
         <div class="card" id="refunds">
             <h3>Request Refund</h3>
             <p>Kelola permintaan refund dari customer</p>
-            <div style="overflow-x:auto;">
+            <div class="table-container">
                 <table>
                     <thead>
                         <tr>
@@ -398,7 +443,7 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
             </form>
 
             <h4>Daftar Slot Terkunci:</h4>
-            <div style="overflow-x:auto; margin-top: 15px;">
+            <div class="table-container">
                 <table>
                     <thead>
                         <tr>
@@ -451,7 +496,7 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
         <div class="card" id="feedback">
             <h3>Kritik & Saran Pelanggan</h3>
             <p>Masukan terbaru dari para customer</p>
-            <div style="overflow-x:auto;">
+            <div class="table-container">
                 <table>
                     <thead>
                         <tr>
@@ -509,5 +554,20 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
         </div>
 
     </div>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Close sidebar when clicking links on mobile
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 992) {
+                    document.getElementById('sidebar').classList.remove('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

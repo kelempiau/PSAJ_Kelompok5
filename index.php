@@ -477,11 +477,11 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
         @media (max-width: 768px) {
             .hero {
-                flex-direction: column-reverse; /* Put images above text for better mobile hook */
+                flex-direction: column; 
                 text-align: center;
                 height: auto;
-                min-height: 100vh;
-                padding: 120px 20px 60px; /* Better padding for fixed navbar */
+                min-height: 80vh;
+                padding: 120px 20px 60px;
             }
             .hero::before { display: block; }
             .hero > div[style*="background: #fdfbfd"] { display: none; }
@@ -499,28 +499,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                 font-size: clamp(2.2rem, 10vw, 3.2rem) !important;
             }
             .hero-images {
-                height: auto !important;
-                width: 100% !important;
-                max-width: 400px;
-                margin: 0 auto;
-                padding-top: 20px;
-                display: flex;
-                flex-wrap: wrap; /* Allow images to share space if possible */
-                gap: 10px;
-            }
-            .hero-images img {
-                width: 45% !important; /* Side by side on small screens */
-                height: auto !important;
-                aspect-ratio: 2/3;
-            }
-            /* Adjust the absolute positioned elements for mobile */
-            .hero-images div[style*="left: -80px"] {
-                position: relative !important;
-                left: 0 !important;
-                bottom: 0 !important;
-                width: 45% !important;
-                height: auto !important;
-                margin-top: 0 !important;
+                display: none !important; /* Hide images on mobile as they clutter the space */
             }
         }
         .dots-grid {
