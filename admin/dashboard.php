@@ -103,70 +103,81 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
     <title>Admin Dashboard - Ney Dream</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f4f7f6; margin: 0; display: flex; flex-direction: row; transition: all 0.3s; }
+        body { font-family: 'Poppins', sans-serif; background-color: #f4f7f6; margin: 0; display: flex; flex-direction: row; transition: all 0.3s; min-height: 100vh; }
         
         /* Sidebar Styling */
         .sidebar { 
             width: 260px; 
             background-color: #2c3e50; 
             color: white; 
-            min-height: 100vh; 
+            height: 100vh; 
             padding: 20px; 
             box-sizing: border-box; 
-            transition: transform 0.3s ease; 
+            transition: all 0.3s ease; 
             z-index: 2000;
+            position: sticky;
+            top: 0;
+            flex-shrink: 0;
         }
-        .sidebar h2 { margin-top: 0; color: #ecf0f1; font-size: 1.5rem; margin-bottom: 30px; }
-        .sidebar a { display: block; color: #bdc3c7; text-decoration: none; padding: 12px 15px; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; }
+        .sidebar h2 { margin-top: 0; color: #ecf0f1; font-size: 1.4rem; margin-bottom: 30px; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar a { display: flex; align-items: center; gap: 12px; color: #bdc3c7; text-decoration: none; padding: 12px 15px; border-radius: 8px; margin-bottom: 5px; transition: 0.3s; font-size: 0.95rem; }
         .sidebar a:hover { background: rgba(255,255,255,0.1); color: white; padding-left: 20px; }
-        .sidebar a.active { background: #d63384; color: white; }
+        .sidebar a.active { background: #d63384; color: white; box-shadow: 0 4px 10px rgba(214, 51, 132, 0.3); }
+
+        /* Mobile Header */
+        .admin-header-mobile { display: none; background: #2c3e50; color: white; padding: 15px 20px; justify-content: space-between; align-items: center; position: fixed; top: 0; left: 0; width: 100%; z-index: 2500; box-shadow: 0 2px 10px rgba(0,0,0,0.1); box-sizing: border-box; }
+        .admin-header-mobile h2 { margin: 0; font-size: 1.2rem; }
+        .sidebar-toggle { background: #d63384; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 1.2rem; display: none; }
 
         /* Main Content */
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; height: 100vh; width: 100%; }
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; width: 100%; box-sizing: border-box; }
+        h1 { color: #2c3e50; margin-bottom: 30px; font-weight: 600; }
         
-        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; }
-        h3 { margin-top: 0; border-bottom: 2px solid #d63384; padding-bottom: 10px; color: #2c3e50; margin-bottom: 20px; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); margin-bottom: 30px; border: 1px solid #f0f0f0; }
+        h3 { margin-top: 0; border-bottom: 2px solid #d63384; padding-bottom: 12px; color: #2c3e50; margin-bottom: 25px; font-size: 1.2rem; }
         
         /* Table Responsiveness */
-        .table-container { overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #eee; }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th, td { text-align: left; padding: 15px; border-bottom: 1px solid #eee; }
-        th { background-color: #f8f9fa; color: #2c3e50; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; }
-        tr:hover { background-color: #fcfcfc; }
+        .table-container { overflow-x: auto; margin-top: 15px; border-radius: 12px; border: 1px solid #eee; background: white; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th, td { text-align: left; padding: 16px; border-bottom: 1px solid #f5f5f5; }
+        th { background-color: #fcfcfc; color: #666; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
+        tr:hover { background-color: #fafafa; }
         
-        .btn { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; color: white; font-size: 13px; font-weight: 500; transition: 0.2s; }
+        .btn { padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; color: white; font-size: 13px; font-weight: 500; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; }
         .btn:hover { opacity: 0.9; transform: translateY(-1px); }
-        .btn-del { background-color: #e74c3c; }
-        .btn-edit { background-color: #f39c12; }
-        .btn-lock { background-color: #3498db; }
+        .btn-del { background-color: #ff4757; }
+        .btn-edit { background-color: #ffa502; }
+        .btn-lock { background-color: #2f3542; }
         
-        select { padding: 6px; border-radius: 6px; border: 1px solid #ddd; outline: none; }
+        select { padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; outline: none; background: white; font-family: inherit; }
         
-        .msg { background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #28a745; }
+        .msg { background: #e3f9e5; color: #1b5e20; padding: 18px; border-radius: 12px; margin-bottom: 25px; border-left: 6px solid #2ecc71; font-weight: 500; }
 
-        /* Mobile Adjustments */
-        .sidebar-toggle { display: none; background: #2c3e50; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; position: fixed; top: 15px; right: 15px; z-index: 3000; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-
-        @media (max-width: 992px) {
+        /* Breakpoint Redesign (Mobile/Tablet) */
+        @media (max-width: 1200px) {
             body { flex-direction: column; }
             .sidebar { 
                 position: fixed; 
                 left: 0; 
                 top: 0; 
                 transform: translateX(-100%); 
-                width: 280px; 
+                width: 300px; 
                 height: 100%; 
-                box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+                box-shadow: 15px 0 40px rgba(0,0,0,0.15);
+                z-index: 3000;
             }
             .sidebar.active { transform: translateX(0); }
-            .sidebar-toggle { display: block; }
-            .main-content { padding: 80px 15px 30px; }
-            .card { padding: 15px; }
+            .admin-header-mobile, .sidebar-toggle { display: flex; }
+            .main-content { padding: 100px 20px 40px; }
         }
 
-        @media (max-width: 480px) {
-            h1 { font-size: 1.5rem; }
-            .btn { padding: 8px 10px; font-size: 11px; }
+        @media (max-width: 600px) {
+            .table-container { margin: 15px -10px; border-radius: 0; border-left: none; border-right: none; }
+            .card { padding: 20px 15px; border-radius: 10px; }
+            h1 { font-size: 1.6rem; }
+            .time-slot-form { flex-direction: column !important; align-items: stretch !important; gap: 20px !important; }
+            .time-slot-form .form-group { width: 100%; }
+            .time-slot-form button { margin-top: 10px; width: 100%; }
         }
 
         .time-slot-form { 
@@ -210,16 +221,20 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
     </style>
 </head>
 <body>
-    <button class="sidebar-toggle" onclick="toggleSidebar()">☰ Menu</button>
+    <header class="admin-header-mobile">
+        <h2>Admin Panel</h2>
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰ Menu</button>
+    </header>
+
     <div class="sidebar" id="sidebar">
         <h2>Admin Panel</h2>
-        <a href="../index.php">🏠 Halaman Utama</a>
-        <a href="#users" class="active">Kelola User</a>
-        <a href="#reservations">Data Reservasi</a>
-        <a href="#refunds">Refund Requests</a>
-        <a href="#slots">Kelola Jadwal</a>
-        <a href="#feedback">Kritik & Saran</a>
-        <a href="../auth/logout.php" style="color: #e74c3c; margin-top: 50px;">Logout</a>
+        <a href="../index.php"><span>🏠</span> Halaman Utama</a>
+        <a href="#users" class="active"><span>👥</span> Kelola User</a>
+        <a href="#reservations"><span>📅</span> Data Reservasi</a>
+        <a href="#refunds"><span>💰</span> Refund Requests</a>
+        <a href="#slots"><span>🔒</span> Kelola Jadwal</a>
+        <a href="#feedback"><span>💬</span> Kritik & Saran</a>
+        <a href="../auth/logout.php" style="color: #ff4757; margin-top: 50px;"><span>👋</span> Logout</a>
     </div>
 
     <div class="main-content">
@@ -562,11 +577,26 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
 
         // Close sidebar when clicking links on mobile
         document.querySelectorAll('.sidebar a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth <= 992) {
+            link.addEventListener('click', (e) => {
+                // Update active class
+                document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+                link.classList.add('active');
+
+                if (window.innerWidth <= 1200) {
                     document.getElementById('sidebar').classList.remove('active');
                 }
             });
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.sidebar-toggle');
+            if (window.innerWidth <= 1200) {
+                if (!sidebar.contains(e.target) && !toggle.contains(e.target) && sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                }
+            }
         });
     </script>
 </body>
