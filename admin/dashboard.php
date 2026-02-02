@@ -227,13 +227,14 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
 
     <div class="sidebar" id="sidebar">
         <h2>Admin Panel</h2>
-        <a href="../index.php"><span>🏠</span> Halaman Utama</a>
-        <a href="
-        <a href="
-        <a href="
-        <a href="
-        <a href="
-        <a href="../auth/logout.php" style="color: 
+        <a href="../index.php" onclick="closeSidebarOnMobile()"><span>🏠</span> Halaman Utama</a>
+        <a href="dashboard.php" class="active" onclick="closeSidebarOnMobile()"><span>📊</span> Dashboard</a>
+        <a href="conversations.php" onclick="closeSidebarOnMobile()"><span>💬</span> Conversations</a>
+        <a href="#users" onclick="closeSidebarOnMobile()"><span>👥</span> Pengguna</a>
+        <a href="#reservations" onclick="closeSidebarOnMobile()"><span>📅</span> Reservasi</a>
+        <a href="#slots" onclick="closeSidebarOnMobile()"><span>🔒</span> Kunci Jadwal</a>
+        <a href="#feedback" onclick="closeSidebarOnMobile()"><span>📣</span> Feedback</a>
+        <a href="../auth/logout.php" style="color: #fca5a5; margin-top: auto;" onclick="closeSidebarOnMobile()"><span>🚪</span> Logout</a>
     </div>
 
     <div class="main-content">
@@ -263,7 +264,7 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
                             <form method="POST" style="display:inline;">
                                 <input type="hidden" name="action" value="update_role">
                                 <input type="hidden" name="user_id" value="<?= $u['id'] ?>">
-                                <select name="role" onchange="this.form.submit()" style="background: <?= $u['role'] == 'admin' ? '
+                                <select name="role" onchange="this.form.submit()" style="background: <?= $u['role'] == 'admin' ? '#dcfce7' : '#f3f4f6' ?>; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
                                     <option value="user" <?= $u['role'] == 'user' ? 'selected' : '' ?>>User</option>
                                     <option value="admin" <?= $u['role'] == 'admin' ? 'selected' : '' ?>>Admin</option>
                                 </select>
@@ -312,14 +313,14 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
                             <td>
                                 Rp<?= number_format($r['total_price']) ?>
                                 <?php if($r['refund_status']): ?>
-                                    <br><span style="background: 
+                                    <br><span style="background: #e0e7ff; color: #4338ca; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600;"><?= htmlspecialchars($r['refund_status']) ?></span>
                                 <?php endif; ?>
                             </td>
                             <td>
                                 <form method="POST">
                                     <input type="hidden" name="action" value="update_status">
                                     <input type="hidden" name="res_id" value="<?= $r['id'] ?>">
-                                    <select name="status" onchange="this.form.submit()" style="width: 100px; background: <?= $r['status']=='pending'?'
+                                    <select name="status" onchange="this.form.submit()" style="width: 100px; background: <?= $r['status']=='pending'?'#fff7ed':($r['status']=='confirmed'?'#eff6ff':($r['status']=='completed'?'#f0fdf4':'#fef2f2')) ?>; border: 1px solid #e5e7eb; border-radius: 4px; padding: 2px;">
                                         <option value="pending" <?= $r['status']=='pending'?'selected':'' ?>>Pending</option>
                                         <option value="confirmed" <?= $r['status']=='confirmed'?'selected':'' ?>>Confirmed</option>
                                         <option value="completed" <?= $r['status']=='completed'?'selected':'' ?>>Completed</option>
@@ -366,11 +367,11 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
                     </thead>
                     <tbody>
                         <?php if ($refund_requests->num_rows == 0): ?>
-                            <tr><td colspan="6" style="text-align: center; color: 
+                            <tr><td colspan="6" style="text-align: center; color: #6b7280; padding: 20px;">No refund requests found.</td></tr>
                         <?php else: ?>
                             <?php while($rf = $refund_requests->fetch_assoc()): ?>
-                            <tr style="background: <?= $rf['refund_status'] == 'pending' ? '
-                                <td>
+                            <tr style="background: <?= $rf['refund_status'] == 'pending' ? '#fff7ed' : '#ffffff' ?>;">
+                                <td><?= $rf['id'] ?></td>
                                 <td>
                                     <?= htmlspecialchars($rf['username']) ?><br>
                                     <small><?= htmlspecialchars($rf['email']) ?></small>
@@ -381,10 +382,10 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
                                 </td>
                                 <td style="max-width: 250px;">
                                     <?= htmlspecialchars($rf['refund_reason']) ?><br>
-                                    <small style="color: 
+                                    <small style="color: #6b7280;"><?= date('d/m/Y H:i', strtotime($rf['refund_date'])) ?></small>
                                 </td>
                                 <td>
-                                    <span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; background: <?= $rf['refund_status']=='pending'?'
+                                    <span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; background: <?= $rf['refund_status']=='pending'?'#fed7aa':($rf['refund_status']=='approved'?'#bbf7d0':'#fecaca') ?>; color: <?= $rf['refund_status']=='pending'?'#9a3412':($rf['refund_status']=='approved'?'#166534':'#991b1b') ?>;">
                                         <?= strtoupper($rf['refund_status']) ?>
                                     </span>
                                 </td>
@@ -394,7 +395,7 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
                                             <form method="POST" style="margin: 0;" onsubmit="return confirm('Setujui refund?');">
                                                 <input type="hidden" name="action" value="approve_refund">
                                                 <input type="hidden" name="booking_id" value="<?= $rf['id'] ?>">
-                                                <button type="submit" class="btn" style="background: 
+                                                <button type="submit" class="btn" style="background: #22c55e; color: white;">Approve</button>
                                             </form>
                                             <form method="POST" style="margin: 0;" onsubmit="return confirm('Tolak refund?');">
                                                 <input type="hidden" name="action" value="reject_refund">
@@ -416,7 +417,7 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
 
         <div class="card" id="slots">
             <h3>Kunci Jadwal (Lock Slots)</h3>
-            <p style="color:
+            <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 20px;">Kunci slot waktu tertentu agar pelanggan tidak bisa melakukan reservasi pada jadwal tersebut.</p>
             
             <form method="POST" class="time-slot-form">
                 <input type="hidden" name="action" value="lock_slot">
@@ -442,8 +443,7 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
                 <button type="submit" class="btn btn-lock" style="height: 42px; padding: 0 25px;">Lock 🔒</button>
             </form>
 
-            <h4 style="margin-top: 30px; color: 
-            <div class="table-container">
+            <h4 style="margin-top: 30px; color: #1e293b;">Daftar Slot Terkunci</h4>            <div class="table-container">
                 <table>
                     <thead>
                         <tr>
@@ -459,8 +459,7 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
                         $no = 1;
                         if ($locked_slots->num_rows == 0): 
                         ?>
-                            <tr><td colspan="5" style="text-align: center; color: 
-                        <?php else: ?>
+                            <tr><td colspan="5" style="text-align: center; color: #6b7280; padding: 20px;">Belum ada slot yang dikunci.</td></tr>                        <?php else: ?>
                             <?php 
                             mysqli_data_seek($locked_slots, 0);
                             while($s = $locked_slots->fetch_assoc()): 
@@ -469,8 +468,7 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
                                 <td><?= $no++ ?></td>
                                 <td><?= date('d M Y', strtotime($s['date'])) ?></td>
                                 <td><?= $s['time'] ?></td>
-                                <td><span style="background: 
-                                <td>
+                                <td><span style="background: #fef2f2; color: #dc2626; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">LOCKED</span></td>                                <td>
                                     <form method="POST" style="display:inline;" onsubmit="return confirm('Buka kunci slot ini?');">
                                         <input type="hidden" name="action" value="unlock_slot_id">
                                         <input type="hidden" name="slot_id" value="<?= $s['id'] ?>">
@@ -499,19 +497,16 @@ $feedbacks = $conn->query("SELECT feedback.*, users.username as user_uname FROM 
                     </thead>
                     <tbody>
                         <?php if ($feedbacks->num_rows == 0): ?>
-                            <tr><td colspan="4" style="text-align: center; color: 
-                        <?php else: ?>
+                            <tr><td colspan="4" style="text-align: center; color: #6b7280; padding: 20px;">Belum ada feedback dari pelanggan.</td></tr>                        <?php else: ?>
                             <?php while($f = $feedbacks->fetch_assoc()): ?>
                             <tr>
                                 <td style="white-space: nowrap; font-size: 0.85rem;"><?= date('d M Y', strtotime($f['created_at'])) ?><br><small><?= date('H:i', strtotime($f['created_at'])) ?></small></td>
                                 <td>
                                     <strong><?= htmlspecialchars($f['name']) ?></strong>
                                     <?php if($f['whatsapp_number']): ?>
-                                        <br><a href="https://wa.me/62<?= ltrim($f['whatsapp_number'], '08') ?>" target="_blank" style="color: 
-                                    <?php endif; ?>
+                                        <br><a href="https://wa.me/62<?= ltrim($f['whatsapp_number'], '08') ?>" target="_blank" style="color: #25d366; font-size: 0.8rem; text-decoration: none;">💬 Hubungi via WA</a>                                    <?php endif; ?>
                                 </td>
-                                <td style="min-width: 250px; line-height: 1.5; color: 
-                                <td>
+                                <td style="min-width: 250px; line-height: 1.5; color: #475569; padding: 12px;"><?= nl2br(htmlspecialchars($f['message'])) ?></td>                                <td>
                                     <form method="POST" style="margin: 0;" onsubmit="return confirm('Hapus pesan ini?');">
                                         <input type="hidden" name="action" value="delete_feedback">
                                         <input type="hidden" name="feedback_id" value="<?= $f['id'] ?>">
