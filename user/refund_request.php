@@ -1,7 +1,7 @@
 <?php
 require '../core/config.php';
 
-// Check if user is logged in
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
     exit();
@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $booking_id = $_POST['booking_id'];
     $reason = trim($_POST['reason']);
 
-    // Verify booking belongs to user
+    
     $check = $conn->prepare("SELECT * FROM reservations WHERE id = ? AND user_id = ?");
     $check->bind_param("ii", $booking_id, $user_id);
     $check->execute();
@@ -21,14 +21,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows > 0) {
         $booking = $result->fetch_assoc();
         
-        // Check if already has refund request
+        
         if ($booking['refund_status']) {
             $_SESSION['error'] = "Booking ini sudah memiliki request refund.";
             header("Location: history.php");
             exit();
         }
 
-        // Update refund status
+        
         $update = $conn->prepare("UPDATE reservations SET refund_status = 'pending', refund_reason = ?, refund_date = NOW() WHERE id = ?");
         $update->bind_param("si", $reason, $booking_id);
         
@@ -47,3 +47,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 header("Location: refund_status.php");
 exit();
 ?>
+

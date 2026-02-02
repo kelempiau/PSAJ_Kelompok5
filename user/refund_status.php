@@ -1,7 +1,7 @@
 <?php
 require '../core/config.php';
 
-// Check if user is logged in
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
     exit();
@@ -9,13 +9,12 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Strict Access Control: Admin cannot access user pages
+
 if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
     header("Location: ../admin/dashboard.php");
     exit();
 }
 
-// Fetch all refund requests from this user
 $sql = "SELECT * FROM reservations 
         WHERE user_id = ? AND refund_status IS NOT NULL 
         ORDER BY refund_date DESC";
@@ -40,7 +39,7 @@ $result = $stmt->get_result();
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #ffd9e2 0%, #ffe6f0 100%);
+            background: linear-gradient(135deg, 
             min-height: 100vh;
             padding: 20px;
         }
@@ -62,7 +61,7 @@ $result = $stmt->get_result();
         }
 
         .header h1 {
-            color: #5f162e;
+            color: 
             font-size: 1.8rem;
         }
 
@@ -75,12 +74,12 @@ $result = $stmt->get_result();
         }
 
         .btn-back {
-            background: #f0f0f0;
-            color: #333;
+            background: 
+            color: 
         }
 
         .btn-back:hover {
-            background: #e0e0e0;
+            background: 
         }
 
         .stats {
@@ -105,13 +104,13 @@ $result = $stmt->get_result();
         }
 
         .stat-label {
-            color: #666;
+            color: 
             font-size: 0.9rem;
         }
 
-        .pending .stat-number { color: #856404; }
-        .approved .stat-number { color: #155724; }
-        .rejected .stat-number { color: #721c24; }
+        .pending .stat-number { color: 
+        .approved .stat-number { color: 
+        .rejected .stat-number { color: 
 
         .empty-state {
             background: white;
@@ -122,7 +121,7 @@ $result = $stmt->get_result();
         }
 
         .empty-state h2 {
-            color: #5f162e;
+            color: 
             margin-bottom: 15px;
         }
 
@@ -146,7 +145,7 @@ $result = $stmt->get_result();
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
+            border-bottom: 2px solid 
         }
 
         .status-badge {
@@ -157,18 +156,18 @@ $result = $stmt->get_result();
         }
 
         .status-pending {
-            background: #fff3cd;
-            color: #856404;
+            background: 
+            color: 
         }
 
         .status-approved {
-            background: #d4edda;
-            color: #155724;
+            background: 
+            color: 
         }
 
         .status-rejected {
-            background: #f8d7da;
-            color: #721c24;
+            background: 
+            color: 
         }
 
         .refund-details {
@@ -178,25 +177,25 @@ $result = $stmt->get_result();
         }
 
         .detail-item strong {
-            color: #5f162e;
+            color: 
             display: block;
             margin-bottom: 5px;
             font-size: 0.9rem;
         }
 
         .detail-item span {
-            color: #666;
+            color: 
         }
 
         .reason-box {
-            background: #f8f9fa;
+            background: 
             padding: 15px;
             border-radius: 10px;
             margin-top: 15px;
         }
 
         .reason-box strong {
-            color: #5f162e;
+            color: 
             display: block;
             margin-bottom: 8px;
         }
@@ -204,7 +203,7 @@ $result = $stmt->get_result();
         .timeline {
             margin-top: 20px;
             padding-top: 20px;
-            border-top: 1px solid #f0f0f0;
+            border-top: 1px solid 
         }
 
         .timeline-item {
@@ -216,7 +215,7 @@ $result = $stmt->get_result();
         .timeline-icon {
             width: 40px;
             height: 40px;
-            background: #ea3671;
+            background: 
             color: white;
             border-radius: 50%;
             display: flex;
@@ -230,7 +229,7 @@ $result = $stmt->get_result();
         }
 
         .timeline-date {
-            color: #999;
+            color: 
             font-size: 0.85rem;
         }
 
@@ -259,15 +258,15 @@ $result = $stmt->get_result();
         $approved = 0;
         $rejected = 0;
         
-        // Count statuses
+        
         $temp_result = $result;
-        mysqli_data_seek($result, 0); // Reset pointer
+        mysqli_data_seek($result, 0); 
         while ($row = $result->fetch_assoc()) {
             if ($row['refund_status'] == 'pending') $pending++;
             elseif ($row['refund_status'] == 'approved') $approved++;
             elseif ($row['refund_status'] == 'rejected') $rejected++;
         }
-        mysqli_data_seek($result, 0); // Reset again for display
+        mysqli_data_seek($result, 0); 
         ?>
 
         <?php if ($result->num_rows > 0): ?>
@@ -290,8 +289,8 @@ $result = $stmt->get_result();
                 <div class="refund-card">
                     <div class="refund-header">
                         <div>
-                            <strong>Booking #<?= $refund['id'] ?></strong>
-                            <div style="color: #999; font-size: 0.9rem; margin-top: 5px;">
+                            <strong>Booking 
+                            <div style="color: 
                                 Request: <?= date('d M Y H:i', strtotime($refund['refund_date'])) ?>
                             </div>
                         </div>
@@ -321,7 +320,7 @@ $result = $stmt->get_result();
 
                     <div class="reason-box">
                         <strong>Alasan Refund:</strong>
-                        <p style="color: #666;"><?= htmlspecialchars($refund['refund_reason']) ?></p>
+                        <p style="color: 
                     </div>
 
                     <div class="timeline">
@@ -335,7 +334,7 @@ $result = $stmt->get_result();
 
                         <?php if ($refund['refund_status'] == 'pending'): ?>
                             <div class="timeline-item">
-                                <div class="timeline-icon" style="background: #ffc107;">⏳</div>
+                                <div class="timeline-icon" style="background: 
                                 <div class="timeline-content">
                                     <strong>Menunggu Review Admin</strong>
                                     <div class="timeline-date">Status akan diupdate dalam 1-2 hari kerja</div>
@@ -343,7 +342,7 @@ $result = $stmt->get_result();
                             </div>
                         <?php elseif ($refund['refund_status'] == 'approved'): ?>
                             <div class="timeline-item">
-                                <div class="timeline-icon" style="background: #28a745;">✓</div>
+                                <div class="timeline-icon" style="background: 
                                 <div class="timeline-content">
                                     <strong>Refund Disetujui</strong>
                                     <div class="timeline-date">Dana akan dikembalikan dalam 3-5 hari kerja</div>
@@ -351,7 +350,7 @@ $result = $stmt->get_result();
                             </div>
                         <?php else: ?>
                             <div class="timeline-item">
-                                <div class="timeline-icon" style="background: #dc3545;">✗</div>
+                                <div class="timeline-icon" style="background: 
                                 <div class="timeline-content">
                                     <strong>Refund Ditolak</strong>
                                     <div class="timeline-date">Hubungi admin untuk informasi lebih lanjut</div>
@@ -365,10 +364,10 @@ $result = $stmt->get_result();
         <?php else: ?>
             <div class="empty-state">
                 <h2>Belum Ada Request Refund</h2>
-                <p style="color: #666; margin-bottom: 25px;">
+                <p style="color: 
                     Anda belum pernah mengajukan refund untuk transaksi apapun.
                 </p>
-                <a href="history.php" class="btn" style="background: #ea3671; color: white;">
+                <a href="history.php" class="btn" style="background: 
                     Lihat Riwayat Transaksi
                 </a>
             </div>
@@ -376,3 +375,4 @@ $result = $stmt->get_result();
     </div>
 </body>
 </html>
+

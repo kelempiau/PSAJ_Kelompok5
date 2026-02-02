@@ -7,14 +7,14 @@ $services = [
     'nailart' => [
         'title' => 'Nail Art',
         'price' => 'Mulai Rp 30.000',
-        'desc' => 'Kreasi seni pada kuku dengan berbagai desain yang dapat disesuaikan dengan keinginan anda. Kami menawarkan berbagai gaya mulai dari minimalis hingga rumit.',
+        'desc' => 'yang dapat disesuaikan dengan keinginan anda. Kami menawarkan berbagai gaya mulai dari minimalis hingga rumit.',
         'details' => ['Gel Polish', 'French Tips', 'Ombre', 'Marble'],
         'img' => 'home/img/image-5.png'
     ],
     'extension' => [
         'title' => 'Extension',
         'price' => 'Mulai Rp 60.000',
-        'desc' => 'Ingin kuku panjang instan? Layanan extension kami menggunakan bahan berkualitas untuk hasil natural dan tahan lama.',
+        'desc' => 'Ingin kukuension kami menggunakan bahan berkualitas untuk hasil',
         'details' => ['Acrylic Extension', 'Gel Extension', 'Polygel'],
         'img' => 'home/img/rectangle-46.svg' 
     ],
@@ -52,7 +52,7 @@ $data = isset($services[$type]) ? $services[$type] : null;
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #ffd9e2 0%, #ffe6f0 100%);
+            background: linear-gradient(135deg, 
             min-height: 100vh;
             padding: 40px 20px;
         }
@@ -67,7 +67,7 @@ $data = isset($services[$type]) ? $services[$type] : null;
         }
 
         .header {
-            background: linear-gradient(135deg, #ea3671, #d63060);
+            background: linear-gradient(135deg, 
             padding: 60px 40px;
             text-align: center;
             color: white;
@@ -91,20 +91,20 @@ $data = isset($services[$type]) ? $services[$type] : null;
         .description {
             font-size: 1.1rem;
             line-height: 1.8;
-            color: #555;
+            color: 
             margin-bottom: 40px;
             text-align: center;
         }
 
         .features {
-            background: #f9f9f9;
+            background: 
             padding: 30px;
             border-radius: 20px;
             margin-bottom: 40px;
         }
 
         .features h3 {
-            color: #5f162e;
+            color: 
             margin-bottom: 20px;
             font-size: 1.3rem;
         }
@@ -115,10 +115,10 @@ $data = isset($services[$type]) ? $services[$type] : null;
 
         .features li {
             padding: 12px 0;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid 
             display: flex;
             align-items: center;
-            color: #666;
+            color: 
             font-size: 1rem;
         }
 
@@ -128,7 +128,7 @@ $data = isset($services[$type]) ? $services[$type] : null;
 
         .features li:before {
             content: "✓";
-            color: #ea3671;
+            color: 
             font-weight: bold;
             margin-right: 15px;
             font-size: 1.2rem;
@@ -152,16 +152,16 @@ $data = isset($services[$type]) ? $services[$type] : null;
         }
 
         .btn-back {
-            background: #f0f0f0;
-            color: #333;
+            background: 
+            color: 
         }
 
         .btn-back:hover {
-            background: #e0e0e0;
+            background: 
         }
 
         .btn-reserve {
-            background: linear-gradient(135deg, #ea3671, #d63060);
+            background: linear-gradient(135deg, 
             color: white;
         }
 
@@ -176,7 +176,7 @@ $data = isset($services[$type]) ? $services[$type] : null;
         }
 
         .not-found h1 {
-            color: #5f162e;
+            color: 
             margin-bottom: 20px;
         }
 
@@ -224,17 +224,18 @@ $data = isset($services[$type]) ? $services[$type] : null;
                 </div>
 
                 <div class="buttons">
-                    <a href="../index.php#katalog" class="btn btn-back">← Kembali</a>
+                    <a href="../index.php
                     <a href="<?php echo $isAdmin ? '../admin/dashboard.php' : '../user/reservasi.php'; ?>" class="btn btn-reserve">Booking Sekarang</a>
                 </div>
             </div>
         <?php else: ?>
             <div class="not-found">
                 <h1>Layanan tidak ditemukan</h1>
-                <p style="margin-bottom: 30px; color: #666;">Maaf, layanan yang Anda cari tidak tersedia.</p>
-                <a href="../index.php#katalog" class="btn btn-back">← Kembali ke Katalog</a>
+                <p style="margin-bottom: 30px; color: 
+                <a href="../index.php
             </div>
         <?php endif; ?>
     </div>
 </body>
 </html>
+

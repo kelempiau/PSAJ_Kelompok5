@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $phone = $_POST['phone'];
 
-    // Check if email or username already exists
+
     $check = $conn->query("SELECT id FROM users WHERE email = '$email' OR username = '$username'");
     if ($check->num_rows > 0) {
         $message = "Username atau Email sudah terdaftar!";
@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #ffd9e2 0%, #ffe6f0 100%);
+            background: linear-gradient(135deg, 
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -65,19 +65,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         h2 {
-            color: #5f162e;
+            color: 
             font-size: 2rem;
             margin-bottom: 10px;
         }
 
         .subtitle {
-            color: #666;
+            color: 
             margin-bottom: 30px;
         }
 
         .alert {
-            background: #ffe6e6;
-            color: #d63060;
+            background: 
+            color: 
             padding: 12px;
             border-radius: 10px;
             margin-bottom: 20px;
@@ -88,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             width: 100%;
             padding: 15px 20px;
             margin: 10px 0;
-            border: 2px solid #f0f0f0;
+            border: 2px solid 
             border-radius: 12px;
             font-size: 1rem;
             font-family: 'Poppins', sans-serif;
@@ -97,14 +97,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         input:focus {
             outline: none;
-            border-color: #ea3671;
+            border-color: 
             box-shadow: 0 0 0 3px rgba(234, 54, 113, 0.1);
         }
 
         button {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, #ea3671, #d63060);
+            background: linear-gradient(135deg, 
             color: white;
             border: none;
             border-radius: 12px;
@@ -123,12 +123,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         .link {
             margin-top: 25px;
-            color: #666;
+            color: 
             font-size: 0.95rem;
         }
 
         .link a {
-            color: #ea3671;
+            color: 
             text-decoration: none;
             font-weight: 600;
         }
@@ -140,13 +140,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .back-link {
             display: inline-block;
             margin-top: 20px;
-            color: #999;
+            color: 
             text-decoration: none;
             font-size: 0.9rem;
         }
 
         .back-link:hover {
-            color: #666;
+            color: 
         }
 
         .close-auth {
@@ -154,14 +154,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             top: 20px;
             right: 20px;
             text-decoration: none;
-            color: #ccc;
+            color: 
             font-size: 1.5rem;
             line-height: 1;
             transition: color 0.3s;
         }
 
         .close-auth:hover {
-            color: #ea3671;
+            color: 
         }
 
         @media (max-width: 480px) {
@@ -177,7 +177,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
     <div class="auth-container" style="position: relative;">
-        <!-- Close Button (X) -->
+
         <a href="../index.php" class="close-auth" title="Kembali ke Beranda">✕</a>
 
         <h2>Join Us! ✨</h2>
@@ -201,3 +201,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </body>
 </html>
+

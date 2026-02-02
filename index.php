@@ -26,18 +26,18 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: #fff;
-            color: #333;
-            padding-top: 90px; /* Offset for fixed navbar */
+            background: 
+            color: 
+            padding-top: 90px; 
         }
 
-        /* Navbar Reset & Premium Desktop Style */
+
         nav {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            z-index: 2000; /* Higher than overlay (1650) */
+            z-index: 2000; 
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             padding: 10px 5%;
@@ -81,7 +81,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
         .nav-center a {
             text-decoration: none;
-            color: #333;
+            color: 
             font-weight: 500;
             font-size: 1rem;
             transition: all 0.3s;
@@ -95,7 +95,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             left: 0;
             width: 0;
             height: 2px;
-            background: #ea3671;
+            background: 
             transition: width 0.3s;
         }
 
@@ -104,11 +104,11 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         }
 
         .nav-center a:hover, .nav-center a.active {
-            color: #ea3671;
+            color: 
             font-weight: 700;
         }
 
-        /* Buttons */
+
         .btn {
             padding: 12px 28px;
             border-radius: 50px;
@@ -122,39 +122,39 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         }
 
         .btn-primary {
-            background: #ff85a1;
+            background: 
             color: white;
             box-shadow: 0 5px 15px rgba(255, 133, 161, 0.3);
         }
 
         .btn-primary:hover {
-            background: #ff5c8a;
+            background: 
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(255, 133, 161, 0.4);
         }
 
         .btn-outline {
-            border: 2px solid #ff85a1;
-            color: #ff85a1;
+            border: 2px solid 
+            color: 
             background: transparent;
         }
 
         .btn-outline:hover {
-            background: #ff85a1;
+            background: 
             color: white;
         }
 
         .btn-logout {
-            background: #fff0f3;
-            color: #ff85a1;
-            border: 1px solid #ffb7c5;
+            background: 
+            color: 
+            border: 1px solid 
         }
 
         .btn-logout:hover {
-            background: #ffe0e6;
+            background: 
         }
 
-        #mobileMenu {
+        
             display: none;
         }
 
@@ -162,7 +162,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             padding: 10px;
             font-size: 1.2rem;
             line-height: 1;
-            background: #ff85a1;
+            background: 
             border-radius: 50%;
             width: 45px;
             height: 45px;
@@ -176,10 +176,10 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
         .btn-icon:hover {
             transform: scale(1.1);
-            background: #ff5c8a;
+            background: 
         }
 
-        /* Hamburger Styles */
+
         .hamburger {
             display: none;
             flex-direction: column;
@@ -193,21 +193,21 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             display: block;
             width: 25px;
             height: 3px;
-            background: #ff85a1;
+            background: 
             border-radius: 5px;
             transition: 0.3s;
         }
 
-        /* Active Hamburger Animation */
+
         .hamburger.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
         .hamburger.active span:nth-child(2) { opacity: 0; }
         .hamburger.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
-        /* Mobile Menu Optimization */
+        
         @media (max-width: 992px) {
             .hamburger { display: flex; }
             
-            #mobileMenu {
+            
                 position: fixed;
                 top: 0;
                 right: 0;
@@ -225,26 +225,26 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                 visibility: hidden;
             }
 
-            #mobileMenu.active { 
+            
                 transform: translateX(0);
                 visibility: visible;
             }
 
-            .nav-center, .nav-right { display: none; } /* Hide default nav for mobile */
+            .nav-center, .nav-right { display: none; } 
 
             .mobile-link {
                 text-decoration: none;
-                color: #333;
+                color: 
                 font-size: 1.2rem;
                 font-weight: 500;
                 padding-bottom: 5px;
-                border-bottom: 1px solid #f0f0f0;
+                border-bottom: 1px solid 
             }
 
             .mobile-link.active {
-                color: #ea3671;
+                color: 
                 font-weight: 700;
-                border-bottom: 2px solid #ea3671;
+                border-bottom: 2px solid 
             }
 
             .mobile-auth {
@@ -255,10 +255,10 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             }
         }
 
-        /* Hero Section */
+        
         .hero {
             min-height: 90vh;
-            background: linear-gradient(135deg, #ffd9e2 0%, #fff 100%);
+            background: linear-gradient(135deg, 
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -266,7 +266,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             gap: 50px;
             flex-wrap: wrap;
             overflow: hidden;
-            image-rendering: -webkit-optimize-contrast; /* Fix blurriness */
+            image-rendering: -webkit-optimize-contrast; 
         }
 
         .hero-content {
@@ -276,14 +276,14 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
         .hero-content h1 {
             font-size: clamp(2rem, 5vw, 3.5rem);
-            color: #333;
+            color: 
             margin-bottom: 20px;
             line-height: 1.2;
         }
 
         .hero-content p {
             font-size: 1.1rem;
-            color: #666;
+            color: 
             margin-bottom: 30px;
         }
 
@@ -309,7 +309,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             transform: translateY(-10px);
         }
 
-        /* Section Styling */
+        
         section {
             padding: 80px 5%;
         }
@@ -321,19 +321,19 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
         .section-header h2 {
             font-size: clamp(1.8rem, 4vw, 2.5rem);
-            color: #5f162e;
+            color: 
             margin-bottom: 10px;
         }
 
         .section-header .underline {
             width: 100px;
             height: 4px;
-            background: #e91e63;
+            background: 
             margin: 0 auto;
             border-radius: 2px;
         }
 
-        /* Services Grid */
+        
         .services-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -370,13 +370,13 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         }
 
         .service-card h3 {
-            color: #ea3671;
+            color: 
             font-size: 1.3rem;
             margin-bottom: 10px;
         }
 
         .service-card p {
-            color: #666;
+            color: 
             font-size: 0.9rem;
             margin-bottom: 15px;
             line-height: 1.6;
@@ -384,11 +384,11 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
         .service-card .price {
             font-weight: 700;
-            color: #333;
+            color: 
             font-size: 1.1rem;
         }
 
-        /* Gallery */
+        
         .gallery-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -404,14 +404,14 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             transition: transform 0.3s;
-            image-rendering: auto; /* Ensure high quality */
+            image-rendering: auto; 
         }
 
         .gallery-grid img:hover {
             transform: scale(1.05);
         }
 
-        /* Features */
+        
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -439,23 +439,23 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         }
 
         .feature-card h3 {
-            color: #5f162e;
+            color: 
             margin-bottom: 15px;
             font-size: 1.3rem;
         }
 
         .feature-card p {
-            color: #666;
+            color: 
             line-height: 1.6;
             font-size: 0.95rem;
         }
 
-        /* Background Sections */
+        
         .bg-pink {
-            background: linear-gradient(135deg, #ffd9e2 0%, #ffe6f0 100%);
+            background: linear-gradient(135deg, 
         }
 
-        /* Hero Section Premium Styles */
+        
         .hero {
             position: relative;
             overflow: hidden;
@@ -463,14 +463,14 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             display: flex;
             align-items: center;
             padding: 0;
-            background: none !important; /* Managed by dividers */
+            background: none !important; 
         }
 
-        .hero::before { /* Mobile Background */
+        .hero::before { 
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #ffd9e2 0%, #fff 100%);
+            background: linear-gradient(135deg, 
             display: none;
             z-index: 0;
         }
@@ -484,7 +484,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                 padding: 120px 20px 60px;
             }
             .hero::before { display: block; }
-            .hero > div[style*="background: #fdfbfd"] { display: none; }
+            .hero > div[style*="background: 
             .hero > div[style*="background: linear-gradient"] { display: none; }
             
             .hero-content {
@@ -499,7 +499,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                 font-size: clamp(2.2rem, 10vw, 3.2rem) !important;
             }
             .hero-images {
-                display: none !important; /* Hide images on mobile as they clutter the space */
+                display: none !important; 
             }
         }
         .dots-grid {
@@ -514,11 +514,11 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         .dots-grid div {
             width: 6px;
             height: 6px;
-            background: #ea3671;
+            background: 
             border-radius: 50%;
         }
 
-        /* Animations & Shapes */
+        
         @keyframes float {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-20px); }
@@ -543,14 +543,14 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
         .sparkle {
             position: absolute;
-            color: #ea3671;
+            color: 
             font-size: 1.5rem;
             z-index: 0;
             opacity: 0.6;
             animation: float 5s ease-in-out infinite;
         }
 
-        /* Section Separator removed shadow as requested */
+        
         .hero {
             position: relative;
             z-index: 10;
@@ -558,9 +558,9 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     </style>
 </head>
 <body>
-    <!-- Navigation -->
+    
     <nav>
-        <!-- Left: Logo + User Greeting -->
+    
         <div class="nav-left">
             <img src="assets/img/588237789-17951033973048360-6209016104075046821-n-removebg-preview-1.png" alt="Logo" class="logo" onerror="this.style.display='none'">
             <?php if ($isLoggedIn): ?>
@@ -568,7 +568,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             <?php endif; ?>
         </div>
         
-        <!-- Hamburger Menu Button -->
+
         <div class="hamburger" id="hamburger">
             <span></span>
             <span></span>
@@ -576,10 +576,10 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         </div>
         
         <div id="mobileMenu">
-            <a href="#home" class="mobile-link">Beranda</a>
-            <a href="#layanan" class="mobile-link">Layanan</a>
-            <a href="#katalog" class="mobile-link">Katalog</a>
-            <a href="#faq" class="mobile-link">FAQ</a>
+            <a href="
+            <a href="
+            <a href="
+            <a href="
             
             <div class="mobile-auth">
                 <?php if ($isLoggedIn): ?>
@@ -601,13 +601,13 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         </div>
 
         <div class="nav-center">
-            <a href="#home">Beranda</a>
-            <a href="#layanan">Layanan</a>
-            <a href="#katalog">Katalog</a>
-            <a href="#faq">FAQ</a>
+            <a href="
+            <a href="
+            <a href="
+            <a href="
         </div>
         
-        <!-- Right: Auth Buttons (Desktop) -->
+
         <div class="nav-right">
             <?php if ($isLoggedIn): ?>
                 <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
@@ -625,23 +625,23 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         </div>
     </nav>
 
-    <!-- Hero Section -->
+
     <section class="hero" id="home" style="position: relative; overflow: hidden; height: 100vh; display: flex; align-items: center; padding: 0;">
         
-        <!-- Background Decor -->
-        <div style="position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: #fdfbfd; z-index: 0;"></div>
-        <div style="position: absolute; top: 0; right: 0; width: 50%; height: 100%; background: linear-gradient(135deg, #ffd9e2 0%, #ffe6f0 100%); z-index: 0;"></div>
         
-        <!-- Hero Content Wrapper -->
+        <div style="position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: 
+        <div style="position: absolute; top: 0; right: 0; width: 50%; height: 100%; background: linear-gradient(135deg, 
+        
+        
         <div style="max-width: 1300px; margin: 0 auto; width: 100%; height: 100%; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1;">
             
-            <!-- Left Text -->
+            
             <div class="hero-content" style="flex: 1; padding: 0 5%; z-index: 2;">
-                <h2 style="font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 4rem; line-height: 1.1; color: #333; letter-spacing: -2px; text-transform: uppercase; margin-bottom: 10px;">
-                    <span style="color: #999; font-size: 3rem; display: block; font-weight: 600;">Let your</span>
-                    <span style="color: #ea3671; font-size: 5rem; display: block;">Soul Glow</span>
+                <h2 style="font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 4rem; line-height: 1.1; color: 
+                    <span style="color: 
+                    <span style="color: 
                 </h2>
-                <p style="font-family: 'Satisfy', cursive; font-size: 1.5rem; color: #555; margin-bottom: 40px; transform: rotate(-3deg);">
+                <p style="font-family: 'Satisfy', cursive; font-size: 1.5rem; color: 
                     Leave the shine of your hands to us...
                 </p>
                 <a href="<?php 
@@ -653,36 +653,36 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                 </a>
             </div>
 
-            <!-- Right Image -->
+            
             <div class="hero-images" style="flex: 1; height: 100%; position: relative; display: flex; align-items: flex-end; justify-content: center;">
-                <!-- Main Featured Image (Composition of existing images) -->
+                
                 <div style="position: relative; width: 80%; height: 85%; background: url('assets/img/img1.jpg') no-repeat center center/cover; border-radius: 200px 200px 0 0; box-shadow: -20px 20px 50px rgba(0,0,0,0.1);">
-                    <!-- Floating Accent Image -->
+                    
                     <div style="position: absolute; bottom: 50px; left: -80px; width: 220px; height: 280px; background: url('assets/img/img3.jpg') no-repeat center center/cover; border: 10px solid white; border-radius: 20px; transform: rotate(-10deg); box-shadow: 0 15px 40px rgba(0,0,0,0.15);"></div>
                     
-                    <!-- Decorative Circle -->
-                    <div style="position: absolute; top: 50px; right: -30px; width: 100px; height: 100px; background: #ea3671; border-radius: 50%; opacity: 0.1;"></div>
+                    
+                    <div style="position: absolute; top: 50px; right: -30px; width: 100px; height: 100px; background: 
                 </div>
             </div>
 
         </div>
 
-        <!-- Floating Decorations -->
+        
         <div class="sparkle" style="top: 15%; left: 45%; font-size: 2rem;">✨</div>
         <div class="sparkle" style="bottom: 10%; right: 5%; font-size: 2.5rem;">✨</div>
-        <div class="deco-shape spin-slow" style="bottom: -100px; left: -50px; width: 300px; height: 300px; border: 40px solid #f0f0f0; border-radius: 50%;"></div>
+        <div class="deco-shape spin-slow" style="bottom: -100px; left: -50px; width: 300px; height: 300px; border: 40px solid 
     </section>
 
-    <!-- Services Section -->
-    <section id="layanan" style="position: relative; overflow: hidden; background: linear-gradient(180deg, #ffd9e2 0%, #fff 100%);">
-         <!-- Services Decorations -->
+    
+    <section id="layanan" style="position: relative; overflow: hidden; background: linear-gradient(180deg, 
+         
          <div class="dots-grid" style="top: 40px; right: 20px; grid-template-columns: repeat(4, 1fr);">
             <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
         </div>
         <div class="dots-grid" style="top: 150px; left: 10%; opacity: 0.4;">
             <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
         </div>
-        <!-- New Decos -->
+        
         <div class="deco-shape float-fast" style="top: 100px; left: -30px; width: 100px; height: 100px; border: 15px solid rgba(234, 54, 113, 0.1); border-radius: 50%;"></div>
         <div class="sparkle" style="top: 60px; right: 30%;">✨</div>
         <div class="sparkle" style="bottom: 100px; left: 5%;">✨</div>
@@ -732,17 +732,17 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         </div>
     </section>
 
-    <!-- Gallery Section -->
+    
     <section id="katalog" style="position: relative; overflow: hidden;">
-        <!-- Gallery Decorations -->
+        
         <div class="dots-grid" style="bottom: 40px; left: 20px;">
             <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
         </div>
         <div class="dots-grid" style="top: 40px; right: 5%; grid-template-columns: repeat(2, 1fr);">
             <div></div><div></div><div></div><div></div><div></div><div></div>
         </div>
-        <!-- New Decos -->
-        <div class="deco-shape float-slow" style="top: 50%; right: -20px; width: 80px; height: 80px; background: #fff0f5; border-radius: 50%;"></div>
+        
+        <div class="deco-shape float-slow" style="top: 50%; right: -20px; width: 80px; height: 80px; background: 
         <div class="sparkle" style="top: 80px; left: 20%;">✨</div>
 
         <div class="section-header" style="position: relative; z-index: 1;">
@@ -757,16 +757,16 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         </div>
     </section>
 
-    <!-- Features Section -->
+    
     <section class="bg-pink" style="position: relative; overflow: hidden;">
-        <!-- Decorative Dots Background -->
+        
         <div style="position: absolute; top: 20px; right: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-            <div style="width: 8px; height: 8px; background: #ea3671; border-radius: 50%;"></div>
-            <div style="width: 8px; height: 8px; background: #ea3671; border-radius: 50%;"></div>
-            <div style="width: 8px; height: 8px; background: #ea3671; border-radius: 50%;"></div>
-            <div style="width: 8px; height: 8px; background: #ea3671; border-radius: 50%;"></div>
-            <div style="width: 8px; height: 8px; background: #ea3671; border-radius: 50%;"></div>
-            <div style="width: 8px; height: 8px; background: #ea3671; border-radius: 50%;"></div>
+            <div style="width: 8px; height: 8px; background: 
+            <div style="width: 8px; height: 8px; background: 
+            <div style="width: 8px; height: 8px; background: 
+            <div style="width: 8px; height: 8px; background: 
+            <div style="width: 8px; height: 8px; background: 
+            <div style="width: 8px; height: 8px; background: 
         </div>
 
         <div class="section-header">
@@ -776,47 +776,47 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
         <div style="max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px;">
             
-            <!-- Card 1: Premium Quality -->
+            
             <div class="feature-card-wide" style="position: relative;">
                 <div style="position: absolute; top: -30px; left: -30px; font-size: 4rem; z-index: 1;">✨</div>
                 <h3>Premium Quality</h3>
                 <p>" Kami hanya menggunakan gel polish pilihan dengan kualitas terbaik yang telah teruji aman untuk kuku asli. Formulanya dirancang agar warna tahan lama, berkilau sempurna, dan tetap menjaga kekuatan serta kesehatan kuku Anda tanpa membuat kuku rapuh atau rusak. "</p>
-                <!-- Dots decoration -->
+                
                 <div style="position: absolute; bottom: -10px; left: 20px; display: flex; gap: 5px;">
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
+                    <div style="width: 6px; height: 6px; background: 
+                    <div style="width: 6px; height: 6px; background: 
+                    <div style="width: 6px; height: 6px; background: 
+                    <div style="width: 6px; height: 6px; background: 
                 </div>
             </div>
 
-            <!-- Card 2: Custom Art -->
+            
             <div class="feature-card-wide" style="position: relative;">
                 <div style="position: absolute; top: -20px; right: -30px; font-size: 4rem; z-index: 1; transform: rotate(15deg);">🎨</div>
                 <h3>Custom Art</h3>
                 <p>" Setiap kuku adalah kanvas seni. Anda bebas membawa referensi, ide, atau desain impian apa pun, dan nail artist profesional kami akan menerjemahkannya dengan presisi dan detail tinggi. Dari gaya minimalis hingga nail art kompleks, setiap sentuhan dibuat eksklusif sesuai karakter dan keinginan Anda. "</p>
-                <!-- Dots decoration -->
+                
                 <div style="position: absolute; top: -15px; right: 80px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px;">
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
+                    <div style="width: 6px; height: 6px; background: 
+                    <div style="width: 6px; height: 6px; background: 
+                    <div style="width: 6px; height: 6px; background: 
+                    <div style="width: 6px; height: 6px; background: 
                 </div>
             </div>
 
-            <!-- Card 3: Hygienic Tools -->
+            
             <div class="feature-card-wide" style="position: relative;">
                 <div style="position: absolute; top: 50%; left: -40px; transform: translateY(-50%); font-size: 4rem; z-index: 1;">🛡️</div>
                 <h3>Hygienic Tools</h3>
                 <p>" Kebersihan dan keamanan adalah prioritas utama kami. Seluruh alat yang digunakan melalui proses sterilisasi menyeluruh sebelum dan sesudah pemakaian. Kami memastikan setiap perawatan dilakukan dengan standar kebersihan tinggi agar Anda merasa nyaman, aman, dan bebas khawatir selama treatment. "</p>
-                <!-- Dots decoration -->
+                
                 <div style="position: absolute; top: 20px; right: -20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
+                    <div style="width: 6px; height: 6px; background: 
+                    <div style="width: 6px; height: 6px; background: 
+                    <div style="width: 6px; height: 6px; background: 
+                    <div style="width: 6px; height: 6px; background: 
+                    <div style="width: 6px; height: 6px; background: 
+                    <div style="width: 6px; height: 6px; background: 
                 </div>
             </div>
 
@@ -837,13 +837,13 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                 transform: translateY(-5px);
             }
             .feature-card-wide h3 {
-                color: #5f162e;
+                color: 
                 font-size: 1.8rem;
                 margin-bottom: 15px;
                 font-weight: 700;
             }
             .feature-card-wide p {
-                color: #555;
+                color: 
                 font-size: 1rem;
                 line-height: 1.8;
                 max-width: 90%;
@@ -853,16 +853,16 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     </section>
 
     
-    <!-- FAQ Section -->
-    <section id="faq" style="padding: 80px 5%; position: relative; overflow: hidden; background: linear-gradient(180deg, #ffd9e2 0%, #fff 100%);">
+    
+    <section id="faq" style="padding: 80px 5%; position: relative; overflow: hidden; background: linear-gradient(180deg, 
         <div class="section-header">
             <h2>Frequency Asked Questions (FAQ)</h2>
-            <p style="color: #666; margin-top: 10px;">Punya pertanyaan? Cari jawabannya di sini!</p>
+            <p style="color: 
             <div class="underline"></div>
         </div>
 
         <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; position: relative; z-index: 1;">
-            <!-- FAQ Item 1 -->
+            
             <div class="faq-item">
                 <div class="faq-question">
                     <span>Apakah harus bayar DP untuk booking?</span>
@@ -873,7 +873,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                 </div>
             </div>
 
-            <!-- FAQ Item 2 -->
+            
             <div class="faq-item">
                 <div class="faq-question">
                     <span>Di mana lokasi tepatnya Neydream Studio?</span>
@@ -884,7 +884,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                 </div>
             </div>
 
-            <!-- FAQ Item 3 -->
+            
             <div class="faq-item">
                 <div class="faq-question">
                     <span>Berapa lama daya tahan Nail Art di Neydream?</span>
@@ -895,7 +895,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                 </div>
             </div>
 
-            <!-- FAQ Item 4 -->
+            
             <div class="faq-item">
                 <div class="faq-question">
                     <span>Apakah bisa membawa referensi desain sendiri?</span>
@@ -906,7 +906,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                 </div>
             </div>
 
-            <!-- FAQ Item 5 -->
+            
             <div class="faq-item">
                 <div class="faq-question">
                     <span>Kenapa namanya ganti menjadi Neydream?</span>
@@ -933,18 +933,18 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                 align-items: center;
                 cursor: pointer;
                 font-weight: 600;
-                color: #5f162e;
+                color: 
                 transition: background 0.3s;
             }
             .faq-question:hover {
-                background: #fffafa;
+                background: 
             }
             .faq-answer {
                 padding: 0 25px;
                 max-height: 0;
                 overflow: hidden;
                 transition: all 0.3s ease-out;
-                color: #666;
+                color: 
                 line-height: 1.6;
             }
             .faq-item.active .faq-answer {
@@ -953,12 +953,12 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             }
             .faq-item.active .faq-icon {
                 transform: rotate(45deg);
-                color: #ea3671;
+                color: 
             }
             .faq-icon {
                 font-size: 1.5rem;
                 transition: transform 0.3s;
-                color: #999;
+                color: 
             }
         </style>
 
@@ -972,15 +972,15 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         </script>
     </section>
 
-    <!-- Final CTA / Registration Section -->
+    
     <section class="final-cta" style="padding: 100px 5%; background: white; text-align: center; position: relative; overflow: hidden;">
-        <!-- Background Accents -->
-        <div class="deco-shape float-fast" style="top: -50px; left: 10%; width: 150px; height: 150px; border: 20px solid #fff0f5; border-radius: 50%;"></div>
-        <div class="deco-shape spin-slow" style="bottom: -50px; right: 10%; width: 200px; height: 200px; border: 2px dashed #ea3671; border-radius: 50%; opacity: 0.1;"></div>
+        
+        <div class="deco-shape float-fast" style="top: -50px; left: 10%; width: 150px; height: 150px; border: 20px solid 
+        <div class="deco-shape spin-slow" style="bottom: -50px; right: 10%; width: 200px; height: 200px; border: 2px dashed 
         
         <div style="max-width: 800px; margin: 0 auto; position: relative; z-index: 1;">
-            <h2 style="font-size: 2.8rem; color: #5f162e; margin-bottom: 20px; font-weight: 700;">Jadilah Bagian dari Keluarga Neydream! ✨</h2>
-            <p style="font-size: 1.2rem; color: #666; margin-bottom: 40px; line-height: 1.8;">
+            <h2 style="font-size: 2.8rem; color: 
+            <p style="font-size: 1.2rem; color: 
                 Dapatkan info promo spesial, kemudahan booking, dan pantau riwayat cantikmu hanya dalam satu akun. Tunggu apa lagi? Daftar sekarang juga!
             </p>
             <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
@@ -997,43 +997,43 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         </div>
     </section>
 
-    <!-- Feedback Section -->
-    <section id="feedback" style="padding: 80px 5%; background: #fffafb;">
+    
+    <section id="feedback" style="padding: 80px 5%; background: 
         <div class="section-header" style="text-align: center; margin-bottom: 40px;">
-            <h2 style="font-size: 2.5rem; color: #5f162e; font-weight: 700;">Kritik & Saran 📝</h2>
-            <p style="color: #666; margin-top: 10px;">Masukan Anda sangat berharga bagi peningkatan layanan kami.</p>
-            <div style="width: 80px; height: 4px; background: #ea3671; margin: 20px auto; border-radius: 2px;"></div>
+            <h2 style="font-size: 2.5rem; color: 
+            <p style="color: 
+            <div style="width: 80px; height: 4px; background: 
         </div>
 
         <div style="max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
             <?php if ($isLoggedIn): ?>
                 <form action="actions/submit_feedback.php" method="POST">
                     <div style="margin-bottom: 20px;">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #5f162e;">Nama Lengkap</label>
-                        <input type="text" name="name" value="<?= htmlspecialchars($username) ?>" readonly placeholder="Masukkan nama Anda" required style="width: 100%; padding: 12px 15px; border: 2px solid #f9f9f9; border-radius: 10px; font-family: 'Poppins', sans-serif; background: #fdfdfd;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: 
+                        <input type="text" name="name" value="<?= htmlspecialchars($username) ?>" readonly placeholder="Masukkan nama Anda" required style="width: 100%; padding: 12px 15px; border: 2px solid 
                     </div>
                     <div style="margin-bottom: 20px;">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #5f162e;">Nomor WhatsApp</label>
-                        <input type="text" name="whatsapp_number" placeholder="Contoh: 08123456789" required style="width: 100%; padding: 12px 15px; border: 2px solid #f0f0f0; border-radius: 10px; font-family: 'Poppins', sans-serif;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: 
+                        <input type="text" name="whatsapp_number" placeholder="Contoh: 08123456789" required style="width: 100%; padding: 12px 15px; border: 2px solid 
                     </div>
                     <div style="margin-bottom: 25px;">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #5f162e;">Pesan Kritik / Saran</label>
-                        <textarea name="message" rows="5" placeholder="Tuliskan masukan Anda di sini..." required style="width: 100%; padding: 12px 15px; border: 2px solid #f0f0f0; border-radius: 10px; font-family: 'Poppins', sans-serif; resize: none;"></textarea>
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: 
+                        <textarea name="message" rows="5" placeholder="Tuliskan masukan Anda di sini..." required style="width: 100%; padding: 12px 15px; border: 2px solid 
                     </div>
-                    <button type="submit" style="width: 100%; background: #ea3671; color: white; padding: 15px; border: none; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 5px 15px rgba(234, 54, 113, 0.2);">
+                    <button type="submit" style="width: 100%; background: 
                         Kirim Masukan ✨
                     </button>
                 </form>
             <?php else: ?>
                 <div style="text-align: center; padding: 20px 0;">
-                    <p style="margin-bottom: 20px; color: #666;">Anda harus login terlebih dahulu untuk mengirim kritik dan saran.</p>
+                    <p style="margin-bottom: 20px; color: 
                     <a href="auth/login.php" class="btn btn-primary" style="display: inline-block; padding: 12px 35px; border-radius: 30px;">Login Sekarang</a>
                 </div>
             <?php endif; ?>
         </div>
     </section>
 
-    <!-- Chat Widget -->
+    
     <div class="chat-container" id="chatContainer" style="display: none;">
         <div class="chat-header">
             <div class="header-info">
@@ -1068,7 +1068,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <script src="assets/js/ai_assistant.js"></script>
     
     <script>
-        // Modal / Overlay Background for Mobile Menu
+        
         const overlay = document.createElement('div');
         overlay.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.15); z-index:1650; display:none; transition: opacity 0.3s;";
         document.body.appendChild(overlay);
@@ -1092,14 +1092,14 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         hamburger.addEventListener('click', toggleMenu);
         overlay.addEventListener('click', toggleMenu);
 
-        // Close menu when clicking link
+        
         document.querySelectorAll('.mobile-link').forEach(link => {
             link.addEventListener('click', () => {
                 if(mobileMenu.classList.contains('active')) toggleMenu();
             });
         });
 
-        // Simple & Robust Active Link Highlight (Center Offset)
+        
         function updateActiveLink() {
             const scrollPos = window.scrollY + 100;
             const sections = document.querySelectorAll('section[id]');
@@ -1107,14 +1107,14 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             
             let found = false;
             
-            // Loop through sections backwards to find the one we are currently in
+            
             for (let i = sections.length - 1; i >= 0; i--) {
                 const section = sections[i];
                 if (scrollPos >= section.offsetTop) {
                     const id = section.getAttribute('id');
                     links.forEach(link => {
                         link.classList.remove('active');
-                        if (link.getAttribute('href') === '#' + id) {
+                        if (link.getAttribute('href') === '
                             link.classList.add('active');
                         }
                     });
@@ -1123,11 +1123,11 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                 }
             }
             
-            // Fallback: If at top of page, highlight Home
+            
             if (!found || window.scrollY < 100) {
                 links.forEach(link => {
                     link.classList.remove('active');
-                    if (link.getAttribute('href') === '#home') {
+                    if (link.getAttribute('href') === '
                         link.classList.add('active');
                     }
                 });
@@ -1137,8 +1137,8 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         window.addEventListener('scroll', updateActiveLink);
         window.addEventListener('load', updateActiveLink);
 
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        
+        document.querySelectorAll('a[href^="
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const targetId = this.getAttribute('href');
@@ -1150,7 +1150,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                         behavior: 'smooth'
                     });
                     
-                    // Force active update after scroll
+                    
                     setTimeout(updateActiveLink, 800);
                 }
             });
@@ -1158,7 +1158,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     </script>
     
     <style>
-        /* Chat Widget Styles */
+        
         .chat-container {
             position: fixed;
             bottom: 90px;
@@ -1175,7 +1175,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         }
 
         .chat-header {
-            background: #ff85a1;
+            background: 
             color: white;
             padding: 15px 20px;
             display: flex;
@@ -1208,7 +1208,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             right: 2px;
             width: 12px;
             height: 12px;
-            background: #4caf50;
+            background: 
             border: 2px solid white;
             border-radius: 50%;
         }
@@ -1241,7 +1241,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             flex: 1;
             overflow-y: auto;
             padding: 20px;
-            background: #f5f5f5;
+            background: 
         }
 
         .message {
@@ -1260,7 +1260,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         }
 
         .message.user {
-            background: #ff85a1;
+            background: 
             color: white;
             margin-left: auto;
             border-bottom-right-radius: 4px;
@@ -1271,26 +1271,26 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             gap: 10px;
             padding: 15px 20px;
             background: white;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid 
         }
 
         .chat-input-area input {
             flex: 1;
             padding: 12px 15px;
-            border: 1px solid #e0e0e0;
+            border: 1px solid 
             border-radius: 25px;
             font-size: 14px;
             outline: none;
         }
 
         .chat-input-area input:focus {
-            border-color: #ea3671;
+            border-color: 
         }
 
         .chat-input-area button {
             width: 45px;
             height: 45px;
-            background: #ff85a1;
+            background: 
             border: none;
             border-radius: 50%;
             color: white;
@@ -1311,7 +1311,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             right: 25px;
             width: 55px;
             height: 55px;
-            background: #ff85a1;
+            background: 
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -1355,3 +1355,4 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     </style>
 </body>
 </html>
+

@@ -2,7 +2,6 @@
 require '../core/config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Force Login to submit feedback
     if (!isset($_SESSION['user_id'])) {
         echo "<script>alert('Silakan login terlebih dahulu untuk mengirim masukan.'); window.location.href='../auth/login.php';</script>";
         exit();
@@ -26,3 +25,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header("Location: ../index.php");
 }
 ?>
+

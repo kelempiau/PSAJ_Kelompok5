@@ -1,7 +1,7 @@
 <?php
 require '../core/config.php';
 
-// Check if user is logged in
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
     exit();
@@ -10,13 +10,13 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $username = $_SESSION['username'];
 
-// Strict Access Control: Admin cannot access user pages
+
 if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
     header("Location: ../admin/dashboard.php");
     exit();
 }
 
-// Fetch user's reservations
+
 $sql = "SELECT * FROM reservations WHERE user_id = ? ORDER BY created_at DESC";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
@@ -39,7 +39,7 @@ $result = $stmt->get_result();
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #ffd9e2 0%, #ffe6f0 100%);
+            background: linear-gradient(135deg, 
             min-height: 100vh;
             padding: 20px;
         }
@@ -61,7 +61,7 @@ $result = $stmt->get_result();
         }
 
         .header h1 {
-            color: #5f162e;
+            color: 
             font-size: 1.8rem;
         }
 
@@ -76,12 +76,12 @@ $result = $stmt->get_result();
         }
 
         .btn-back {
-            background: #f0f0f0;
-            color: #333;
+            background: 
+            color: 
         }
 
         .btn-back:hover {
-            background: #e0e0e0;
+            background: 
         }
 
         .empty-state {
@@ -93,12 +93,12 @@ $result = $stmt->get_result();
         }
 
         .empty-state h2 {
-            color: #5f162e;
+            color: 
             margin-bottom: 15px;
         }
 
         .empty-state p {
-            color: #666;
+            color: 
             margin-bottom: 25px;
         }
 
@@ -122,12 +122,12 @@ $result = $stmt->get_result();
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
+            border-bottom: 2px solid 
         }
 
         .booking-id {
             font-size: 0.9rem;
-            color: #999;
+            color: 
         }
 
         .status-badge {
@@ -138,38 +138,38 @@ $result = $stmt->get_result();
         }
 
         .status-pending {
-            background: #fff3cd;
-            color: #856404;
+            background: 
+            color: 
         }
 
         .status-confirmed {
-            background: #d1ecf1;
-            color: #0c5460;
+            background: 
+            color: 
         }
 
         .status-completed {
-            background: #d4edda;
-            color: #155724;
+            background: 
+            color: 
         }
 
         .status-cancelled {
-            background: #f8d7da;
-            color: #721c24;
+            background: 
+            color: 
         }
 
         .refund-pending {
-            background: #e7f3ff;
-            color: #004085;
+            background: 
+            color: 
         }
 
         .refund-approved {
-            background: #d4edda;
-            color: #155724;
+            background: 
+            color: 
         }
 
         .refund-rejected {
-            background: #f8d7da;
-            color: #721c24;
+            background: 
+            color: 
         }
 
         .booking-details {
@@ -180,14 +180,14 @@ $result = $stmt->get_result();
         }
 
         .detail-item strong {
-            color: #5f162e;
+            color: 
             display: block;
             margin-bottom: 5px;
             font-size: 0.9rem;
         }
 
         .detail-item span {
-            color: #666;
+            color: 
         }
 
         .booking-actions {
@@ -195,23 +195,23 @@ $result = $stmt->get_result();
             gap: 10px;
             margin-top: 15px;
             padding-top: 15px;
-            border-top: 1px solid #f0f0f0;
+            border-top: 1px solid 
         }
 
         .btn-refund {
-            background: #ea3671;
+            background: 
             color: white;
             font-size: 0.9rem;
             padding: 8px 18px;
         }
 
         .btn-refund:hover {
-            background: #d63060;
+            background: 
             transform: translateY(-2px);
         }
 
         .btn-refund:disabled {
-            background: #ccc;
+            background: 
             cursor: not-allowed;
         }
 
@@ -236,14 +236,14 @@ $result = $stmt->get_result();
         }
 
         .modal h3 {
-            color: #5f162e;
+            color: 
             margin-bottom: 20px;
         }
 
         textarea {
             width: 100%;
             padding: 12px;
-            border: 2px solid #f0f0f0;
+            border: 2px solid 
             border-radius: 10px;
             font-family: 'Poppins', sans-serif;
             resize: vertical;
@@ -253,7 +253,7 @@ $result = $stmt->get_result();
 
         textarea:focus {
             outline: none;
-            border-color: #ea3671;
+            border-color: 
         }
 
         .modal-actions {
@@ -263,12 +263,12 @@ $result = $stmt->get_result();
         }
 
         .btn-cancel {
-            background: #f0f0f0;
-            color: #333;
+            background: 
+            color: 
         }
 
         .btn-submit {
-            background: #ea3671;
+            background: 
             color: white;
         }
 
@@ -294,20 +294,20 @@ $result = $stmt->get_result();
         <div class="header">
             <h1>📋 Riwayat Transaksi</h1>
             <div style="display: flex; gap: 10px;">
-                <a href="refund_status.php" class="btn" style="background: #ea3671; color: white;">🔄 Status Refund</a>
+                <a href="refund_status.php" class="btn" style="background: 
                 <a href="../index.php" class="btn btn-back">← Kembali</a>
             </div>
         </div>
 
         <?php if (isset($_SESSION['success'])): ?>
-            <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #28a745;">
+            <div style="background: 
                 ✅ <?= $_SESSION['success'] ?>
             </div>
             <?php unset($_SESSION['success']); ?>
         <?php endif; ?>
 
         <?php if (isset($_SESSION['error'])): ?>
-            <div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #dc3545;">
+            <div style="background: 
                 ❌ <?= $_SESSION['error'] ?>
             </div>
             <?php unset($_SESSION['error']); ?>
@@ -323,7 +323,7 @@ $result = $stmt->get_result();
             <?php while ($booking = $result->fetch_assoc()): ?>
                 <div class="booking-card">
                     <div class="booking-header">
-                        <span class="booking-id">#<?= $booking['id'] ?> - <?= date('d M Y H:i', strtotime($booking['created_at'])) ?></span>
+                        <span class="booking-id">
                         <span class="status-badge status-<?= $booking['status'] ?>"><?= ucfirst($booking['status']) ?></span>
                     </div>
 
@@ -354,11 +354,11 @@ $result = $stmt->get_result();
                     <?php endif; ?>
 
                     <?php if ($booking['refund_status']): ?>
-                        <div style="margin-top: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px;">
-                            <strong style="color: #5f162e;">Status Refund:</strong>
+                        <div style="margin-top: 15px; padding: 12px; background: 
+                            <strong style="color: 
                             <span class="status-badge refund-<?= $booking['refund_status'] ?>"><?= ucfirst($booking['refund_status']) ?></span>
                             <?php if ($booking['refund_reason']): ?>
-                                <p style="margin-top: 8px; color: #666; font-size: 0.9rem;">
+                                <p style="margin-top: 8px; color: 
                                     <strong>Alasan:</strong> <?= htmlspecialchars($booking['refund_reason']) ?>
                                 </p>
                             <?php endif; ?>
@@ -366,13 +366,13 @@ $result = $stmt->get_result();
                     <?php endif; ?>
 
                     <div class="booking-actions">
-                        <!-- Receipt/Invoice Button -->
-                        <button class="btn" style="background: #007bff; color: white;" onclick="printReceipt(<?= $booking['id'] ?>)">
+                        
+                        <button class="btn" style="background: 
                             🧾 Cetak Kwitansi
                         </button>
 
                         <?php if ($booking['payment_proof']): ?>
-                            <a href="../<?= $booking['payment_proof'] ?>" target="_blank" class="btn btn-back" style="background: #e8f5e9; color: #2e7d32; text-decoration: none;">
+                            <a href="../<?= $booking['payment_proof'] ?>" target="_blank" class="btn btn-back" style="background: 
                                 📄 Lihat Bukti
                             </a>
                         <?php endif; ?>
@@ -382,7 +382,7 @@ $result = $stmt->get_result();
                                 🔄 Ajukan Refund
                             </button>
                         <?php elseif ($booking['refund_status']): ?>
-                            <span style="color: #999; font-size: 0.9rem; padding: 10px;">
+                            <span style="color: 
                                 <?php 
                                     if ($booking['refund_status'] == 'pending') echo '⏳ Refund Pending';
                                     elseif ($booking['refund_status'] == 'approved') echo '✅ Refund Disetujui';
@@ -396,7 +396,7 @@ $result = $stmt->get_result();
         <?php endif; ?>
     </div>
 
-    <!-- Refund Modal -->
+    
     <div id="refundModal" class="modal">
         <div class="modal-content">
             <h3>Request Refund</h3>
@@ -423,7 +423,7 @@ $result = $stmt->get_result();
             document.getElementById('reason').value = '';
         }
 
-        // Close modal if click outside
+        
         window.onclick = function(event) {
             const modal = document.getElementById('refundModal');
             if (event.target == modal) {
@@ -431,11 +431,12 @@ $result = $stmt->get_result();
             }
         }
 
-        // Generate and print receipt
+        
         function printReceipt(bookingId) {
-            // Open receipt in new window
+            
             window.open('receipt.php?id=' + bookingId, '_blank', 'width=800,height=600');
         }
     </script>
 </body>
 </html>
+

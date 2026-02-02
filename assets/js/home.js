@@ -1,10 +1,10 @@
-// Toggle Menu Mobile
+
 function toggleMenu() {
     const nav = document.getElementById('navLinks');
     nav.classList.toggle('active');
 }
 
-// Smooth Scrolling & Active Link State
+
 window.addEventListener('scroll', () => {
     let current = '';
     const sections = document.querySelectorAll('section');
@@ -26,11 +26,11 @@ window.addEventListener('scroll', () => {
     });
 });
 
-// Simple Fade In Animation on Scroll
+
 const faders = document.querySelectorAll('.fade-in');
 const appearOptions = { threshold: 0.5 };
 
-const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
+const appearOnScroll = new IntersectionObserver(function (entries, appearOnScroll) {
     entries.forEach(entry => {
         if (!entry.isIntersecting) return;
         entry.target.classList.add('appear');

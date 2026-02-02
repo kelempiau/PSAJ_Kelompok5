@@ -1,37 +1,35 @@
 <?php
 require '../core/config.php';
 
-// Redirect if not logged in
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
     exit();
 }
 
-// Strict Access Control: Admin cannot access user pages
+
 if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
     header("Location: ../admin/dashboard.php");
     exit();
 }
 
 $message = "";
-$messageType = ""; // success or error
+$messageType = "";
 
-// Handle Form Submission
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_SESSION['user_id'];
     $name = $_POST['Nama_Pelanggan'];
     $phone = $_POST['No_WhatsApp'];
     $date = $_POST['Tanggal_Reservasi'];
     $time = $_POST['Jam_Reservasi'];
-    $service = $_POST['Layanan_Utama']; // This is just the price in original form, should mapping names probably, but let's stick to simple
+    $service = $_POST['Layanan_Utama'];
     $addon = $_POST['Layanan_Tambahan'];
     $payment_method = $_POST['Metode_Pembayaran'];
-    $total_pay = $_POST['Total_Bayar']; // String "Rp..."
+    $total_pay = $_POST['Total_Bayar'];
     
-    // Simple mapping for service names based on price (Reverse engineering user's js logic) or just save the price/value
-    // Ideally we save readable text.
     
-    // Check availability
+    
     $checkRes = $conn->prepare("SELECT id FROM reservations WHERE reservation_date = ? AND reservation_time = ? AND status != 'cancelled'");
     $checkRes->bind_param("ss", $date, $time);
     $checkRes->execute();
@@ -46,20 +44,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $message = "Maaf, jadwal pada $date jam $time sudah terisi/dikunci. Mohon pilih waktu lain.";
         $messageType = "error";
     } else {
-        // Handle File Upload
+        
         $proofPath = "";
         if (!empty($_FILES["Lampiran_Bukti_Bayar"]["name"])) {
-            $targetDir = "../uploads/"; // Save to root uploads folder
+            $targetDir = "../uploads/";
             if (!file_exists($targetDir)) { mkdir($targetDir, 0777, true); }
             $fileName = basename($_FILES["Lampiran_Bukti_Bayar"]["name"]);
-            $fileName = preg_replace("/[^a-zA-Z0-9._-]/", "_", $fileName); // Clean filename
+            $fileName = preg_replace("/[^a-zA-Z0-9._-]/", "_", $fileName);
             $targetFilePath = $targetDir . time() . "_" . $fileName;
             if(move_uploaded_file($_FILES["Lampiran_Bukti_Bayar"]["tmp_name"], $targetFilePath)){
-                $proofPath = "uploads/" . time() . "_" . $fileName; // Store path relative to root
+                $proofPath = "uploads/" . time() . "_" . $fileName;
             }
         }
 
-        // Parse total price to float
+        
         $numericPrice = (float)str_replace(['Rp', '.', ','], '', $total_pay);
 
         $stmt = $conn->prepare("INSERT INTO reservations (user_id, name, phone, reservation_date, reservation_time, service_type, addons, total_price, payment_method, payment_proof) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -85,8 +83,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="../assets/css/reservasi.css">
     <style>
         .alert { padding: 15px; margin-bottom: 20px; border-radius: 12px; text-align: center; }
-        .alert.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .alert.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert.error { background-color: 
+        .alert.success { background-color: 
         
         .header-nav {
             display: flex;
@@ -94,39 +92,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             align-items: center;
             margin-bottom: 30px;
             padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid 
         }
 
         .back-link-icon {
             text-decoration: none;
-            color: #999;
+            color: 
             font-size: 1.5rem;
             transition: color 0.3s;
         }
 
-        .back-link-icon:hover { color: #ea3671; }
+        .back-link-icon:hover { color: 
 
         .user-badge {
             display: flex;
             align-items: center;
             gap: 8px;
-            background: #fffafa;
+            background: 
             padding: 5px 12px;
             border-radius: 20px;
-            border: 1px solid #ffe6f0;
+            border: 1px solid 
             font-size: 0.85rem;
-            color: #666;
+            color: 
         }
 
         .user-badge .dot {
             width: 8px;
             height: 8px;
-            background: #2ecc71;
+            background: 
             border-radius: 50%;
         }
 
         .admin-tag {
-            background: #ea3671;
+            background: 
             color: white;
             padding: 2px 8px;
             border-radius: 4px;
@@ -155,12 +153,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         <?php endif; ?>
 
-        <!-- Form action self -->
+        
         <form action="" method="POST" enctype="multipart/form-data">
             
             <div class="form-group">
                 <label for="name">Nama Lengkap</label>
-                <!-- Pre-fill from session if we checked user table, but user asked to be able to input -->
+                
                 <input type="text" id="name" name="Nama_Pelanggan" placeholder="Masukkan nama anda" required>
             </div>
 
@@ -191,7 +189,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <div class="form-group">
                 <label for="type">Jenis Nail Art Utama</label>
-                <!-- Values assume prices as in original html -->
+                
                 <select id="type" name="Layanan_Utama" onchange="calculateTotal()" required>
                     <option value="0" disabled selected>Pilih jenis layanan</option>
                     <option value="50000">Gel Polish - Rp50.000</option>
@@ -235,7 +233,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <div id="detail-qris" class="payment-info" style="display: none; text-align: center;">
                 <p>Scan kode QRIS di bawah ini:</p>
-                <!-- Check image path -->
+                
                 <img src="../assets/img/qris.jpeg" alt="QRIS" class="qris-img" onerror="this.src='https://via.placeholder.com/200?text=QRIS+Placeholder'">
             </div>
 
@@ -250,7 +248,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
     </div>
 
-    <!-- Chat AI Widget -->
+    
     <div class="chat-container" id="chatContainer">
         <div class="chat-header">
             <div class="header-info">
@@ -282,7 +280,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <img src="https://cdn-icons-png.flaticon.com/512/5968/5968841.png" alt="Chat">
     </div>
 
-    <!-- Main scripts: Unified AI Assistant (Handles Form Logic + Smart Chatbot) -->
+    
     <script src="../assets/js/ai_assistant.js"></script>
 </body>
 </html>
+

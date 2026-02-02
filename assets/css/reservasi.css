@@ -1,10 +1,10 @@
-/* 1. VARIABLE & BASE RESET */
+
 :root {
-    --primary-pink: #ffb7c5;
-    --soft-pink: #fff0f3;
-    --dark-pink: #ff85a1;
-    --text-color: #4a4a4a;
-    --white: #ffffff;
+    --primary-pink: 
+    --soft-pink: 
+    --dark-pink: 
+    --text-color: 
+    --white: 
     --transition: all 0.3s ease;
 }
 
@@ -24,7 +24,7 @@ body {
     padding: 40px 20px;
 }
 
-/* 2. CONTAINER */
+
 .container {
     background: var(--white);
     width: 100%;
@@ -36,7 +36,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
-/* 3. NAVIGATION & TYPOGRAPHY */
+
 .back-btn {
     position: absolute;
     top: 25px;
@@ -61,7 +61,7 @@ h2 {
     letter-spacing: 1px;
 }
 
-/* 4. FORM ELEMENTS */
+
 .form-group {
     margin-bottom: 20px;
     display: flex;
@@ -91,7 +91,7 @@ label {
     letter-spacing: 0.3px;
 }
 
-/* Unified Styling for Input & Select */
+
 input, select {
     width: 100%;
     padding: 12px 15px;
@@ -106,12 +106,12 @@ input, select {
 
 input:focus, select:focus {
     border-color: var(--dark-pink);
-    background-color: #fffafb;
+    background-color: 
     box-shadow: 0 0 12px rgba(255, 133, 161, 0.15);
     transform: translateY(-2px);
 }
 
-/* Specific Dropdown Styling (The Arrow) */
+
 select {
     appearance: none;
     cursor: pointer;
@@ -121,7 +121,7 @@ select {
     background-size: 18px;
 }
 
-/* 5. PRICE & PAYMENT INFO */
+
 .price-display {
     background: var(--soft-pink);
     padding: 18px;
@@ -135,7 +135,7 @@ select {
 }
 
 .payment-info {
-    background: #fdfdfd;
+    background: 
     padding: 20px;
     border-radius: 15px;
     border: 1px solid var(--soft-pink);
@@ -161,9 +161,9 @@ select {
     border: 1px solid var(--soft-pink);
 }
 
-/* 6. UPLOAD SECTION */
+
 .upload-section {
-    background: #fafafa;
+    background: 
     border: 2px dashed var(--primary-pink);
     padding: 15px;
     border-radius: 12px;
@@ -175,7 +175,7 @@ select {
     border-color: var(--dark-pink);
 }
 
-/* 7. BUTTON SUBMIT */
+
 .btn-submit {
     width: 100%;
     padding: 16px;
@@ -192,12 +192,12 @@ select {
 }
 
 .btn-submit:hover {
-    background: #ff5c8a;
+    background: 
     transform: translateY(-3px);
     box-shadow: 0 12px 25px rgba(255, 133, 161, 0.5);
 }
 
-/* 8. ANIMATIONS & RESPONSIVE */
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -214,21 +214,21 @@ select {
 
     input, select, .btn-submit {
         padding: 12px;
-        font-size: 0.9rem; /* Slightly smaller for mobile */
+        font-size: 0.9rem; 
     }
 
     input[type="date"] {
-        min-height: 48px; /* Ensure enough touch target area */
+        min-height: 48px; 
     }
 }
-/* --- FLOATING CHAT STYLE --- */
+
 .chat-icon-bubble {
     position: fixed;
     bottom: 30px;
     right: 30px;
     width: 60px;
     height: 60px;
-    background: #ff85a1; /* Senada dengan var --dark-pink */
+    background: 
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -239,7 +239,7 @@ select {
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.chat-icon-bubble:hover { transform: scale(1.1); background: #ff5c8a; }
+.chat-icon-bubble:hover { transform: scale(1.1); background: 
 
 .chat-icon-bubble img { width: 30px; filter: brightness(0) invert(1); }
 
@@ -247,7 +247,7 @@ select {
     position: absolute;
     top: 0; right: 0;
     background: white;
-    color: #ff85a1;
+    color: 
     font-size: 12px; font-weight: bold;
     width: 20px; height: 20px;
     border-radius: 50%;
@@ -263,7 +263,7 @@ select {
     background: white;
     border-radius: 20px;
     box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-    display: none; /* Sembunyi awal */
+    display: none; 
     flex-direction: column;
     overflow: hidden;
     z-index: 9999;
@@ -276,7 +276,7 @@ select {
 }
 
 .chat-header {
-    background: #ff85a1;
+    background: 
     padding: 15px;
     color: white;
     display: flex;
@@ -289,14 +289,14 @@ select {
 .admin-avatar img { width: 100%; }
 .online-status {
     position: absolute; bottom: 2px; right: 2px;
-    width: 10px; height: 10px; background: #4df14d;
-    border-radius: 50%; border: 2px solid #ff85a1;
+    width: 10px; height: 10px; background: 
+    border-radius: 50%; border: 2px solid 
 }
 
 .chat-box {
     flex: 1;
     padding: 15px;
-    background: #fffafa;
+    background: 
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -313,14 +313,14 @@ select {
 
 .message.admin {
     background: white;
-    color: #444;
+    color: 
     align-self: flex-start;
     border-bottom-left-radius: 2px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .message.user {
-    background: #ff85a1;
+    background: 
     color: white;
     align-self: flex-end;
     border-bottom-right-radius: 2px;
@@ -330,19 +330,19 @@ select {
     padding: 15px;
     display: flex;
     gap: 10px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid 
 }
 
 .chat-input-area input {
     flex: 1;
-    border: 1px solid #eee;
+    border: 1px solid 
     padding: 10px;
     border-radius: 20px;
     outline: none;
 }
 
 .chat-input-area button {
-    background: #ff85a1;
+    background: 
     border: none;
     color: white;
     width: 35px; height: 35px;
