@@ -5,7 +5,7 @@ function calculateTotal() {
     const formatted = 'Rp' + total.toLocaleString('id-ID');
 
     document.getElementById('total-price').innerText = formatted;
-    if (document.getElementById('hidden-total')) {
+    if(document.getElementById('hidden-total')) {
         document.getElementById('hidden-total').value = formatted;
     }
 }
@@ -14,11 +14,11 @@ function showPaymentDetail() {
     const method = document.getElementById('payment').value;
     const bca = document.getElementById('detail-bca');
     const qris = document.getElementById('detail-qris');
-    if (bca) bca.style.display = (method === 'bca') ? 'block' : 'none';
-    if (qris) qris.style.display = (method === 'qris') ? 'block' : 'none';
+    if(bca) bca.style.display = (method === 'bca') ? 'block' : 'none';
+    if(qris) qris.style.display = (method === 'qris') ? 'block' : 'none';
 }
 
-
+// --- 2. FUNGSI INTERAKSI CHAT (OPEN/CLOSE) ---
 function toggleChat() {
     const chatContainer = document.getElementById('chatContainer');
     const badge = document.querySelector('.notification-badge');
@@ -31,7 +31,7 @@ function toggleChat() {
     }
 }
 
-
+// --- 3. DATABASE PENGETAHUAN AI ---
 const studioInfo = {
     layanan: "Kami menyediakan berbagai layanan premium: Gel Polish (50rb), French Manicure (75rb), Acrylic Extension (150rb), dan Custom 3D Nail Art (200rb).",
     harga: "Harga kami sangat bersahabat, mulai dari Rp50.000 (Gel Polish) sampai Rp200.000 (Custom 3D).",
@@ -595,16 +595,16 @@ function sendMessage() {
     const userText = input.value.trim();
 
     if (userText !== "") {
-        
+        // Tampilkan Pesan User ke Layar
         addMessageToBox('user', userText);
 
-        
+        // Simpan input asli untuk diproses AI (kecilkan hurufnya)
         const processedInput = userText.toLowerCase();
 
-        input.value = ""; 
+        input.value = ""; // Kosongkan input
         chatBox.scrollTop = chatBox.scrollHeight;
 
-        
+        // Efek AI Sedang Mengetik (Delay 800ms)
         setTimeout(() => {
             const botResponse = getAIResponse(processedInput);
             addMessageToBox('admin', botResponse);
@@ -613,7 +613,7 @@ function sendMessage() {
     }
 }
 
-
+// --- 5. OTAK AI (FILTER KATA KUNCI) ---
 function getAIResponse(input) {
     const text = input.toLowerCase();
     if (text.match(/(wa|whatsapp|nomor|no hp|admin|chat)/)) return studioInfo.wa_admin;
@@ -1039,11 +1039,11 @@ function getAIResponse(input) {
     if (text.match(/(komitmen|janji)/)) return studioInfo.komitmen_neydream;
     else {
         return "Maaf Kak, aku masih tahap belajar.Gunakan kata kunci untuk mengirim pesan, Coba tanya hal lain seperti 'Harga', 'Lokasi', 'Katalog' atau tanya 'halo' 😅'.";
-
+        
     }
 }
 
-
+// --- 6. FUNGSI PEMBANTU (TAMPILKAN PESAN) ---
 function addMessageToBox(sender, text) {
     const chatBox = document.getElementById('chatBox');
     const msgDiv = document.createElement('div');
@@ -1052,7 +1052,7 @@ function addMessageToBox(sender, text) {
     chatBox.appendChild(msgDiv);
 }
 
-
+// --- 7. DETEKSI TOMBOL ENTER ---
 function handleKeyPress(event) {
     if (event.key === 'Enter') {
         sendMessage();

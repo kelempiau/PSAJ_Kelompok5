@@ -1,7 +1,7 @@
 <?php
 require '../core/config.php';
 
-
+// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
     exit();
@@ -10,6 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 $booking_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $user_id = $_SESSION['user_id'];
 
+// Fetch booking details
 $sql = "SELECT r.*, u.username, u.email 
         FROM reservations r 
         LEFT JOIN users u ON r.user_id = u.id 
@@ -30,7 +31,7 @@ $booking = $result->fetch_assoc();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kwitansi 
+    <title>Kwitansi #<?= $booking['id'] ?> - Neydream Studio</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -42,7 +43,7 @@ $booking = $result->fetch_assoc();
         body {
             font-family: 'Poppins', sans-serif;
             padding: 30px;
-            background: 
+            background: #f5f5f5;
         }
 
         .receipt {
@@ -50,25 +51,25 @@ $booking = $result->fetch_assoc();
             margin: 0 auto;
             background: white;
             padding: 40px;
-            border: 2px solid 
+            border: 2px solid #ea3671;
             border-radius: 10px;
         }
 
         .header {
             text-align: center;
-            border-bottom: 3px solid 
+            border-bottom: 3px solid #ea3671;
             padding-bottom: 20px;
             margin-bottom: 30px;
         }
 
         .header h1 {
-            color: 
+            color: #ea3671;
             font-size: 2rem;
             margin-bottom: 5px;
         }
 
         .header p {
-            color: 
+            color: #666;
             font-size: 0.9rem;
         }
 
@@ -80,10 +81,10 @@ $booking = $result->fetch_assoc();
         }
 
         .info-section h3 {
-            color: 
+            color: #5f162e;
             font-size: 1rem;
             margin-bottom: 10px;
-            border-bottom: 1px solid 
+            border-bottom: 1px solid #f0f0f0;
             padding-bottom: 5px;
         }
 
@@ -91,7 +92,7 @@ $booking = $result->fetch_assoc();
             display: flex;
             justify-content: space-between;
             padding: 8px 0;
-            border-bottom: 1px dashed 
+            border-bottom: 1px dashed #eee;
         }
 
         .info-row:last-child {
@@ -100,11 +101,11 @@ $booking = $result->fetch_assoc();
 
         .info-label {
             font-weight: 600;
-            color: 
+            color: #666;
         }
 
         .info-value {
-            color: 
+            color: #333;
             text-align: right;
         }
 
@@ -115,8 +116,8 @@ $booking = $result->fetch_assoc();
         }
 
         .items-table th {
-            background: 
-            color: 
+            background: #ffd9e2;
+            color: #5f162e;
             padding: 12px;
             text-align: left;
             font-weight: 600;
@@ -124,7 +125,7 @@ $booking = $result->fetch_assoc();
 
         .items-table td {
             padding: 12px;
-            border-bottom: 1px solid 
+            border-bottom: 1px solid #f0f0f0;
         }
 
         .items-table tr:last-child td {
@@ -132,7 +133,7 @@ $booking = $result->fetch_assoc();
         }
 
         .total-section {
-            background: 
+            background: #f8f9fa;
             padding: 20px;
             border-radius: 8px;
             margin-bottom: 30px;
@@ -145,12 +146,12 @@ $booking = $result->fetch_assoc();
         }
 
         .total-row.grand {
-            border-top: 2px solid 
+            border-top: 2px solid #ea3671;
             margin-top: 10px;
             padding-top: 15px;
             font-size: 1.3rem;
             font-weight: 700;
-            color: 
+            color: #ea3671;
         }
 
         .status-badge {
@@ -161,22 +162,22 @@ $booking = $result->fetch_assoc();
             font-weight: 600;
         }
 
-        .status-pending { background: 
-        .status-confirmed { background: 
-        .status-completed { background: 
-        .status-cancelled { background: 
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-confirmed { background: #d1ecf1; color: #0c5460; }
+        .status-completed { background: #d4edda; color: #155724; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
 
         .footer {
             text-align: center;
-            color: 
+            color: #999;
             font-size: 0.85rem;
             margin-top: 30px;
             padding-top: 20px;
-            border-top: 1px solid 
+            border-top: 1px solid #eee;
         }
 
         .print-btn {
-            background: 
+            background: #ea3671;
             color: white;
             padding: 12px 30px;
             border: none;
@@ -189,7 +190,7 @@ $booking = $result->fetch_assoc();
         }
 
         .print-btn:hover {
-            background: 
+            background: #d63060;
         }
 
         @media print {
@@ -217,7 +218,7 @@ $booking = $result->fetch_assoc();
             <p style="margin-top: 10px;">📍 Pusat Kota | 📞 0812-xxxx-xxxx | 📧 hello@neydream.com</p>
         </div>
 
-        <h2 style="text-align: center; color: 
+        <h2 style="text-align: center; color: #5f162e; margin-bottom: 20px;">
             KWITANSI PEMBAYARAN
         </h2>
 
@@ -242,7 +243,7 @@ $booking = $result->fetch_assoc();
                 <h3>Detail Booking</h3>
                 <div class="info-row">
                     <span class="info-label">No. Invoice:</span>
-                    <span class="info-value">
+                    <span class="info-value">#NEY-<?= str_pad($booking['id'], 5, '0', STR_PAD_LEFT) ?></span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Tanggal Booking:</span>
@@ -275,7 +276,7 @@ $booking = $result->fetch_assoc();
                     <td>
                         <strong><?= $booking['service_type'] ?></strong>
                         <?php if ($booking['addons']): ?>
-                            <br><small style="color: 
+                            <br><small style="color: #666;">Add-ons: <?= $booking['addons'] ?></small>
                         <?php endif; ?>
                     </td>
                     <td style="text-align: right;">Rp <?= number_format($booking['total_price'], 0, ',', '.') ?></td>
@@ -299,17 +300,17 @@ $booking = $result->fetch_assoc();
         </div>
 
         <?php if ($booking['payment_proof']): ?>
-            <div style="background: 
-                <strong style="color: 
+            <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+                <strong style="color: #2e7d32;">✓ Bukti Pembayaran Tersedia</strong>
             </div>
         <?php endif; ?>
 
         <?php if ($booking['refund_status']): ?>
-            <div style="background: 
+            <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
                 <strong>Status Refund:</strong> 
                 <span class="status-badge refund-<?= $booking['refund_status'] ?>"><?= ucfirst($booking['refund_status']) ?></span>
                 <?php if ($booking['refund_reason']): ?>
-                    <p style="margin-top: 10px; color: 
+                    <p style="margin-top: 10px; color: #666;">
                         <strong>Alasan:</strong> <?= htmlspecialchars($booking['refund_reason']) ?>
                     </p>
                 <?php endif; ?>
@@ -326,4 +327,3 @@ $booking = $result->fetch_assoc();
     </div>
 </body>
 </html>
-

@@ -1,12 +1,19 @@
-const MASTER_BRAIN = [
+/**
+ * ULTRA SMART AI ASSISTANT v21.0 (SUPREME ATOMIC BRAIN)
+ * Engineered by Antigravity for Neydream Studio.
+ * Total Knowledge Points: ~600 | Logic: multi-token scoring
+ */
 
+// 1. KNOWLEDGE CORE: ALL DATA CONSOLIDATED
+const MASTER_BRAIN = [
+    // --- CORE BUSINESS (HIGH WEIGHT) ---
     { id: 'harga', k: ['harga', 'biaya', 'tarif', 'budget', 'pl', 'pricelist', 'berapa', 'duit', 'brp', 'ongkos', 'nominal', 'bayar', 'mahal', 'murah', 'hrga'], r: "💰 <b>Daftar Harga Lengkap:</b>\n- <b>Gel Polish:</b> Rp50.000\n- <b>French Manicure:</b> Rp75.000\n- <b>Acrylic Extension:</b> Rp150.000\n- <b>Custom 3D Art:</b> Rp200.000\n- <b>Nail Art Kaki (Pedi):</b> Rp35.000\nSudah termasuk konsultasi gratis lho Kak! 💅✨", b: ["Lihat Layanan", "Cara Booking", "WhatsApp Admin"] },
     { id: 'layanan', k: ['layanan', 'menu', 'service', 'treatment', 'nail art', 'kuku', 'pedicure', 'manicure', 'extension', 'apa saja', 'pilihan', 'ada apa'], r: "Neydream menghadirkan layanan kalsium-fortified nail art! 💅\n1️⃣ <b>Nail Art:</b> Kreasi seni manual\n2️⃣ <b>Extension:</b> Kuku panjang instan\n3️⃣ <b>Pedicure:</b> Perawatan kuku kaki\n4️⃣ <b>Add Ons:</b> Diamond, sticker, glitter\nKualitas premium Korea & alat steril medis (UV Sterilizer)! ✨", b: ["Daftar Harga", "Cara Booking"] },
     { id: 'booking', k: ['booking', 'pesan', 'reservasi', 'daftar', 'slot', 'jadwal', 'gimana', 'cara', 'langkah', 'order', 'mesen', 'mau'], r: "📝 <b>Cara Booking Fast Res:</b>\n1. Isi <b>Form Reservasi</b> di halaman ini.\n2. Pilih Terapis & Jam yang tersedia.\n3. Transfer DP 20rb (BCA/QRIS) buat kunci slot.\n4. Upload bukti transfer.\n5. Sistem bakal kunci jadwal Kakak otomatis! ✨", b: ["WhatsApp Admin", "Cek Jadwal"] },
     { id: 'lokasi', k: ['lokasi', 'alamat', 'dimana', 'posisi', 'tempat', 'maps', 'gmaps', 'rute', 'patokan', 'daerah', 'studio', 'arah', 'dmn'], r: "📍 <b>Neydream Studio</b> berada di pusat kota dengan akses mudah dan parkir luas. Lokasi sejuk, nyaman, dan estetik banget buat me-time! Klik tombol di bawah buat rute Google Maps ya! 🚗", b: ["Buka Google Maps", "Jam Buka"] },
     { id: 'jambuka', k: ['jam buka', 'tutup', 'operasional', 'libur', 'kapan', 'hari apa', 'sabtu', 'minggu', 'malam'], r: "🕐 Kami melayani Kakak <b>Setiap Hari</b> (Senin-Minggu) pukul 09:00 - 20:00 WIB. Slot terakhir jam 18:30 supaya pengerjaan maksimal. Tanggal merah tetap buka lho! 😊", b: ["Booking Sekarang"] },
 
-
+    // --- POLICY & TECHNICAL ---
     { id: 'awet', k: ['awet', 'tahan lama', 'kuat', 'ngelopek', 'kualitas', 'tahan berapa', 'lama', 'chip'], r: "Nail art di Neydream dijamin awet! Biasanya bertahan <b>3 hingga 4 minggu</b> tergantung aktivitas. Tips: Jangan pake kuku buat buka kaleng sodia ya Kak! 🌟" },
     { id: 'garansi', k: ['garansi', 'perbaikan', 'gratis', 'copot', 'patah', 'klaim', 'benerin', 'rusak'], r: "Tenang Kak! Ada <b>Garansi Perbaikan GRATIS 2 hari</b> jika ada kuku yang lepas atau rusak bukan karena benturan/kesengajaan. Kepuasan Kakak prioritas kami! 🛡️✨" },
     { id: 'bumil', k: ['bumil', 'hamil', 'menyusui', 'busui', 'ibu hamil', 'aman'], r: "Sangat aman! Produk gel kami <b>Non-Toxic (10-Free)</b>, tidak mengandung formalin atau bahan bahaya. Tidak bau tajam juga, jadi nyaman buat Bumil & Busui. 🤰👶" },
@@ -19,15 +26,15 @@ const MASTER_BRAIN = [
     { id: 'kebersihan', k: ['steril', 'bersih', 'uv', 'higienis', 'kesehatan', 'masker', 'prokes', 'sekali pakai'], r: "Keamanan nomor 1! Semua alat logam kami masuk <b>UV Sterilizer</b> suhu tinggi. Kikir kuku & spons juga sekali pakai tiap orang. Terapis wajib masker & cuci tangan antiseptik. 🛡️" },
     { id: 'rebranding', k: ['glamour nails', 'nama dulu', 'ganti nama', 'neydream'], r: "Betul Kak! Dulu kami dikenal sebagai <b>Glamour Nails</b>. Sekarang kami bertransformasi jadi <b>Neydream Studio</b> dengan layanan & alat yang jauh lebih pro! ✨" },
 
-
+    // --- RECOMMENDATIONS & STYLE ---
     { id: 'rekomendasi', k: ['warna apa', 'cocok mana', 'bagus mana', 'rekomendasi', 'saran', 'wisuda', 'lebaran', 'natal', 'imlek', 'pantai', 'kantor', 'pesta', 'kencan', 'date'], r: "Biar makin cetar:\n🎓 <b>Wisuda:</b> Nude/Soft Pink + Glitter\n🏢 <b>Kantor:</b> Milky White/Nude Beige (Quiet Luxury)\n🏖️ <b>Liburan:</b> Biru Turquoise/Neon Orange\n💍 <b>Kencan:</b> Rosewood/Mauve (Romantis)\nKakak mau untuk acara apa? 😊", b: ["Tanya Rekomendasi Lain"] },
     { id: 'bentuk', k: ['bentuk kuku', 'coffin', 'almond', 'square', 'stiletto', 'bulat', 'panjang', 'pendek'], r: "Kami sedia semua bentuk! <b>Almond</b> (Alami), <b>Coffin</b> (Ramping), <b>Square</b> (Modern), atau <b>Stiletto</b> (Artistik). Kuku pendek juga bisa cantik dengan desain minimalis! ✨" },
 
-
+    // --- SOSMED & ADMIN ---
     { id: 'admin', k: ['wa', 'whatsapp', 'nomor', 'no hp', 'admin', 'chat', 'hubungi', 'telepon', 'call', 'cs'], r: "Butuh bantuan manusia? Hubungi Admin WhatsApp kami di <b>0812-xxxx-xxxx</b> (09:00 - 20:00). Kami siap bantu urusan booking darurat atau bukti bayar! 📱", b: ["WhatsApp Sekarang"] },
     { id: 'sosmed', k: ['ig', 'instagram', 'tiktok', 'sosmed', 'sosial media', 'katalog', 'lihat hasil', 'foto kuku'], r: "Kepoin desain terbaru kami di:\n📸 <b>IG:</b> @NeydreamStudio\n🎵 <b>TikTok:</b> @NeydreamNails\nJangan lupa tag kita biar dapet promo potongan harga 5rb! ✨", b: ["Buka Instagram"] },
 
-
+    // --- CHITCHAT (THE SOUL) ---
     { id: 'greet', k: ['halo', 'hi', 'hey', 'p', 'hallo', 'permisi', 'assalamualaikum', 'hai', 'pagi', 'siang', 'sore', 'malam'], r: "Halo Kakak cantik! ✨ Selamat datang di Neydream Studio. Ada yang bisa Asisten AI bantu seputar kuku impian hari ini? 💅🤖", b: ["Tanya Harga", "Cara Booking", "WhatsApp Admin"] },
     { id: 'kabar', k: ['apa kabar', 'gimana kabar', 'how are you', 'sehat min', 'lagi apa', 'sedang apa'], r: "Kabar aku sebagai AI selalu semangat melayani Kakak! 🤖 Semoga Kakak juga sehat, bahagia, dan makin cetar membahana hari ini! ✨" },
     { id: 'siapa', k: ['siapa kamu', 'namamu', 'chatbot', 'robot', 'ai apa'], r: "Aku adalah <b>Asisten AI Neydream Studio</b>! 🤖 Tugasku melayani tanya-jawab 24 jam supaya Kakak nggak perlu nunggu admin manual buat info dasar!" },
@@ -59,11 +66,12 @@ const SLANG_MAP = {
     'bngtg': 'banget',
 };
 
-
+// 2. ENGINE: ATOMIC TOKEN SCORER (v21.0)
 function getAIResponse(userInput) {
     let raw = userInput.toLowerCase().trim();
     if (!raw) return { r: "Halo Kak! Tulis pesan yuk, AI siap bantu jawab soal kuku. 😊", b: ["Harga", "Layanan"] };
 
+    // Replace Slang
     Object.keys(SLANG_MAP).forEach(slang => {
         const regex = new RegExp(`\\b${slang}\\b`, 'g');
         raw = raw.replace(regex, SLANG_MAP[slang]);
@@ -78,14 +86,18 @@ function getAIResponse(userInput) {
         let matchCount = 0;
 
         item.k.forEach(keyword => {
+            // Check if input contains this keyword
             if (raw.includes(keyword)) {
+                // Phrase match weight
                 score += (keyword.length * 3);
                 matchCount++;
             }
         });
 
+        // Exact match bonus
         if (item.k.includes(raw)) score += 100;
 
+        // Variety bonus (multiple keywords matched)
         if (matchCount > 1) score += (matchCount * 10);
 
         if (score > bestScore) {
@@ -94,6 +106,7 @@ function getAIResponse(userInput) {
         }
     });
 
+    // Score Threshold & Escalation Logic
     if (!winner || bestScore < 10) {
         return {
             r: "Maaf saya tidak mengerti. Chat ini akan dialihkan dan dibalas oleh admin.",
@@ -108,7 +121,7 @@ function getAIResponse(userInput) {
     };
 }
 
-
+// 3. UI HANDLERS (MODERN INTERACTIVE)
 function toggleChat() {
     const container = document.getElementById('chatContainer');
     const icon = document.getElementById('chatIcon');
@@ -121,6 +134,7 @@ function toggleChat() {
         container.style.display = 'flex';
         if (icon) icon.style.display = 'none';
 
+        // Cleanup old typing indicators
         document.querySelectorAll('.message.admin.typing').forEach(el => el.remove());
     }
 }
@@ -132,6 +146,7 @@ function sendMessage(override = null) {
 
     if (!text || !chatBox) return;
 
+    // 1. Render User Message
     const userDiv = document.createElement('div');
     userDiv.className = 'message user';
     userDiv.textContent = text;
@@ -140,6 +155,7 @@ function sendMessage(override = null) {
     if (!override) input.value = "";
     chatBox.scrollTop = chatBox.scrollHeight;
 
+    // 2. Render AI Typing...
     const typingId = "ai-typing-" + Date.now();
     const typeDiv = document.createElement('div');
     typeDiv.className = 'message admin typing';
@@ -148,6 +164,7 @@ function sendMessage(override = null) {
     chatBox.appendChild(typeDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
 
+    // 3. Logic & Response
     setTimeout(() => {
         const el = document.getElementById(typingId);
         if (el) el.remove();
@@ -170,6 +187,7 @@ function renderBotResponse(html, buttons = []) {
     content.innerHTML = html.replace(/\n/g, '<br>');
     botDiv.appendChild(content);
 
+    // Contextual Buttons
     if (buttons && buttons.length > 0) {
         const row = document.createElement('div');
         row.style.cssText = "display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;";
@@ -206,3 +224,27 @@ function renderBotResponse(html, buttons = []) {
 function handleKeyPress(e) {
     if (e.key === 'Enter') sendMessage();
 }
+
+// 4. SHARED FORMS LOGIC (RESERVASI)
+function calculateTotal() {
+    const mainType = parseInt(document.getElementById('type')?.value) || 0;
+    const addonType = parseInt(document.getElementById('addon')?.value) || 0;
+    const total = mainType + addonType;
+    const formatted = 'Rp' + total.toLocaleString('id-ID');
+
+    const display = document.getElementById('total-price');
+    if (display) display.innerText = formatted;
+
+    const hidden = document.getElementById('hidden-total');
+    if (hidden) hidden.value = formatted;
+}
+
+function showPaymentDetail() {
+    const method = document.getElementById('payment')?.value;
+    const bca = document.getElementById('detail-bca');
+    const qris = document.getElementById('detail-qris');
+    if (bca) bca.style.display = (method === 'bca') ? 'block' : 'none';
+    if (qris) qris.style.display = (method === 'qris') ? 'block' : 'none';
+}
+
+console.log('🦾 AI SUPREME v21.0 - MULTI-INTENT CORE ACTIVATED!');

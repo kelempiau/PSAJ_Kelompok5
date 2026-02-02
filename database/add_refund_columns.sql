@@ -10,4 +10,3 @@ ADD COLUMN refund_date DATETIME NULL AFTER refund_reason;
 
 -- Verify columns were added
 DESCRIBE reservations;
-
