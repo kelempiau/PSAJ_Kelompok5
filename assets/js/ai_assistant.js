@@ -1,6 +1,3 @@
-
-
-
 const MASTER_BRAIN = [
 
     { id: 'harga', k: ['harga', 'biaya', 'tarif', 'budget', 'pl', 'pricelist', 'berapa', 'duit', 'brp', 'ongkos', 'nominal', 'bayar', 'mahal', 'murah', 'hrga'], r: "💰 <b>Daftar Harga Lengkap:</b>\n- <b>Gel Polish:</b> Rp50.000\n- <b>French Manicure:</b> Rp75.000\n- <b>Acrylic Extension:</b> Rp150.000\n- <b>Custom 3D Art:</b> Rp200.000\n- <b>Nail Art Kaki (Pedi):</b> Rp35.000\nSudah termasuk konsultasi gratis lho Kak! 💅✨", b: ["Lihat Layanan", "Cara Booking", "WhatsApp Admin"] },
@@ -67,7 +64,6 @@ function getAIResponse(userInput) {
     let raw = userInput.toLowerCase().trim();
     if (!raw) return { r: "Halo Kak! Tulis pesan yuk, AI siap bantu jawab soal kuku. 😊", b: ["Harga", "Layanan"] };
 
-    
     Object.keys(SLANG_MAP).forEach(slang => {
         const regex = new RegExp(`\\b${slang}\\b`, 'g');
         raw = raw.replace(regex, SLANG_MAP[slang]);
@@ -82,18 +78,14 @@ function getAIResponse(userInput) {
         let matchCount = 0;
 
         item.k.forEach(keyword => {
-            
             if (raw.includes(keyword)) {
-                
                 score += (keyword.length * 3);
                 matchCount++;
             }
         });
 
-        
         if (item.k.includes(raw)) score += 100;
 
-        
         if (matchCount > 1) score += (matchCount * 10);
 
         if (score > bestScore) {
@@ -102,22 +94,17 @@ function getAIResponse(userInput) {
         }
     });
 
-    
-    if (winner && bestScore >= 5) {
-        return { r: winner.r, b: winner.b || [] };
-    }
-
-    
-    if (raw.includes('?')) {
+    if (!winner || bestScore < 10) {
         return {
-            r: "Wah, pertanyaannya detail banget! AI belum berani jawab biar nggak salah info. 😅\nBoleh pilih salah satu menu di bawah ini biar lebih gampang?",
-            b: ["Cara Booking", "Daftar Harga", "Tanya Admin WA"]
+            r: "Maaf saya tidak mengerti. Chat ini akan dialihkan dan dibalas oleh admin.",
+            b: [],
+            escalate: true
         };
     }
 
     return {
-        r: "Hmm, AI belum paham maksud Kakak... 🤔\nMungkin bisa coba ketik kata kunci seperti 'Harga', 'Layanan', atau 'Lokasi'?",
-        b: ["Menu Layanan", "Harga Update", "Cara Booking", "Lokasi Studio", "Bantuan Admin"]
+        r: winner.r,
+        b: winner.b || []
     };
 }
 
@@ -133,7 +120,7 @@ function toggleChat() {
     } else {
         container.style.display = 'flex';
         if (icon) icon.style.display = 'none';
-        
+
         document.querySelectorAll('.message.admin.typing').forEach(el => el.remove());
     }
 }
@@ -145,7 +132,6 @@ function sendMessage(override = null) {
 
     if (!text || !chatBox) return;
 
-    
     const userDiv = document.createElement('div');
     userDiv.className = 'message user';
     userDiv.textContent = text;
@@ -154,7 +140,6 @@ function sendMessage(override = null) {
     if (!override) input.value = "";
     chatBox.scrollTop = chatBox.scrollHeight;
 
-    
     const typingId = "ai-typing-" + Date.now();
     const typeDiv = document.createElement('div');
     typeDiv.className = 'message admin typing';
@@ -163,13 +148,16 @@ function sendMessage(override = null) {
     chatBox.appendChild(typeDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
 
-    
     setTimeout(() => {
         const el = document.getElementById(typingId);
         if (el) el.remove();
 
         const response = getAIResponse(text);
         renderBotResponse(response.r, response.b);
+
+        if (response.escalate && typeof window.escalateToAdmin === 'function') {
+            window.escalateToAdmin(text);
+        }
     }, 700);
 }
 
@@ -182,7 +170,6 @@ function renderBotResponse(html, buttons = []) {
     content.innerHTML = html.replace(/\n/g, '<br>');
     botDiv.appendChild(content);
 
-    
     if (buttons && buttons.length > 0) {
         const row = document.createElement('div');
         row.style.cssText = "display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;";
@@ -190,20 +177,25 @@ function renderBotResponse(html, buttons = []) {
         buttons.forEach(label => {
             const b = document.createElement('button');
             b.innerText = label;
-            b.style.cssText = "padding:7px 15px; border:1px solid 
+            b.style.cssText = "padding:7px 15px; border:1px solid #ff85a1; background:white; color:#ff85a1; border-radius:20px; cursor:pointer; font-size:0.85rem; transition:all 0.2s;";
+
+            b.onmouseover = () => { b.style.background = "#ff85a1"; b.style.color = "white"; };
+            b.onmouseout = () => { b.style.background = "white"; b.style.color = "#ff85a1"; };
 
             b.onclick = () => {
-                const l = label.toLowerCase();
-                if (l.includes('wa') || l.includes('admin')) window.open('https://wa.me/628123456789', '_blank');
-                else if (l.includes('maps') || l.includes('lokasi')) window.open('https://maps.google.com', '_blank');
-                else if (l.includes('ig') || l.includes('instagram')) window.open('https://instagram.com/neydreamstudio', '_blank');
+                if (label.includes("Harga")) sendMessage("harga");
+                else if (label.includes("Layanan")) sendMessage("layanan");
+                else if (label.includes("Booking") || label.includes("Cara")) sendMessage("booking");
+                else if (label.includes("Lokasi") || label.includes("Maps")) sendMessage("lokasi");
+                else if (label.includes("Jam")) sendMessage("jam buka");
+                else if (label.includes("WhatsApp") || label.includes("Admin")) sendMessage("admin");
+                else if (label.includes("IG") || label.includes("Instagram")) sendMessage("sosmed");
+                else if (label.includes("Jadwal") || label.includes("Cek")) sendMessage("jam buka");
                 else sendMessage(label);
             };
-
-            b.onmouseover = () => { b.style.background = "
-            b.onmouseout = () => { b.style.background = "
             row.appendChild(b);
         });
+
         botDiv.appendChild(row);
     }
 
@@ -211,29 +203,6 @@ function renderBotResponse(html, buttons = []) {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
-
-
-function calculateTotal() {
-    const mainType = parseInt(document.getElementById('type')?.value) || 0;
-    const addonType = parseInt(document.getElementById('addon')?.value) || 0;
-    const total = mainType + addonType;
-    const formatted = 'Rp' + total.toLocaleString('id-ID');
-
-    const display = document.getElementById('total-price');
-    if (display) display.innerText = formatted;
-
-    const hidden = document.getElementById('hidden-total');
-    if (hidden) hidden.value = formatted;
+function handleKeyPress(e) {
+    if (e.key === 'Enter') sendMessage();
 }
-
-function showPaymentDetail() {
-    const method = document.getElementById('payment')?.value;
-    const bca = document.getElementById('detail-bca');
-    const qris = document.getElementById('detail-qris');
-    if (bca) bca.style.display = (method === 'bca') ? 'block' : 'none';
-    if (qris) qris.style.display = (method === 'qris') ? 'block' : 'none';
-}
-
-
-
