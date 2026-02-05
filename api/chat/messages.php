@@ -4,6 +4,7 @@ require '../../core/config.php';
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
+    ob_clean();
     echo json_encode(['success' => false, 'error' => 'Not authenticated']);
     exit;
 }
@@ -11,6 +12,7 @@ if (!isset($_SESSION['user_id'])) {
 $conversation_id = isset($_GET['conversation_id']) ? intval($_GET['conversation_id']) : 0;
 
 if ($conversation_id === 0) {
+    ob_clean();
     echo json_encode(['success' => false, 'error' => 'Conversation ID required']);
     exit;
 }
@@ -31,4 +33,7 @@ while ($row = $result->fetch_assoc()) {
     $messages[] = $row;
 }
 
+ob_clean();
 echo json_encode(['success' => true, 'messages' => $messages]);
+exit;
+

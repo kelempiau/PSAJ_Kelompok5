@@ -34,6 +34,27 @@ $booking = $result->fetch_assoc();
     <title>Kwitansi #<?= $booking['id'] ?> - Neydream Studio</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* ANTIGRAVITY AD PROTECTION */
+        #sb98124, #sb98124_image, #sb98124_close, .tutup2,
+        div[id^="sb"][style*="display: block"], 
+        div[id^="sb"][style*="position: fixed"],
+        a[href*="infinityfree"] {
+            display: none !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+            z-index: -99999 !important;
+        }
+    </style>
+    <script>
+        (function(){
+            setInterval(function(){
+                var ads = document.querySelectorAll('#sb98124, #sb98124_image, .tutup2, div[id^="sb"][style*="fixed"]');
+                ads.forEach(function(el){ el.remove(); });
+            }, 500);
+        })();
+    </script>
+    <style>
         * {
             margin: 0;
             padding: 0;

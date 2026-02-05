@@ -31,6 +31,27 @@ $result = $stmt->get_result();
     <title>Riwayat Transaksi - Neydream</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* ANTIGRAVITY AD PROTECTION */
+        #sb98124, #sb98124_image, #sb98124_close, .tutup2,
+        div[id^="sb"][style*="display: block"], 
+        div[id^="sb"][style*="position: fixed"],
+        a[href*="infinityfree"] {
+            display: none !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+            z-index: -99999 !important;
+        }
+    </style>
+    <script>
+        (function(){
+            setInterval(function(){
+                var ads = document.querySelectorAll('#sb98124, #sb98124_image, .tutup2, div[id^="sb"][style*="fixed"]');
+                ads.forEach(function(el){ el.remove(); });
+            }, 500);
+        })();
+    </script>
+    <style>
         * {
             margin: 0;
             padding: 0;
@@ -344,14 +365,30 @@ $result = $stmt->get_result();
                             <strong>💰 Total Harga</strong>
                             <span>Rp <?= number_format($booking['total_price'], 0, ',', '.') ?></span>
                         </div>
+                        <div class="detail-item">
+                            <strong>💳 Status Bayar</strong>
+                            <?php if ($booking['payment_type'] === 'dp'): ?>
+                                <span style="color: #ea3671; font-weight: bold;">Bayar DP (50%)</span>
+                                <small style="display: block; color: #888;">Paid: Rp <?= number_format($booking['amount_paid'], 0, ',', '.') ?></small>
+                                <small style="display: block; color: #ea3671;">Sisa: Rp <?= number_format($booking['balance_due'], 0, ',', '.') ?></small>
+                            <?php else: ?>
+                                <span>Lunas (Full)</span>
+                            <?php endif; ?>
+                        </div>
                     </div>
 
-                    <?php if ($booking['addons']): ?>
-                        <div class="detail-item" style="margin-bottom: 15px;">
+                    <div class="booking-details" style="margin-top: 10px;">
+                        <div class="detail-item">
+                            <strong>🏦 Metode</strong>
+                            <span style="text-transform: uppercase;"><?= $booking['payment_method'] ?></span>
+                        </div>
+                        <?php if ($booking['addons']): ?>
+                        <div class="detail-item">
                             <strong>➕ Add Ons</strong>
                             <span><?= $booking['addons'] ?></span>
                         </div>
-                    <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
 
                     <?php if ($booking['refund_status']): ?>
                         <div style="margin-top: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px;">
@@ -367,6 +404,12 @@ $result = $stmt->get_result();
 
                     <div class="booking-actions">
                         <!-- Receipt/Invoice Button -->
+                        <?php if (($booking['payment_type'] === 'dp' || $booking['payment_type'] === 'dp_transfer') && $booking['balance_due'] > 0): ?>
+                            <a href="lunasi.php?id=<?= $booking['id'] ?>" class="btn" style="background: #ea3671; color: white; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                                💳 Lunasi Sisa
+                            </a>
+                        <?php endif; ?>
+                        
                         <button class="btn" style="background: #007bff; color: white;" onclick="printReceipt(<?= $booking['id'] ?>)">
                             🧾 Cetak Kwitansi
                         </button>

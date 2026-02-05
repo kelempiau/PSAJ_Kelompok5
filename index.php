@@ -12,6 +12,28 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <title>Ney Dream Nail Art Studio</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Satisfy&display=swap" rel="stylesheet">
     <style>
+        /* ANTIGRAVITY AD PROTECTION */
+        #sb98124, #sb98124_image, #sb98124_close, .tutup2,
+        div[id^="sb"][style*="display: block"], 
+        div[id^="sb"][style*="position: fixed"],
+        a[href*="infinityfree"] {
+            display: none !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+            z-index: -99999 !important;
+        }
+    </style>
+    <script>
+        // Force remove injected ads
+        (function(){
+            setInterval(function(){
+                var ads = document.querySelectorAll('#sb98124, #sb98124_image, .tutup2, div[id^="sb"][style*="fixed"]');
+                ads.forEach(function(el){ el.remove(); });
+            }, 500);
+        })();
+    </script>
+    <style>
         * {
             margin: 0;
             padding: 0;
@@ -22,6 +44,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             overflow-x: hidden;
             width: 100%;
             position: relative;
+            scroll-behavior: smooth; /* Enable smooth scrolling */
         }
 
         body {
@@ -179,6 +202,75 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             background: #ff5c8a;
         }
 
+        .btn-settings {
+            text-decoration: none;
+            font-size: 1.1rem;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 240, 245, 0.8);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 183, 197, 0.3);
+            color: #ff85a1;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .btn-settings:hover {
+            transform: scale(1.1) rotate(60deg);
+            background: rgba(255, 240, 245, 1);
+            color: #ea3671;
+            box-shadow: 0 6px 12px rgba(234, 54, 113, 0.15);
+        }
+
+        .user-profile-pill {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 240, 245, 0.8);
+            backdrop-filter: blur(5px);
+            padding: 6px 16px 6px 6px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 183, 197, 0.3);
+            margin-left: 15px;
+            transition: all 0.3s;
+        }
+
+        .user-profile-pill:hover {
+            background: rgba(255, 240, 245, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 133, 161, 0.1);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #ff85a1, #ea3671);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 3px 8px rgba(234, 54, 113, 0.2);
+        }
+
+        .user-info-text {
+            font-size: 0.95rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .user-info-text strong {
+            color: #ea3671;
+            font-weight: 700;
+        }
+
         /* Hamburger Styles */
         .hamburger {
             display: none;
@@ -187,6 +279,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             cursor: pointer;
             z-index: 2000;
             padding: 10px;
+            pointer-events: auto !important;
         }
 
         .hamburger span {
@@ -548,6 +641,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             z-index: 0;
             opacity: 0.6;
             animation: float 5s ease-in-out infinite;
+            pointer-events: none; /* DO NOT BLOCK CLICKS */
         }
 
         /* Section Separator removed shadow as requested */
@@ -561,15 +655,21 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <!-- Navigation -->
     <nav>
         <!-- Left: Logo + User Greeting -->
-        <div class="nav-left">
+        <div class="nav-left" style="display: flex; align-items: center;">
             <img src="assets/img/588237789-17951033973048360-6209016104075046821-n-removebg-preview-1.png" alt="Logo" class="logo" onerror="this.style.display='none'">
             <?php if ($isLoggedIn): ?>
-                <span class="user-greeting">Hi, <?= htmlspecialchars($username) ?>!</span>
+                <div class="user-profile-pill">
+                    <div class="user-avatar"><?= strtoupper(substr($username, 0, 1)) ?></div>
+                    <div class="user-info-text">
+                        Hi, <strong><?= htmlspecialchars($username) ?></strong>!
+                    </div>
+                </div>
+                <a href="user/settings.php" class="btn-settings" title="Pengaturan Akun">⚙️</a>
             <?php endif; ?>
         </div>
         
         <!-- Hamburger Menu Button -->
-        <div class="hamburger" id="hamburger">
+        <div class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
             <span></span>
             <span></span>
             <span></span>
@@ -578,20 +678,26 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         <div id="mobileMenu">
             <a href="#home" class="mobile-link">Beranda</a>
             <a href="#layanan" class="mobile-link">Layanan</a>
+            <a href="#lokasi" class="mobile-link">Lokasi</a>
             <a href="#katalog" class="mobile-link">Katalog</a>
             <a href="#faq" class="mobile-link">FAQ</a>
+            <?php if ($isLoggedIn): ?>
+                <a href="user/settings.php" class="mobile-link" style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.1rem;">⚙️</span> Pengaturan Akun
+                </a>
+            <?php endif; ?>
             
             <div class="mobile-auth">
                 <?php if ($isLoggedIn): ?>
                     <?php if ($isAdmin): ?>
                         <a href="admin/dashboard.php" class="btn btn-primary">Go to Dashboard</a>
-                        <a href="logout.php" class="btn btn-logout">Logout</a>
+                        <a href="javascript:void(0)" onclick="confirmLogout('auth/logout.php')" class="btn btn-logout">Logout</a>
                     <?php else: ?>
                         <a href="user/history.php" class="btn btn-outline" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
                             <span style="font-size: 1.3rem;">📋</span> Riwayat Transaksi
                         </a>
                         <a href="user/reservasi.php" class="btn btn-primary">Booking Sekarang</a>
-                        <a href="auth/logout.php" class="btn btn-logout">Logout</a>
+                        <a href="javascript:void(0)" onclick="confirmLogout('auth/logout.php')" class="btn btn-logout">Logout</a>
                     <?php endif; ?>
                 <?php else: ?>
                     <a href="auth/login.php" class="btn btn-outline">Log In</a>
@@ -603,6 +709,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         <div class="nav-center">
             <a href="#home">Beranda</a>
             <a href="#layanan">Layanan</a>
+            <a href="#lokasi">Lokasi</a>
             <a href="#katalog">Katalog</a>
             <a href="#faq">FAQ</a>
         </div>
@@ -612,11 +719,11 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             <?php if ($isLoggedIn): ?>
                 <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                     <a href="admin/dashboard.php" class="btn btn-primary">Go to Dashboard</a>
-                    <a href="auth/logout.php" class="btn btn-logout">Logout</a>
+                    <a href="javascript:void(0)" onclick="confirmLogout('auth/logout.php')" class="btn btn-logout">Logout</a>
                 <?php else: ?>
                     <a href="user/history.php" class="btn btn-icon" title="Riwayat Transaksi">📋</a>
                     <a href="<?= 'user/reservasi.php' ?>" class="btn btn-primary">Reservasi</a>
-                    <a href="auth/logout.php" class="btn btn-logout">Logout</a>
+                    <a href="javascript:void(0)" onclick="confirmLogout('auth/logout.php')" class="btn btn-logout">Logout</a>
                 <?php endif; ?>
             <?php else: ?>
                 <a href="auth/login.php" class="btn btn-outline">Log In</a>
@@ -729,6 +836,18 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                     <div class="price">Mulai Rp 2.000</div>
                 </div>
             </a>
+        </div>
+    </section>
+
+    <!-- Map Location Section -->
+    <section id="lokasi" style="padding: 60px 5%; background: #fff;">
+        <div class="section-header" style="margin-bottom: 40px;">
+            <h2>Lokasi Neydream</h2>
+            <div class="underline"></div>
+        </div>
+        
+        <div style="max-width: 1200px; margin: 0 auto; border-radius: 30px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: 8px solid white;">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d247.30260000595965!2d109.2379401682376!3d-7.371644493750555!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e655f75cf4500dd%3A0x11758038b45defc1!2sJ6HQ%2B858%2C%20Dusun%20I%2C%20Rempoah%2C%20Kec.%20Baturaden%2C%20Kabupaten%20Banyumas%2C%20Jawa%20Tengah%2053126!5e0!3m2!1sen!2sid!4v1770178730917!5m2!1sen!2sid" width="100%" height="450" style="border:0; display: block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
     </section>
 
@@ -1033,40 +1152,20 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         </div>
     </section>
 
-    <!-- Chat Widget -->
-    <div class="chat-container" id="chatContainer" style="display: none;">
-        <div class="chat-header">
-            <div class="header-info">
-                <div class="admin-avatar">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" alt="Admin">
-                    <span class="online-status"></span>
-                </div>
-                <div>
-                    <h4>Asisten Neydream</h4>
-                    <p>Online</p>
-                </div>
-            </div>
-            <button class="close-chat" onclick="toggleChat()">×</button>
-        </div>
 
-        <div class="chat-box" id="chatBox">
-            <div class="message admin">
-                Halo! ✨ Selamat datang di Neydream Studio. Ada yang bisa saya bantu hari ini?
-            </div>
-        </div>
-
-        <div class="chat-input-area">
-            <input type="text" id="userInput" placeholder="Tulis pesan..." onkeypress="handleKeyPress(event)">
-            <button onclick="sendMessage()">➤</button>
-        </div>
-    </div>
-
-    <div class="chat-icon-bubble" id="chatIcon" onclick="toggleChat()">
-        <img src="https://cdn-icons-png.flaticon.com/512/5968/5968841.png" alt="Chat">
-    </div>
-
-    <script src="assets/js/ai_assistant.js"></script>
+    <!-- Chatbot Integration -->
+    <script src="assets/js/smart_chatbot.js"></script>
     
+    <script>
+    async function customerHeartbeat() {
+        try {
+            await fetch('api/user/heartbeat.php');
+        } catch (e) {}
+    }
+    setInterval(customerHeartbeat, 30000);
+    customerHeartbeat();
+    </script>
+
     <script>
         // Modal / Overlay Background for Mobile Menu
         const overlay = document.createElement('div');
@@ -1153,157 +1252,11 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                     // Force active update after scroll
                     setTimeout(updateActiveLink, 800);
                 }
-            });
         });
     </script>
     
     <style>
-        /* Chat Widget Styles */
-        .chat-container {
-            position: fixed;
-            bottom: 90px;
-            right: 25px;
-            width: 320px;
-            height: 450px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-            display: flex;
-            flex-direction: column;
-            z-index: 9999;
-            overflow: hidden;
-        }
-
-        .chat-header {
-            background: #ff85a1;
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .admin-avatar {
-            position: relative;
-            width: 45px;
-            height: 45px;
-        }
-
-        .admin-avatar img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 2px solid white;
-        }
-
-        .online-status {
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            width: 12px;
-            height: 12px;
-            background: #4caf50;
-            border: 2px solid white;
-            border-radius: 50%;
-        }
-
-        .header-info h4 {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .header-info p {
-            margin: 0;
-            font-size: 12px;
-            opacity: 0.9;
-        }
-
-        .close-chat {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 30px;
-            cursor: pointer;
-            line-height: 1;
-            padding: 0;
-            width: 30px;
-            height: 30px;
-        }
-
-        .chat-box {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-
-        .message {
-            margin-bottom: 15px;
-            max-width: 80%;
-            padding: 10px 15px;
-            border-radius: 12px;
-            line-height: 1.5;
-            word-wrap: break-word;
-        }
-
-        .message.admin {
-            background: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            border-bottom-left-radius: 4px;
-        }
-
-        .message.user {
-            background: #ff85a1;
-            color: white;
-            margin-left: auto;
-            border-bottom-right-radius: 4px;
-        }
-
-        .chat-input-area {
-            display: flex;
-            gap: 10px;
-            padding: 15px 20px;
-            background: white;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        .chat-input-area input {
-            flex: 1;
-            padding: 12px 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 25px;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .chat-input-area input:focus {
-            border-color: #ea3671;
-        }
-
-        .chat-input-area button {
-            width: 45px;
-            height: 45px;
-            background: #ff85a1;
-            border: none;
-            border-radius: 50%;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .chat-input-area button:hover {
-            transform: scale(1.05);
-        }
+        /* Chat Widget Styles Removed */
 
         .chat-icon-bubble {
             position: fixed;
@@ -1318,8 +1271,9 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             justify-content: center;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(255, 133, 161, 0.4);
-            z-index: 9998;
+            z-index: 99999; /* ABOVE EVERYTHING */
             transition: all 0.3s;
+            pointer-events: auto !important;
         }
 
         .chat-icon-bubble:hover {
@@ -1353,5 +1307,74 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             }
         }
     </style>
+    <!-- Chat Page Link (No Popup) -->
+    <a href="user/help.php" class="chat-icon-bubble" id="chatIcon" title="Bantuan & Chat" style="z-index: 999999 !important; pointer-events: auto !important; text-decoration: none;">
+        <img src="https://cdn-icons-png.flaticon.com/512/5968/5968841.png" alt="Chat" style="pointer-events: none;">
+    </a>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+            <div style="font-size: 3rem; margin-bottom: 20px;">🚪</div>
+            <h3 style="margin-bottom: 15px; color: #333;">Yakin ingin Logout?</h3>
+            <p style="color: #666; margin-bottom: 30px;">Huhu, Kakak akan keluar dari akun Neydream. Sampai jumpa di lain waktu ya! ✨</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button onclick="handleLogoutConfirm(false)" class="btn btn-outline" style="flex: 1;">Tidak</button>
+                <button onclick="handleLogoutConfirm(true)" class="btn btn-primary" style="flex: 1;">Ya, Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- UI Core Logic (Embedded for instant response) -->
+    <script>
+    function toggleMobileMenu() {
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (hamburger && mobileMenu) {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        }
+    }
+
+    // Close menu when clicking links
+    document.addEventListener('DOMContentLoaded', () => {
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                const hamburger = document.getElementById('hamburger');
+                const mobileMenu = document.getElementById('mobileMenu');
+                if (hamburger) hamburger.classList.remove('active');
+                if (mobileMenu) mobileMenu.classList.remove('active');
+            });
+        });
+    });
+
+    function confirmLogout(logoutUrl) {
+        const modal = document.getElementById('logoutModal');
+        if (modal) {
+            modal.dataset.logoutUrl = logoutUrl;
+            modal.style.display = 'flex';
+        } else {
+            if (confirm("Apakah Anda yakin ingin logout?")) window.location.href = logoutUrl;
+        }
+    }
+
+    function handleLogoutConfirm(confirmed) {
+        const modal = document.getElementById('logoutModal');
+        if (confirmed) {
+            window.location.href = modal.dataset.logoutUrl;
+        } else {
+            modal.style.display = 'none';
+        }
+    }
+    </script>
+
+    <!-- Core Scripts -->
+    <script src="assets/js/home.js"></script>
+    <!-- Chatbot script removed from global scope to prevent popup logic -->
+    
+    <script>
+    // Link behavior is now handled naturally by the <a> tag.
+    </script>
 </body>
 </html>

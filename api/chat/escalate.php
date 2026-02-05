@@ -19,10 +19,8 @@ $stmt = $conn->prepare("UPDATE conversations SET status = 'escalated' WHERE id =
 $stmt->bind_param("i", $conversation_id);
 
 if ($stmt->execute()) {
-    $bot_message = "Maaf saya tidak mengerti. Chat ini akan dialihkan dan dibalas oleh admin.";
-    $stmt2 = $conn->prepare("INSERT INTO messages (conversation_id, sender_type, message) VALUES (?, 'bot', ?)");
-    $stmt2->bind_param("is", $conversation_id, $bot_message);
-    $stmt2->execute();
+    // $bot_message = "maaf saya tidak tahu chat ini akan dijawab oleh admin";
+    // SQL Insert removed to avoid duplicates (JS handles it)
     
     echo json_encode(['success' => true, 'message' => 'Escalated to admin']);
 } else {

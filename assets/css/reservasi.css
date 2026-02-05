@@ -92,7 +92,8 @@ label {
 }
 
 /* Unified Styling for Input & Select */
-input, select {
+input,
+select {
     width: 100%;
     padding: 12px 15px;
     border: 2px solid var(--soft-pink);
@@ -104,7 +105,8 @@ input, select {
     transition: var(--transition);
 }
 
-input:focus, select:focus {
+input:focus,
+select:focus {
     border-color: var(--dark-pink);
     background-color: #fffafb;
     box-shadow: 0 0 12px rgba(255, 133, 161, 0.15);
@@ -199,36 +201,48 @@ select {
 
 /* 8. ANIMATIONS & RESPONSIVE */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @media (max-width: 480px) {
     .container {
         padding: 30px 20px;
     }
-    
+
     h2 {
         font-size: 1.4rem;
     }
 
-    input, select, .btn-submit {
+    input,
+    select,
+    .btn-submit {
         padding: 12px;
-        font-size: 0.9rem; /* Slightly smaller for mobile */
+        font-size: 0.9rem;
+        /* Slightly smaller for mobile */
     }
 
     input[type="date"] {
-        min-height: 48px; /* Ensure enough touch target area */
+        min-height: 48px;
+        /* Ensure enough touch target area */
     }
 }
-/* --- FLOATING CHAT STYLE --- */
+
+/* --- FLOATING CHAT STYLE (Pink Theme) --- */
 .chat-icon-bubble {
     position: fixed;
     bottom: 30px;
     right: 30px;
     width: 60px;
     height: 60px;
-    background: #ff85a1; /* Senada dengan var --dark-pink */
+    background: linear-gradient(135deg, #ff85a1, #ff5c8a);
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -239,115 +253,30 @@ select {
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.chat-icon-bubble:hover { transform: scale(1.1); background: #ff5c8a; }
+.chat-icon-bubble:hover {
+    transform: scale(1.1) rotate(5deg);
+    background: linear-gradient(135deg, #ff5c8a, #ea3671);
+}
 
-.chat-icon-bubble img { width: 30px; filter: brightness(0) invert(1); }
+.chat-icon-bubble img {
+    width: 30px;
+    filter: brightness(0) invert(1);
+}
 
 .notification-badge {
     position: absolute;
-    top: 0; right: 0;
-    background: white;
-    color: #ff85a1;
-    font-size: 12px; font-weight: bold;
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    display: flex; justify-content: center; align-items: center;
-}
-
-.chat-container {
-    position: fixed;
-    bottom: 100px;
-    right: 30px;
-    width: 320px;
-    height: 450px;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-    display: none; /* Sembunyi awal */
-    flex-direction: column;
-    overflow: hidden;
-    z-index: 9999;
-    animation: slideUp 0.4s ease;
-}
-
-@keyframes slideUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-.chat-header {
-    background: #ff85a1;
-    padding: 15px;
+    top: 0;
+    right: 0;
+    background: #ef4444;
     color: white;
+    font-size: 12px;
+    font-weight: bold;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
 }
 
-.header-info { display: flex; align-items: center; gap: 10px; }
-.admin-avatar { position: relative; width: 40px; height: 40px; background: white; border-radius: 50%; padding: 5px; }
-.admin-avatar img { width: 100%; }
-.online-status {
-    position: absolute; bottom: 2px; right: 2px;
-    width: 10px; height: 10px; background: #4df14d;
-    border-radius: 50%; border: 2px solid #ff85a1;
-}
-
-.chat-box {
-    flex: 1;
-    padding: 15px;
-    background: #fffafa;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.message {
-    max-width: 80%;
-    padding: 10px 15px;
-    border-radius: 15px;
-    font-size: 0.85rem;
-    line-height: 1.4;
-}
-
-.message.admin {
-    background: white;
-    color: #444;
-    align-self: flex-start;
-    border-bottom-left-radius: 2px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.message.user {
-    background: #ff85a1;
-    color: white;
-    align-self: flex-end;
-    border-bottom-right-radius: 2px;
-}
-
-.chat-input-area {
-    padding: 15px;
-    display: flex;
-    gap: 10px;
-    border-top: 1px solid #eee;
-}
-
-.chat-input-area input {
-    flex: 1;
-    border: 1px solid #eee;
-    padding: 10px;
-    border-radius: 20px;
-    outline: none;
-}
-
-.chat-input-area button {
-    background: #ff85a1;
-    border: none;
-    color: white;
-    width: 35px; height: 35px;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-.close-chat { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+/* Chat Popup Styles Removed (Moved to user/chat.php) */

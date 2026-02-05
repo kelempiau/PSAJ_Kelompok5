@@ -6,99 +6,144 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
-$theme = 'light';
-$check_theme = $conn->query("SELECT theme FROM admin_settings WHERE user_id = " . $_SESSION['user_id']);
-if ($check_theme && $check_theme->num_rows > 0) {
-    $theme = $check_theme->fetch_assoc()['theme'];
-}
+
 ?>
 <!DOCTYPE html>
-<html lang="id" data-theme="<?= $theme ?>">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conversations - Admin Panel</title>
+    <title>Chat - Admin Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <?php include 'includes/admin_styles.php'; ?>
     <link rel="stylesheet" href="css/conversations.css">
+    <style>
+        .chat-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .btn-delete-chat {
+            background: var(--primary-dark, #ff5c8a);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        .btn-delete-chat:hover { opacity: 0.8; }
+        
+        /* Modal Styles */
+        .admin-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        .admin-modal-content {
+            background: var(--card-bg, #fff);
+            padding: 24px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .admin-modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        .btn-modal {
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            font-weight: 500;
+        }
+        .btn-modal.cancel { background: #f1f2f6; color: #2f3542; }
+        .btn-modal.confirm { background: #ff4757; color: white; }
+    </style>
 </head>
 <body>
-    <div class="admin-layout">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2>Neydream Admin</h2>
-            </div>
-            <nav class="sidebar-nav">
-                <a href="dashboard.php" class="nav-item">
-                    <span class="icon">📊</span>
-                    <span>Dashboard</span>
-                </a>
-                <a href="conversations.php" class="nav-item active">
-                    <span class="icon">💬</span>
-                    <span>Conversations</span>
-                    <span class="badge" id="totalUnread">0</span>
-                </a>
-            </nav>
-            <div class="sidebar-footer">
-                <button class="settings-btn" onclick="openSettings()">⚙️</button>
-                <div class="user-info">
-                    <span><?= htmlspecialchars($_SESSION['username']) ?></span>
+    <div class="admin-container">
+        <?php include 'includes/sidebar.php'; ?>
+
+        <div class="main-wrapper">
+            <header class="top-header">
+                <div class="breadcrumbs">
+                    <a href="dashboard.php" class="sep">Dashboard</a>
+                    <span class="sep">/</span>
+                    <span class="current">Chat</span>
+                </div>
+                <div class="header-actions">
+                </div>
+            </header>
+
+            <div class="page-header-context">
+                <div class="context-avatar">💬</div>
+                <div class="context-info">
+                    <div class="title">Bantuan Langsung</div>
+                    <div class="subtitle">Pusat kendali komunikasi dengan pelanggan.</div>
                 </div>
             </div>
-        </aside>
 
-        <main class="main-content">
             <div class="conversations-container">
                 <div class="conversations-sidebar">
                     <div class="conversations-header">
-                        <h3>Conversations</h3>
-                        <input type="text" placeholder="Search..." class="search-input">
+                        <h3>Antrian Pesan</h3>
+                        <div class="search-wrapper">
+                            <input type="text" placeholder="Cari nama pelanggan..." class="search-input">
+                        </div>
                     </div>
                     <div class="conversation-list" id="conversationList">
-                        <div class="loading">Loading conversations...</div>
+                        <div class="loading">Memuat percakapan...</div>
                     </div>
                 </div>
 
                 <div class="chat-panel">
                     <div class="chat-header" id="chatHeader">
                         <div class="chat-info">
-                            <h4>Select a conversation</h4>
+                            <h4 id="activeChatName">Pilih percakapan</h4>
+                            <div class="status-text" id="activeChatStatus"></div>
                         </div>
                     </div>
                     <div class="chat-messages" id="chatMessages">
                         <div class="empty-state">
-                            <p>👈 Select a conversation to start chatting</p>
+                            <p>👈 Pilih salah satu pelanggan di samping untuk mulai membalas pesan.</p>
                         </div>
                     </div>
                     <div class="chat-input-container" id="chatInputContainer" style="display: none;">
-                        <input type="file" id="imageInput" accept="image/*" style="display: none;">
-                        <button class="attach-btn" onclick="document.getElementById('imageInput').click()">📎</button>
-                        <input type="text" id="messageInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
-                        <button class="send-btn" onclick="sendAdminMessage()">Send</button>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <div class="modal" id="settingsModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Settings</h3>
-                <button class="close-btn" onclick="closeSettings()">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="setting-item">
-                    <label>Theme</label>
-                    <div class="theme-toggle">
-                        <button class="theme-btn" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
-                        <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+                        <input type="file" id="imageInput" accept="image/*,video/*" style="display: none;" onchange="handleAdminFileSelect(this)">
+                        <button class="attach-btn" id="adminAttachBtn" onclick="document.getElementById('imageInput').click()">📎</button>
+                        <input type="text" id="messageInput" placeholder="Tulis balasan Anda..." onkeypress="handleKeyPress(event)">
+                        <button class="send-btn" id="adminSendBtn" onclick="sendAdminMessage()">Kirim Pesan</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <div id="deleteModal" class="admin-modal">
+        <div class="admin-modal-content">
+            <h3 style="margin-bottom: 10px;">Hapus Riwayat Chat?</h3>
+            <p style="color: #666; font-size: 14px;">Apakah Anda yakin ingin menghapus seluruh riwayat chat dengan pelanggan ini? Tindakan ini tidak dapat dibatalkan.</p>
+            <div class="admin-modal-actions">
+                <button class="btn-modal cancel" onclick="closeAdminDeleteModal()">Tidak</button>
+                <button class="btn-modal confirm" onclick="executeAdminDeleteChat()">Hapus</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/conversations.js"></script>
-    <script src="js/theme.js"></script>
 </body>
 </html>
