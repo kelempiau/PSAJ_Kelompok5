@@ -123,6 +123,13 @@ select {
     background-size: 18px;
 }
 
+/* Disabled Option Styling */
+select option:disabled {
+    color: #ccc !important;
+    background-color: #f5f5f5 !important;
+    font-style: italic;
+}
+
 /* 5. PRICE & PAYMENT INFO */
 .price-display {
     background: var(--soft-pink);

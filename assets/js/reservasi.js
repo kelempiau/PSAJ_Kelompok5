@@ -1,3 +1,162 @@
+// Check availability for date and update time slots
+async function checkAvailability() {
+    const dateInput = document.getElementById('date');
+    const timeSelect = document.getElementById('time');
+    const warningDiv = document.getElementById('availability-warning');
+
+    if (!dateInput || !dateInput.value) return;
+
+    const selectedDate = dateInput.value;
+
+    try {
+        const response = await fetch(`../api/check_availability.php?date=${selectedDate}`);
+        const data = await response.json();
+
+        if (data.success && data.unavailable_times) {
+            // Update time options
+            const timeOptions = timeSelect.querySelectorAll('option');
+            timeOptions.forEach(option => {
+                if (option.value) {
+                    // Store original text if not stored yet
+                    if (!option.dataset.originalText) {
+                        option.dataset.originalText = option.textContent;
+                    }
+
+                    const isUnavailable = data.unavailable_times.includes(option.value);
+                    option.disabled = isUnavailable;
+
+                    if (isUnavailable) {
+                        option.style.color = '#ccc';
+                        option.textContent = option.dataset.originalText + (data.is_past_date ? ' (Sudah Lewat)' : ' (Penuh)');
+                    } else {
+                        // Reset to available
+                        option.style.color = '';
+                        option.textContent = option.dataset.originalText;
+                    }
+                }
+            });
+
+            // Special handling for past dates
+            if (data.is_past_date) {
+                showPastDateWarning();
+                timeSelect.value = '';
+            } else if (timeSelect.value && data.unavailable_times.includes(timeSelect.value)) {
+                // Check if currently selected time is unavailable (booked or past)
+                showAvailabilityWarning(timeSelect.value);
+                timeSelect.value = '';
+            } else if (warningDiv) {
+                warningDiv.style.display = 'none';
+            }
+        }
+    } catch (error) {
+        console.error('Error checking availability:', error);
+    }
+}
+
+// Check when time is selected
+async function checkTimeAvailability() {
+    const dateInput = document.getElementById('date');
+    const timeSelect = document.getElementById('time');
+
+    if (!dateInput.value || !timeSelect.value) return;
+
+    const selectedDate = dateInput.value;
+    const selectedTime = timeSelect.value;
+
+    try {
+        const response = await fetch(`../api/check_availability.php?date=${selectedDate}&time=${selectedTime}`);
+        const data = await response.json();
+
+        if (data.success && !data.available) {
+            showAvailabilityWarning(selectedTime);
+        } else {
+            hideAvailabilityWarning();
+        }
+    } catch (error) {
+        console.error('Error checking time availability:', error);
+    }
+}
+
+// Show warning for past dates
+function showPastDateWarning() {
+    let warningDiv = document.getElementById('availability-warning');
+
+    if (!warningDiv) {
+        warningDiv = createWarningDiv();
+        const dateGroup = document.querySelector('.form-grid-2');
+        if (dateGroup) dateGroup.appendChild(warningDiv);
+    }
+
+    warningDiv.innerHTML = `
+        <span style="font-size: 1.2rem;">🚫</span>
+        <span>Maaf, tanggal ini sudah terlewat. Silakan pilih tanggal hari ini atau yang akan datang.</span>
+    `;
+    warningDiv.style.display = 'flex';
+}
+
+// Helper to create warning div
+function createWarningDiv() {
+    const div = document.createElement('div');
+    div.id = 'availability-warning';
+    div.style.cssText = `
+        margin-top: 10px;
+        padding: 12px 15px;
+        background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+        border-left: 4px solid #ef4444;
+        border-radius: 8px;
+        color: #dc2626;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: slideDown 0.3s ease-out;
+    `;
+    return div;
+}
+
+// Show warning message
+function showAvailabilityWarning(time) {
+    let warningDiv = document.getElementById('availability-warning');
+
+    if (!warningDiv) {
+        warningDiv = createWarningDiv();
+        const dateGroup = document.querySelector('.form-grid-2');
+        if (dateGroup) dateGroup.appendChild(warningDiv);
+    }
+
+    // Determine if it's past or booked
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMin = now.getMinutes();
+    const [h, m] = time.split(':').map(Number);
+
+    // Simple logic: if today and slot time <= current time, it's "Sudah Lewat"
+    const dateInput = document.getElementById('date');
+    const isToday = dateInput.value === new Date().toISOString().split('T')[0];
+
+    if (isToday && (h < currentHour || (h === currentHour && m <= currentMin))) {
+        warningDiv.innerHTML = `
+            <span style="font-size: 1.2rem;">⏱️</span>
+            <span>Maaf, jam <strong>${time}</strong> untuk hari ini sudah terlewat.</span>
+        `;
+    } else {
+        warningDiv.innerHTML = `
+            <span style="font-size: 1.2rem;">⚠️</span>
+            <span>Maaf, jadwal <strong>${time}</strong> sudah direservasi. Silakan pilih jam lain.</span>
+        `;
+    }
+    warningDiv.style.display = 'flex';
+}
+
+// Hide warning message
+function hideAvailabilityWarning() {
+    const warningDiv = document.getElementById('availability-warning');
+    if (warningDiv) {
+        warningDiv.style.display = 'none';
+    }
+}
+
 function calculateTotal() {
     const typeSelect = document.getElementById('type');
     const addon1Select = document.getElementById('addon');
@@ -115,23 +274,18 @@ function showPaymentDetail() {
     const methodSelect = document.getElementById('payment');
     if (!methodSelect) return;
 
-    const method = methodSelect.value;
-    const details = {
-        'bca': document.getElementById('detail-bca'),
-        'qris': document.getElementById('detail-qris'),
-        'gopay': document.getElementById('detail-gopay'),
-        'shopeepay': document.getElementById('detail-shopeepay'),
-        'dana': document.getElementById('detail-dana')
-    };
+    const selectedId = methodSelect.value;
+    const allDetailDivs = document.querySelectorAll('.payment-info');
 
     // Hide all first
-    for (let key in details) {
-        if (details[key]) details[key].style.display = 'none';
-    }
+    allDetailDivs.forEach(div => {
+        div.style.display = 'none';
+    });
 
     // Show selected
-    if (details[method]) {
-        details[method].style.display = 'block';
+    const targetDiv = document.getElementById('detail-pm-' + selectedId);
+    if (targetDiv) {
+        targetDiv.style.display = 'block';
     }
 }
 
@@ -155,4 +309,41 @@ window.onload = function () {
 
     const payEl = document.getElementById('payment');
     if (payEl) payEl.addEventListener('change', showPaymentDetail);
+
+    // Add availability checking
+    const dateEl = document.getElementById('date');
+    if (dateEl) {
+        dateEl.addEventListener('change', checkAvailability);
+
+        // Also check on load if date is pre-selected
+        if (dateEl.value) {
+            checkAvailability();
+        }
+    }
+
+    const timeEl = document.getElementById('time');
+    if (timeEl) {
+        timeEl.addEventListener('change', checkTimeAvailability);
+    }
 };
+
+// Add CSS animation for warning
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    select option:disabled {
+        color: #ccc !important;
+        background: #f5f5f5 !important;
+    }
+`;
+document.head.appendChild(style);

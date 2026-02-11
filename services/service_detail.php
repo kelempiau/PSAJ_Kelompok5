@@ -1,47 +1,44 @@
 <?php
 require '../core/config.php';
 $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
-$type = isset($_GET['type']) ? $_GET['type'] : 'unknown';
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$type = isset($_GET['type']) ? $_GET['type'] : '';
 
-$services = [
-    'nailart' => [
-        'title' => 'Nail Art',
-        'price' => 'Mulai Rp 30.000',
-        'desc' => 'Kreasi seni pada kuku dengan berbagai desain yang dapat disesuaikan dengan keinginan anda. Kami menawarkan berbagai gaya mulai dari minimalis hingga rumit.',
-        'details' => ['Gel Polish', 'French Tips', 'Ombre', 'Marble'],
-        'img' => 'home/img/image-5.png'
-    ],
-    'extension' => [
-        'title' => 'Extension',
-        'price' => 'Mulai Rp 60.000',
-        'desc' => 'Ingin kuku panjang instan? Layanan extension kami menggunakan bahan berkualitas untuk hasil natural dan tahan lama.',
-        'details' => ['Acrylic Extension', 'Gel Extension', 'Polygel'],
-        'img' => 'home/img/rectangle-46.svg' 
-    ],
-    'nailart_kaki' => [
-        'title' => 'Nail Art Kaki',
-        'price' => 'Mulai Rp 35.000',
-        'desc' => 'Percantik jari kaki anda dengan perawatan pedicure dan nail art yang memukau.',
-        'details' => ['Pedicure', 'Gel Polish Kaki', 'Spa Kaki'],
-        'img' => 'home/img/rectangle-48.svg'
-    ],
-    'addons' => [
-        'title' => 'Add Ons',
-        'price' => 'Mulai Rp 2.000',
-        'desc' => 'Tambahkan ornamen cantik pada kuku anda.',
-        'details' => ['Diamond', 'Sticker', '3D Charm', 'Cat Eye Effect'],
-        'img' => 'home/img/rectangle-47.svg'
-    ]
-];
+$data = null;
+if ($id > 0) {
+    $stmt = $conn->prepare("SELECT * FROM services WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $data = $stmt->get_result()->fetch_assoc();
+} elseif (!empty($type)) {
+    // Legacy support for type names
+    $typeNameMap = [
+        'nailart' => 'Nail Art',
+        'extension' => 'Extension',
+        'nailart_kaki' => 'Nail Art Kaki',
+        'addons' => 'Add Ons'
+    ];
+    $searchName = isset($typeNameMap[$type]) ? $typeNameMap[$type] : $type;
+    $stmt = $conn->prepare("SELECT * FROM services WHERE name LIKE ?");
+    $searchParam = "%$searchName%";
+    $stmt->bind_param("s", $searchParam);
+    $stmt->execute();
+    $data = $stmt->get_result()->fetch_assoc();
+}
 
-$data = isset($services[$type]) ? $services[$type] : null;
+// Convert comma-separated details to array
+if ($data && !empty($data['details'])) {
+    $data['details_list'] = array_map('trim', explode(',', $data['details']));
+} else {
+    $data['details_list'] = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $data ? $data['title'] : 'Layanan' ?> - Ney Dream</title>
+    <title><?= $data ? htmlspecialchars($data['name']) : 'Layanan' ?> - Ney Dream</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -207,18 +204,18 @@ $data = isset($services[$type]) ? $services[$type] : null;
     <div class="container">
         <?php if ($data): ?>
             <div class="header">
-                <h1><?= $data['title'] ?></h1>
-                <div class="price"><?= $data['price'] ?></div>
+                <h1><?= htmlspecialchars($data['name']) ?></h1>
+                <div class="price">Mulai Rp <?= number_format($data['price_start'], 0, ',', '.') ?></div>
             </div>
             
             <div class="content">
-                <p class="description"><?= $data['desc'] ?></p>
+                <p class="description"><?= htmlspecialchars($data['description']) ?></p>
                 
                 <div class="features">
                     <h3>Yang Anda Dapatkan:</h3>
                     <ul>
-                        <?php foreach($data['details'] as $item): ?>
-                            <li><?= $item ?></li>
+                        <?php foreach($data['details_list'] as $item): ?>
+                            <li><?= htmlspecialchars($item) ?></li>
                         <?php endforeach; ?>
                     </ul>
                 </div>

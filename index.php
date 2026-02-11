@@ -3,6 +3,11 @@ require 'core/config.php';
 $isLoggedIn = isset($_SESSION['user_id']);
 $username = $isLoggedIn ? $_SESSION['username'] : '';
 $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+
+// Fetch Content from Database
+$servicesRes = $conn->query("SELECT * FROM services ORDER BY id ASC");
+$featuresRes = $conn->query("SELECT * FROM why_choose_us ORDER BY id ASC");
+$faqsRes = $conn->query("SELECT * FROM faq ORDER BY id ASC");
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -11,26 +16,44 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ney Dream Nail Art Studio</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Satisfy&display=swap" rel="stylesheet">
+    <!-- Loading Screen CSS & JS -->
+    <link rel="stylesheet" href="css/loading.css">
+    <script defer src="js/loading.js"></script>
     <style>
-        /* ANTIGRAVITY AD PROTECTION */
+        /* ADVANCED ANTI-AD PROTECTION (ANTIGRAVITY) */
         #sb98124, #sb98124_image, #sb98124_close, .tutup2,
-        div[id^="sb"][style*="display: block"], 
-        div[id^="sb"][style*="position: fixed"],
-        a[href*="infinityfree"] {
+        div[style*="position: fixed"][style*="z-index: 999999"],
+        div[style*="position: absolute"][style*="z-index: 99999"],
+        div[id^="sb"], div[class^="sb"],
+        a[href*="infinityfree"], a[href*="epizy"],
+        iframe[src*="ad"], iframe[id*="google_ads"],
+        .disclaimer, center a[title*="Free Web Hosting"] {
             display: none !important;
             opacity: 0 !important;
             pointer-events: none !important;
             visibility: hidden !important;
-            z-index: -99999 !important;
+            height: 0 !important;
+            width: 0 !important;
+            position: absolute !important;
+            left: -9999px !important;
         }
     </style>
     <script>
-        // Force remove injected ads
+        // Nuclear Anti-Ad Injection Cleanup
         (function(){
-            setInterval(function(){
-                var ads = document.querySelectorAll('#sb98124, #sb98124_image, .tutup2, div[id^="sb"][style*="fixed"]');
-                ads.forEach(function(el){ el.remove(); });
-            }, 500);
+            const cleanup = () => {
+                const selectors = [
+                    '#sb98124', '.tutup2', 'div[id^="sb"]', 
+                    'a[href*="infinityfree"]', 'center a[title*="Hosting"]',
+                    'iframe[src*="ad"]', 'div[style*="fixed"][style*="99999"]'
+                ];
+                selectors.forEach(s => {
+                    document.querySelectorAll(s).forEach(el => el.remove());
+                });
+            };
+            cleanup();
+            setInterval(cleanup, 1000);
+            window.addEventListener('load', cleanup);
         })();
     </script>
     <style>
@@ -444,6 +467,9 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             cursor: pointer;
             text-decoration: none;
             color: inherit;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .service-card:hover {
@@ -460,6 +486,9 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
         .service-card-content {
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
         }
 
         .service-card h3 {
@@ -473,12 +502,14 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             font-size: 0.9rem;
             margin-bottom: 15px;
             line-height: 1.6;
+            flex-grow: 1; /* Ensure text takes up available space, but price stays at bottom */
         }
 
         .service-card .price {
             font-weight: 700;
             color: #333;
             font-size: 1.1rem;
+            margin-top: auto;
         }
 
         /* Gallery */
@@ -652,24 +683,38 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     </style>
 </head>
 <body>
+    <?php include 'includes/loading.php'; ?>
     <!-- Navigation -->
     <nav>
         <!-- Left: Logo + User Greeting -->
         <div class="nav-left" style="display: flex; align-items: center;">
             <img src="assets/img/588237789-17951033973048360-6209016104075046821-n-removebg-preview-1.png" alt="Logo" class="logo" onerror="this.style.display='none'">
-            <?php if ($isLoggedIn): ?>
-                <div class="user-profile-pill">
-                    <div class="user-avatar"><?= strtoupper(substr($username, 0, 1)) ?></div>
-                    <div class="user-info-text">
+            <?php if ($isLoggedIn): 
+                $uData = ['profile_pic' => null];
+                $colCheck = $conn->query("SHOW COLUMNS FROM users LIKE 'profile_pic'");
+                if ($colCheck && $colCheck->num_rows > 0) {
+                    $q = $conn->query("SELECT profile_pic FROM users WHERE id = ".$_SESSION['user_id']);
+                    if ($q) $uData = $q->fetch_assoc();
+                }
+            ?>
+                <div class="user-profile-pill" style="padding: 4px 12px; height: 36px; gap: 8px;">
+                    <div class="user-avatar" style="width: 28px; height: 28px; font-size: 12px; overflow: hidden;">
+                        <?php if(!empty($uData['profile_pic'])): ?>
+                            <img src="<?= $uData['profile_pic'] ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                        <?php else: ?>
+                            <?= strtoupper(substr($username, 0, 1)) ?>
+                        <?php endif; ?>
+                    </div>
+                    <div class="user-info-text" style="font-size: 13px;">
                         Hi, <strong><?= htmlspecialchars($username) ?></strong>!
                     </div>
                 </div>
-                <a href="user/settings.php" class="btn-settings" title="Pengaturan Akun">⚙️</a>
+                <a href="user/settings.php" class="btn-settings" title="Pengaturan Akun" style="text-decoration: none; margin-left: 5px;">⚙️</a>
             <?php endif; ?>
         </div>
         
         <!-- Hamburger Menu Button -->
-        <div class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
+        <div class="hamburger" id="hamburger">
             <span></span>
             <span></span>
             <span></span>
@@ -732,53 +777,123 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home" style="position: relative; overflow: hidden; height: 100vh; display: flex; align-items: center; padding: 0;">
+    <!-- Final Harmonious Hero Section v2 (Ney Dream) -->
+    <section class="hero" id="home" style="min-height: 95vh; background: linear-gradient(to bottom, #ffc0cb 0%, #ffffff 50%, #ffc0cb 100%); position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 0;">
         
-        <!-- Background Decor -->
-        <div style="position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: #fdfbfd; z-index: 0;"></div>
-        <div style="position: absolute; top: 0; right: 0; width: 50%; height: 100%; background: linear-gradient(135deg, #ffd9e2 0%, #ffe6f0 100%); z-index: 0;"></div>
-        
-        <!-- Hero Content Wrapper -->
-        <div style="max-width: 1300px; margin: 0 auto; width: 100%; height: 100%; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1;">
+        <!-- Decorative Ambient Shapes -->
+        <div style="position: absolute; top: 10%; left: 5%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(234, 54, 113, 0.08) 0%, transparent 70%); z-index: 0;"></div>
+        <div style="position: absolute; bottom: 5%; right: 5%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(255, 133, 161, 0.1) 0%, transparent 70%); z-index: 0;"></div>
+
+        <div style="max-width: 1300px; width: 100%; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 10; padding: 0 5%;">
             
-            <!-- Left Text -->
-            <div class="hero-content" style="flex: 1; padding: 0 5%; z-index: 2;">
-                <h2 style="font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 4rem; line-height: 1.1; color: #333; letter-spacing: -2px; text-transform: uppercase; margin-bottom: 10px;">
-                    <span style="color: #999; font-size: 3rem; display: block; font-weight: 600;">Let your</span>
-                    <span style="color: #ea3671; font-size: 5rem; display: block;">Soul Glow</span>
-                </h2>
-                <p style="font-family: 'Satisfy', cursive; font-size: 1.5rem; color: #555; margin-bottom: 40px; transform: rotate(-3deg);">
-                    Leave the shine of your hands to us...
+            <!-- Hero Left: Elegant Content -->
+            <div class="hero-content" style="flex: 1; padding-right: 50px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px;">
+                    <div style="width: 40px; height: 1px; background: #ea3671;"></div>
+                    <span style="text-transform: uppercase; letter-spacing: 5px; font-size: 0.85rem; color: #ea3671; font-weight: 700;">Exclusive Nail Art Studio</span>
+                </div>
+                
+                <h1 style="font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; color: #333; line-height: 1.1; margin-bottom: 25px; letter-spacing: -1px;">
+                    Kembalikan <span style="color: #ea3671;">Kilau</span> <br>
+                    Alami Jari Anda
+                </h1>
+
+                <p style="font-size: 1.1rem; line-height: 1.6; color: #666; margin-bottom: 45px; max-width: 500px;">
+                    Wujudkan tampilan kuku yang elegan dan profesional bersama kami. <br>
+                    <span style="font-family: 'Satisfy', cursive; color: #ea3671; font-size: 1.8rem;">Sentuhan seni untuk setiap momen spesial Anda.</span>
                 </p>
-                <a href="<?php 
-                    if (!$isLoggedIn) echo 'auth/login.php';
-                    elseif ($isAdmin) echo 'admin/dashboard.php';
-                    else echo 'user/reservasi.php';
-                ?>" class="btn btn-primary" style="padding: 15px 50px; font-size: 1.2rem; border-radius: 50px; box-shadow: 0 10px 25px rgba(234, 54, 113, 0.4);">
-                    Book Now
-                </a>
+
+                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                    <a href="<?= $isLoggedIn ? ($isAdmin ? 'admin/dashboard.php' : 'user/reservasi.php') : 'auth/login.php' ?>" 
+                       class="btn btn-primary" 
+                       style="padding: 18px 45px; font-size: 1.05rem; border-radius: 50px; background: #ea3671; color: #fff; box-shadow: 0 10px 30px rgba(234, 54, 113, 0.2); transition: all 0.3s ease; text-decoration: none;">
+                        Mulai Reservasi
+                    </a>
+                </div>
+
+                <!-- Final Elegant Tagline (No Reviews) -->
+                <div style="margin-top: 50px; display: flex; align-items: center; gap: 15px;">
+                    <span style="font-size: 1.3rem; color: #ea3671; font-weight: 600; font-family: 'Satisfy', cursive;">Kecantikan Sejati Dimulai dari Sini...</span>
+                </div>
             </div>
 
-            <!-- Right Image -->
-            <div class="hero-images" style="flex: 1; height: 100%; position: relative; display: flex; align-items: flex-end; justify-content: center;">
-                <!-- Main Featured Image (Composition of existing images) -->
-                <div style="position: relative; width: 80%; height: 85%; background: url('assets/img/img1.jpg') no-repeat center center/cover; border-radius: 200px 200px 0 0; box-shadow: -20px 20px 50px rgba(0,0,0,0.1);">
-                    <!-- Floating Accent Image -->
-                    <div style="position: absolute; bottom: 50px; left: -80px; width: 220px; height: 280px; background: url('assets/img/img3.jpg') no-repeat center center/cover; border: 10px solid white; border-radius: 20px; transform: rotate(-10deg); box-shadow: 0 15px 40px rgba(0,0,0,0.15);"></div>
+            <!-- Hero Right: Harmonious Visuals (Hidden on Mobile) -->
+            <div class="hero-visual" style="flex: 1; position: relative; height: 600px; display: flex; align-items: center; justify-content: center;">
+                <div style="position: relative; width: 100%; height: 100%;">
                     
-                    <!-- Decorative Circle -->
-                    <div style="position: absolute; top: 50px; right: -30px; width: 100px; height: 100px; background: #ea3671; border-radius: 50%; opacity: 0.1;"></div>
+                    <!-- Main Image (Local Asset) -->
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-40%, -50%); width: 70%; height: 75%; overflow: hidden; border-radius: 180px 180px 40px 40px; border: 12px solid #fff; box-shadow: 0 30px 60px rgba(0,0,0,0.12); z-index: 2;">
+                        <img src="assets/img/img8.jpeg" 
+                             style="width: 100%; height: 100%; object-fit: cover;" alt="Luxury Nail Polish">
+                    </div>
+
+                    <!-- Secondary Image (Local Asset) -->
+                    <div style="position: absolute; bottom: 8%; left: -8%; width: 240px; height: 300px; overflow: hidden; border-radius: 30px; border: 10px solid #fff; box-shadow: 0 20px 45px rgba(0,0,0,0.15); z-index: 3; transform: rotate(-12deg);">
+                        <img src="assets/img/img10.jpeg" 
+                             style="width: 100%; height: 100%; object-fit: cover;" alt="Premium Nail Art">
+                    </div>
+
+                    <!-- Decorative Floating Elements -->
+                    <div class="float-slow" style="position: absolute; top: 10%; right: 5%; width: 120px; height: 120px; background: rgba(234, 54, 113, 0.12); border-radius: 50%; backdrop-filter: blur(8px); z-index: 1;"></div>
+                    <div class="float-fast" style="position: absolute; bottom: 35%; right: 15%; color: #ea3671; font-size: 3rem; z-index: 4;">✨</div>
+                    
+                    <!-- Expertise Tag -->
+                    <div style="position: absolute; top: 20%; right: -25px; background: #fff; padding: 18px 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(234,54,113,0.1); z-index: 5; border: 1px solid rgba(255,133,161,0.2); text-align: center;">
+                        <div style="font-weight: 800; color: #ea3671; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px;">Dikerjakan oleh</div>
+                        <div style="font-size: 1.2rem; color: #333; font-weight: 700;">Ahlinya</div>
+                    </div>
                 </div>
             </div>
 
         </div>
 
-        <!-- Floating Decorations -->
-        <div class="sparkle" style="top: 15%; left: 45%; font-size: 2rem;">✨</div>
-        <div class="sparkle" style="bottom: 10%; right: 5%; font-size: 2.5rem;">✨</div>
-        <div class="deco-shape spin-slow" style="bottom: -100px; left: -50px; width: 300px; height: 300px; border: 40px solid #f0f0f0; border-radius: 50%;"></div>
+        <!-- Scroll Indicator -->
+        <div style="position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0.6;">
+            <div style="width: 1px; height: 50px; background: #ea3671;"></div>
+            <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 4px; color: #ea3671;">Explore</span>
+        </div>
     </section>
+
+    <style>
+        @media (max-width: 991px) {
+            .hero {
+                min-height: auto;
+                padding: 130px 24px 100px;
+                background: linear-gradient(to bottom, #ffc0cb 0%, #ffffff 50%, #ffc0cb 100%) !important;
+            }
+            .hero > div:first-of-type {
+                flex-direction: column;
+                text-align: center;
+                justify-content: center;
+            }
+            .hero-content {
+                padding-right: 0 !important;
+                margin-bottom: 0;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .hero-content h1 {
+                font-size: clamp(2.5rem, 8vw, 3.5rem) !important;
+                margin-bottom: 20px !important;
+            }
+            .hero-content p {
+                margin: 0 auto 40px !important;
+            }
+            .hero-visual {
+                display: none !important;
+            }
+            .hero-content .btn {
+                width: 100%;
+                max-width: 320px;
+            }
+            .hero-content div[style*="margin-top: 50px"] {
+                margin-top: 45px !important;
+                justify-content: center;
+            }
+        }
+    </style>
 
     <!-- Services Section -->
     <section id="layanan" style="position: relative; overflow: hidden; background: linear-gradient(180deg, #ffd9e2 0%, #fff 100%);">
@@ -801,41 +916,20 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         </div>
 
         <div class="services-grid" style="position: relative; z-index: 1;">
-            <a href="services/service_detail.php?type=nailart" class="service-card">
-                <img src="assets/img/img4.png" alt="Nail Art" onerror="this.src='https://via.placeholder.com/250x200/ea3671/ffffff?text=Nail+Art'">
-                <div class="service-card-content">
-                    <h3>Nail Art</h3>
-                    <p>Kreasi seni pada kuku dengan berbagai desain yang dapat disesuaikan dengan keinginan anda.</p>
-                    <div class="price">Mulai Rp 30.000</div>
-                </div>
-            </a>
-
-            <a href="services/service_detail.php?type=extension" class="service-card">
-                <img src="assets/img/img5.png" alt="Extension" onerror="this.src='https://via.placeholder.com/250x200/ffd9e2/333333?text=Extension'">
-                <div class="service-card-content">
-                    <h3>Extension</h3>
-                    <p>Memberikan tambahan detail dan desain pada NailArt anda agar terlihat lebih menarik lagi.</p>
-                    <div class="price">Mulai Rp 60.000</div>
-                </div>
-            </a>
-
-            <a href="services/service_detail.php?type=nailart_kaki" class="service-card">
-                <img src="assets/img/img6.png" alt="Nail Art Kaki" onerror="this.src='https://via.placeholder.com/250x200/ea3671/ffffff?text=Pedicure'">
-                <div class="service-card-content">
-                    <h3>Nail Art Kaki</h3>
-                    <p>Kreasi seni pada kuku kaki dengan berbagai desain yang dapat disesuaikan dengan keinginan anda.</p>
-                    <div class="price">Mulai Rp 35.000</div>
-                </div>
-            </a>
-
-            <a href="services/service_detail.php?type=addons" class="service-card">
-                <img src="assets/img/img7.png" alt="Add Ons" onerror="this.src='https://via.placeholder.com/250x200/ffd9e2/333333?text=Add+Ons'">
-                <div class="service-card-content">
-                    <h3>Add Ons</h3>
-                    <p>Memberi tambahan pada NailArt sesuai keinginan anda dengan tambahan biaya yang tersedia.</p>
-                    <div class="price">Mulai Rp 2.000</div>
-                </div>
-            </a>
+            <?php if($servicesRes && $servicesRes->num_rows > 0): ?>
+                <?php while($s = $servicesRes->fetch_assoc()): ?>
+                <a href="services/service_detail.php?id=<?= $s['id'] ?>" class="service-card">
+                    <img src="<?= $s['image_path'] ?>" alt="<?= htmlspecialchars($s['name']) ?>" onerror="this.src='https://via.placeholder.com/250x200/ea3671/ffffff?text=Service'">
+                    <div class="service-card-content">
+                        <h3><?= htmlspecialchars($s['name']) ?></h3>
+                        <p><?= htmlspecialchars($s['description']) ?></p>
+                        <div class="price">Mulai Rp <?= number_format($s['price_start'], 0, ',', '.') ?></div>
+                    </div>
+                </a>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <p style="text-align:center; grid-column: 1/-1; color: #666;">Layanan akan segera hadir!</p>
+            <?php endif; ?>
         </div>
     </section>
 
@@ -846,8 +940,10 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
             <div class="underline"></div>
         </div>
         
-        <div style="max-width: 1200px; margin: 0 auto; border-radius: 30px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: 8px solid white;">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d247.30260000595965!2d109.2379401682376!3d-7.371644493750555!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e655f75cf4500dd%3A0x11758038b45defc1!2sJ6HQ%2B858%2C%20Dusun%20I%2C%20Rempoah%2C%20Kec.%20Baturaden%2C%20Kabupaten%20Banyumas%2C%20Jawa%20Tengah%2053126!5e0!3m2!1sen!2sid!4v1770178730917!5m2!1sen!2sid" width="100%" height="450" style="border:0; display: block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <div style="max-width: 1200px; margin: 0 auto; border-radius: 30px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: 8px solid white; background: #f0f0f0; position: relative; padding-bottom: 56.25%; height: 0;">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1183.1!2d109.2372!3d-7.3716!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e655f75cf4500dd%3A0x11758038b45defc1!2sNeydream%20Studio!5e0!3m2!1sen!2sid!4v1711234567890!5m2!1sen!2sid" 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" 
+                    allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
     </section>
 
@@ -894,51 +990,23 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         </div>
 
         <div style="max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px;">
-            
-            <!-- Card 1: Premium Quality -->
-            <div class="feature-card-wide" style="position: relative;">
-                <div style="position: absolute; top: -30px; left: -30px; font-size: 4rem; z-index: 1;">✨</div>
-                <h3>Premium Quality</h3>
-                <p>" Kami hanya menggunakan gel polish pilihan dengan kualitas terbaik yang telah teruji aman untuk kuku asli. Formulanya dirancang agar warna tahan lama, berkilau sempurna, dan tetap menjaga kekuatan serta kesehatan kuku Anda tanpa membuat kuku rapuh atau rusak. "</p>
-                <!-- Dots decoration -->
-                <div style="position: absolute; bottom: -10px; left: 20px; display: flex; gap: 5px;">
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
+            <?php if($featuresRes && $featuresRes->num_rows > 0): ?>
+                <?php $i = 0; while($f = $featuresRes->fetch_assoc()): $i++; ?>
+                <div class="feature-card-wide" style="position: relative;">
+                    <div style="position: absolute; <?= $i % 2 === 0 ? 'top: -20px; right: -30px;' : 'top: -30px; left: -30px;' ?> font-size: 4rem; z-index: 1; transform: <?= $i % 2 === 0 ? 'rotate(15deg)' : '' ?>;"><?= $f['icon'] ?></div>
+                    <h3><?= htmlspecialchars($f['title']) ?></h3>
+                    <p>" <?= htmlspecialchars($f['description']) ?> "</p>
+                    
+                    <!-- Dots decoration -->
+                    <div style="position: absolute; <?= $i % 2 === 0 ? 'top: -15px; right: 80px;' : 'bottom: -10px; left: 20px;' ?> display: <?= $i % 2 === 0 ? 'grid' : 'flex' ?>; grid-template-columns: repeat(2, 1fr); gap: 5px;">
+                        <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
+                        <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
+                        <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
+                        <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Card 2: Custom Art -->
-            <div class="feature-card-wide" style="position: relative;">
-                <div style="position: absolute; top: -20px; right: -30px; font-size: 4rem; z-index: 1; transform: rotate(15deg);">🎨</div>
-                <h3>Custom Art</h3>
-                <p>" Setiap kuku adalah kanvas seni. Anda bebas membawa referensi, ide, atau desain impian apa pun, dan nail artist profesional kami akan menerjemahkannya dengan presisi dan detail tinggi. Dari gaya minimalis hingga nail art kompleks, setiap sentuhan dibuat eksklusif sesuai karakter dan keinginan Anda. "</p>
-                <!-- Dots decoration -->
-                <div style="position: absolute; top: -15px; right: 80px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px;">
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                </div>
-            </div>
-
-            <!-- Card 3: Hygienic Tools -->
-            <div class="feature-card-wide" style="position: relative;">
-                <div style="position: absolute; top: 50%; left: -40px; transform: translateY(-50%); font-size: 4rem; z-index: 1;">🛡️</div>
-                <h3>Hygienic Tools</h3>
-                <p>" Kebersihan dan keamanan adalah prioritas utama kami. Seluruh alat yang digunakan melalui proses sterilisasi menyeluruh sebelum dan sesudah pemakaian. Kami memastikan setiap perawatan dilakukan dengan standar kebersihan tinggi agar Anda merasa nyaman, aman, dan bebas khawatir selama treatment. "</p>
-                <!-- Dots decoration -->
-                <div style="position: absolute; top: 20px; right: -20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: #ea3671; border-radius: 50%;"></div>
-                </div>
-            </div>
-
+                <?php endwhile; ?>
+            <?php endif; ?>
         </div>
         
         <style>
@@ -981,60 +1049,21 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         </div>
 
         <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; position: relative; z-index: 1;">
-            <!-- FAQ Item 1 -->
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>Apakah harus bayar DP untuk booking?</span>
-                    <span class="faq-icon">+</span>
+            <?php if($faqsRes && $faqsRes->num_rows > 0): ?>
+                <?php while($f = $faqsRes->fetch_assoc()): ?>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span><?= htmlspecialchars($f['question']) ?></span>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p><?= htmlspecialchars($f['answer']) ?></p>
+                    </div>
                 </div>
-                <div class="faq-answer">
-                    <p>Ya, Kak. Kami memerlukan DP sebesar <strong>Rp20.000</strong> untuk mengunci slot Kakak agar tidak diambil orang lain. Sisa pembayaran dilakukan di studio setelah pengerjaan selesai.</p>
-                </div>
-            </div>
-
-            <!-- FAQ Item 2 -->
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>Di mana lokasi tepatnya Neydream Studio?</span>
-                    <span class="faq-icon">+</span>
-                </div>
-                <div class="faq-answer">
-                    <p>Neydream Studio berada di pusat kota, Kak! Aksesnya sangat mudah. Untuk Maps detail silakan hubungi Admin via WhatsApp atau cek link di bio Instagram kami.</p>
-                </div>
-            </div>
-
-            <!-- FAQ Item 3 -->
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>Berapa lama daya tahan Nail Art di Neydream?</span>
-                    <span class="faq-icon">+</span>
-                </div>
-                <div class="faq-answer">
-                    <p>Kuku dari Neydream dijamin awet! Biasanya bertahan <strong>3 hingga 4 minggu</strong> tergantung pada aktivitas dan perawatan Kakak di rumah.</p>
-                </div>
-            </div>
-
-            <!-- FAQ Item 4 -->
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>Apakah bisa membawa referensi desain sendiri?</span>
-                    <span class="faq-icon">+</span>
-                </div>
-                <div class="faq-answer">
-                    <p>Bisa banget! Kakak boleh bawa foto referensi dari Pinterest atau Instagram, nanti terapis profesional kami akan membuatkan semirip mungkin sesuai request Kakak.</p>
-                </div>
-            </div>
-
-            <!-- FAQ Item 5 -->
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>Kenapa namanya ganti menjadi Neydream?</span>
-                    <span class="faq-icon">+</span>
-                </div>
-                <div class="faq-answer">
-                    <p>Neydream Studio sebelumnya dikenal sebagai <strong>Glamour Nails</strong>. Kami melakukan rebranding agar tampil lebih fresh dan modern, namun kualitas dan layanan kami tetap yang nomor satu!</p>
-                </div>
-            </div>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <p style="text-align:center; color: #666;">Belum ada pertanyaan yang diajukan.</p>
+            <?php endif; ?>
         </div>
 
         <style>
@@ -1153,8 +1182,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     </section>
 
 
-    <!-- Chatbot Integration -->
-    <script src="assets/js/smart_chatbot.js"></script>
+    <!-- Heartbeat Integration -->
     
     <script>
     async function customerHeartbeat() {
@@ -1255,62 +1283,239 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         });
     </script>
     
+    <!-- --- FLOATING CHAT POPUP (NEW) --- -->
+    <?php if ($isLoggedIn && !$isAdmin): ?>
     <style>
-        /* Chat Widget Styles Removed */
-
-        .chat-icon-bubble {
+        .floating-chat-bubble {
             position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 55px;
-            height: 55px;
-            background: #ff85a1;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ea3671, #be123c);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 133, 161, 0.4);
-            z-index: 99999; /* ABOVE EVERYTHING */
-            transition: all 0.3s;
-            pointer-events: auto !important;
+            box-shadow: 0 10px 30px rgba(234, 54, 113, 0.4);
+            z-index: 99999;
+            transition: 0.3s;
         }
+        .floating-chat-bubble:hover { transform: scale(1.1) rotate(-5deg); }
+        .floating-chat-bubble img { width: 30px; height: 30px; filter: brightness(0) invert(1); }
 
-        .chat-icon-bubble:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(234, 54, 113, 0.5);
+        .chat-popup-container {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 380px;
+            height: 550px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+            z-index: 99999;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            animation: popupSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        @keyframes popupSlideIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        /* Popup Header */
+        .cp-header {
+            padding: 15px 20px;
+            background: white;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .cp-user { display: flex; align-items: center; gap: 12px; }
+        .cp-avatar { 
+            width: 32px; height: 32px; border-radius: 50%; 
+            background: #ea3671; display: flex; align-items: center; justify-content: center;
+            overflow: hidden; color: white; font-size: 14px;
+        }
+        .cp-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .cp-info h4 { margin: 0; font-size: 14px; font-weight: 700; color: #1e293b; }
+        .cp-info p { margin: 0; font-size: 11px; color: #10b981; font-weight: 600; }
+        .cp-close { cursor: pointer; color: #64748b; font-size: 20px; transition: 0.2s; }
+        .cp-close:hover { color: #ef4444; }
 
-        .chat-icon-bubble img {
-            width: 28px;
-            height: 28px;
-            filter: brightness(0) invert(1);
+        /* Popup Body */
+        .cp-body {
+            flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+            background: rgba(255, 241, 242, 0.3);
+            scrollbar-width: thin;
         }
+        .cp-msg { max-width: 80%; padding: 10px 15px; border-radius: 18px; font-size: 13px; line-height: 1.5; }
+        .cp-msg.admin { background: white; align-self: flex-start; border-radius: 18px 18px 18px 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .cp-msg.user { background: #ea3671; color: white; align-self: flex-end; border-radius: 18px 18px 4px 18px; box-shadow: 0 4px 10px rgba(234, 54, 113, 0.2); }
+
+        /* Popup Footer */
+        .cp-footer { padding: 12px 15px; background: white; border-top: 1px solid #f1f5f9; display: flex; gap: 10px; align-items: center; }
+        .cp-input { flex: 1; border: none; background: #f8fafc; padding: 10px 15px; border-radius: 12px; font-size: 13px; outline: none; }
+        .cp-send { width: 40px; height: 40px; background: #ea3671; border: none; border-radius: 10px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .cp-send:hover { transform: scale(1.05); background: #be123c; }
 
         @media (max-width: 480px) {
-            .chat-container {
-                width: calc(100% - 20px);
-                right: 10px;
-                height: 500px;
-            }
-
-            .chat-icon-bubble {
-                width: 55px;
-                height: 55px;
-                right: 20px;
-                bottom: 20px;
-            }
-
-            .chat-icon-bubble img {
-                width: 28px;
-                height: 28px;
+            .chat-popup-container {
+                width: 100%; height: 100%; bottom: 0; right: 0; border-radius: 0;
             }
         }
     </style>
-    <!-- Chat Page Link (No Popup) -->
-    <a href="user/help.php" class="chat-icon-bubble" id="chatIcon" title="Bantuan & Chat" style="z-index: 999999 !important; pointer-events: auto !important; text-decoration: none;">
-        <img src="https://cdn-icons-png.flaticon.com/512/5968/5968841.png" alt="Chat" style="pointer-events: none;">
-    </a>
+
+    <div class="floating-chat-bubble" id="chatBubble" onclick="toggleChatPopup()">
+        <img src="https://cdn-icons-png.flaticon.com/512/5968/5968841.png" alt="Chat">
+    </div>
+
+    <div class="chat-popup-container" id="chatPopup">
+        <div class="cp-header">
+            <div class="cp-user">
+                <div class="cp-avatar" id="cpAdminAvatar">
+                    <?php 
+                    $adminPic = null;
+                    $stCheck = $conn->query("SHOW COLUMNS FROM studio_settings LIKE 'admin_profile_pic'");
+                    if ($stCheck && $stCheck->num_rows > 0) {
+                        $stRes = $conn->query("SELECT admin_profile_pic FROM studio_settings WHERE id = 1");
+                        if ($stRes) {
+                            $stData = $stRes->fetch_assoc();
+                            $adminPic = $stData['admin_profile_pic'] ?? null;
+                        }
+                    }
+                    if($adminPic): ?>
+                        <img src="<?= $adminPic ?>">
+                    <?php else: ?>
+                        👩‍💼
+                    <?php endif; ?>
+                </div>
+                <div class="cp-info">
+                    <h4>Neydream Assistant</h4>
+                    <p>● Online</p>
+                </div>
+            </div>
+            <div class="cp-close" onclick="toggleChatPopup()">&times;</div>
+        </div>
+        <div class="cp-body" id="cpBody">
+            <div class="cp-msg admin">
+                Halo Kak <b><?= htmlspecialchars($username) ?></b>! ✨ Mau tanya-tanya soal nail art atau booking? Aku siap bantu ya!
+            </div>
+        </div>
+        <div class="cp-footer">
+            <input type="text" class="cp-input" id="cpInput" placeholder="Tulis pesan..." onkeypress="if(event.key==='Enter') sendPopupMsg()">
+            <button class="cp-send" onclick="sendPopupMsg()">➤</button>
+        </div>
+    </div>
+
+    <script>
+        let currentConvId = null;
+        let isPopupOpen = false;
+
+        function toggleChatPopup() {
+            const popup = document.getElementById('chatPopup');
+            isPopupOpen = !isPopupOpen;
+            popup.style.display = isPopupOpen ? 'flex' : 'none';
+            if (isPopupOpen) loadPopupHistory();
+        }
+
+        async function loadPopupHistory() {
+            try {
+                // Use get_status.php as in help.php
+                const statusRes = await fetch('api/chat/get_status.php');
+                const statusData = await statusRes.json();
+                
+                if (statusData.success && statusData.conversation_id) {
+                    currentConvId = statusData.conversation_id;
+                    const msgRes = await fetch(`api/chat/messages.php?conversation_id=${currentConvId}`);
+                    const msgData = await msgRes.json();
+                    if (msgData.success) {
+                        const body = document.getElementById('cpBody');
+                        body.innerHTML = '';
+                        // Initial Welcome
+                        const welcome = document.createElement('div');
+                        welcome.className = 'cp-msg admin';
+                        welcome.innerHTML = 'Halo Kak <b><?= htmlspecialchars($username) ?></b>! ✨ Mau tanya-tanya?';
+                        body.appendChild(welcome);
+
+                        msgData.messages.forEach(m => {
+                            const div = document.createElement('div');
+                            div.className = `cp-msg ${m.sender_type === 'customer' ? 'user' : 'admin'}`;
+                            div.innerHTML = m.message;
+                            body.appendChild(div);
+                        });
+                        body.scrollTop = body.scrollHeight;
+                    }
+                }
+            } catch (e) {}
+        }
+
+
+        async function sendPopupMsg() {
+            const input = document.getElementById('cpInput');
+            const text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+
+            const body = document.getElementById('cpBody');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'cp-msg user';
+            userMsg.innerText = text;
+            body.appendChild(userMsg);
+            body.scrollTop = body.scrollHeight;
+
+            const formData = new FormData();
+            formData.append('message', text);
+            if (currentConvId) formData.append('conversation_id', currentConvId);
+
+            try {
+                const res = await fetch('api/chat/send.php', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success && !currentConvId) currentConvId = data.conversation_id;
+
+                // Simple AI logic (Nova)
+                const typing = document.createElement('div');
+                typing.className = 'cp-msg admin font-style: italic;';
+                typing.innerText = 'Nova sedang mengetik...';
+                body.appendChild(typing);
+                body.scrollTop = body.scrollHeight;
+
+                // Actual Gemini Logic
+                await callNovaAI(text);
+                body.removeChild(typing);
+                loadPopupHistory();
+            } catch (e) {}
+        }
+
+        async function callNovaAI(userText) {
+            const API_KEYS = ["AIzaSyAt7tLr6mD89qTeINcOgySAlnd64-0all8", "AIzaSyD2KpEf1t9u61xq_LftAJZuyCOT5Fk8hTo"];
+            const key = API_KEYS[Math.floor(Math.random() * API_KEYS.length)];
+            const prompt = `Kamu adalah Nova dari Neydream Studio. Singkat & ramah. User tanya: ${userText}`;
+            
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${key}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                const data = await res.json();
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    const reply = data.candidates[0].content.parts[0].text;
+                    const fm = new FormData();
+                    fm.append('message', reply);
+                    fm.append('conversation_id', currentConvId);
+                    fm.append('sender_type', 'bot');
+                    await fetch('api/chat/send.php', { method: 'POST', body: fm });
+                }
+            } catch (e) {}
+        }
+    </script>
+    <?php endif; ?>
 
     <!-- Logout Confirmation Modal -->
     <div id="logoutModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000000; align-items: center; justify-content: center;">

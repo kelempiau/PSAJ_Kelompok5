@@ -28,6 +28,12 @@ if (!$reservation || $reservation['balance_due'] <= 0) {
     exit();
 }
 
+$p_methods = $conn->query("SELECT * FROM payment_methods WHERE is_active = 1");
+$method_details = [];
+while($pm = $p_methods->fetch_assoc()) {
+    $method_details[] = $pm;
+}
+
 $message = "";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $payment_method = $_POST['Metode_Pembayaran'];
@@ -69,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Lunasi Sisa Pembayaran - Neydream</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/reservasi.css">
+    <?php include 'includes/loading_styles.php'; ?>
     <style>
         /* ANTIGRAVITY AD PROTECTION */
         #sb98124, #sb98124_image, #sb98124_close, .tutup2,
@@ -125,6 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </style>
 </head>
 <body style="background-color: #fff1f2; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; font-family: 'Outfit', sans-serif;">
+    <?php include '../includes/loading.php'; ?>
     <div class="lunasi-card" style="background: white; padding: 50px; border-radius: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.1); max-width: 500px; width: 90%;">
         <div style="text-align: center; margin-bottom: 30px;">
             <div style="font-size: 3rem; margin-bottom: 15px;">💳</div>
@@ -142,31 +150,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label style="display: block; font-weight: 600; color: #ea3671; margin-bottom: 10px; font-size: 0.9rem;">Pilih Metode Pembayaran</label>
                 <select name="Metode_Pembayaran" onchange="showPaymentDetail(this.value)" required style="width: 100%; padding: 15px; border-radius: 15px; border: 1px solid #ffe4e6; background: #fffafb; font-family: inherit; font-size: 1rem; color: #ea3671;">
                     <option value="" disabled selected>Pilih metode</option>
-                    <option value="bca">Transfer BCA</option>
-                    <option value="qris">QRIS (GoPay/OVO/Dana)</option>
-                    <option value="gopay">GoPay</option>
-                    <option value="shopeepay">ShopeePay</option>
-                    <option value="dana">Dana</option>
+                    <?php foreach($method_details as $pm): ?>
+                        <option value="<?= $pm['id'] ?>"><?= htmlspecialchars($pm['method_name']) ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
 
             <!-- Payment Details (Appears only if selected) -->
-            <div id="detail-bca" class="payment-info" style="display: none; padding: 20px; background: #fffafb; border-radius: 20px; margin-bottom: 25px; text-align: center; border: 1px solid #ffe4e6;">
-                <p style="font-size: 0.85rem; color: #ea3671; margin-bottom: 5px; opacity: 0.7;">Transfer ke Rekening:</p>
-                <strong style="color: #ea3671; font-size: 1.1rem;">BCA: 123-456-7890</strong><br>
-                <span style="font-size: 0.9rem; color: #666;">a/n Glamour Nails Studio</span>
-            </div>
-
-            <div id="detail-qris" class="payment-info" style="display: none; text-align: center; margin-bottom: 25px; background: #fffafb; padding: 20px; border-radius: 20px; border: 1px solid #ffe4e6;">
-                <p style="font-size: 0.9rem; color: #ea3671; font-weight: 600; margin-bottom: 15px;">Scan QRIS di Bawah Ini:</p>
-                <img src="../assets/img/qris.jpeg" alt="QRIS" class="qris-img" style="display: block; margin: 0 auto; width: 220px; border-radius: 12px; box-shadow: 0 10px 25px rgba(234, 54, 113, 0.15);" onerror="this.src='https://via.placeholder.com/200?text=QRIS+General'">
-            </div>
-
-            <div id="detail-wallet" class="payment-info" style="display: none; padding: 20px; background: #fffafb; border-radius: 20px; margin-bottom: 25px; text-align: center; border: 1px solid #ffe4e6;">
-                <p style="font-size: 0.85rem; color: #ea3671; margin-bottom: 5px; opacity: 0.7;">Nomor Tujuan Transfer:</p>
-                <strong style="color: #ea3671; font-size: 1.2rem;">0812-0389-443</strong><br>
-                <span style="font-size: 0.9rem; color: #666;">a/n Jazin volney</span>
-            </div>
+            <?php foreach($method_details as $pm): ?>
+                <div id="detail-pm-<?= $pm['id'] ?>" class="payment-info" style="display: none; padding: 20px; background: #fffafb; border-radius: 20px; margin-bottom: 25px; text-align: center; border: 1px solid #ffe4e6;">
+                    <?php if($pm['type'] === 'qris'): ?>
+                        <p style="font-size: 0.9rem; color: #ea3671; font-weight: 600; margin-bottom: 15px;">Scan QRIS di Bawah Ini:</p>
+                        <img src="../<?= htmlspecialchars($pm['qr_image']) ?>" alt="QRIS" class="qris-img" style="display: block; margin: 0 auto; width: 220px; border-radius: 12px; box-shadow: 0 10px 25px rgba(234, 54, 113, 0.15);" onerror="this.src='https://via.placeholder.com/200?text=QRIS+General'">
+                    <?php else: ?>
+                        <p style="font-size: 0.85rem; color: #ea3671; margin-bottom: 5px; opacity: 0.7;">Transfer ke Rekening:</p>
+                        <strong style="color: #ea3671; font-size: 1.1rem;"><?= htmlspecialchars($pm['method_name']) ?>: <?= htmlspecialchars($pm['account_number']) ?></strong><br>
+                        <span style="font-size: 0.9rem; color: #666;">a/n <?= htmlspecialchars($pm['account_name']) ?></span>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
 
             <div class="form-group" style="margin-bottom: 30px;">
                 <label style="display: block; font-weight: 600; color: #ea3671; margin-bottom: 10px; font-size: 0.9rem;">Upload Bukti Pelunasan</label>
@@ -191,17 +193,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <script>
-        function showPaymentDetail(method) {
+        function showPaymentDetail(id) {
             // Hide all
             document.querySelectorAll('.payment-info').forEach(el => el.style.display = 'none');
             
             // Show selected
-            if (method === 'bca') {
-                document.getElementById('detail-bca').style.display = 'block';
-            } else if (method === 'qris') {
-                document.getElementById('detail-qris').style.display = 'block';
-            } else if (method !== '') {
-                document.getElementById('detail-wallet').style.display = 'block';
+            const target = document.getElementById('detail-pm-' + id);
+            if (target) {
+                target.style.display = 'block';
             }
         }
     </script>

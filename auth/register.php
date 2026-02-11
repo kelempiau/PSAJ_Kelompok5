@@ -37,6 +37,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Ney Dream</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Loading Screen -->
+    <link rel="stylesheet" href="../css/loading.css">
+    <script defer src="../js/loading.js"></script>
     <style>
         * {
             margin: 0;
@@ -176,6 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </style>
 </head>
 <body>
+    <?php include '../includes/loading.php'; ?>
     <div class="auth-container" style="position: relative;">
         <!-- Close Button (X) -->
         <a href="../index.php" class="close-auth" title="Kembali ke Beranda">✕</a>

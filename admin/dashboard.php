@@ -42,6 +42,11 @@ $chart_labels = range(1, $days_in_month);
 // Calculate Totals for Display
 $total_rev_month = array_sum($chart_data['revenue']);
 $total_book_month = array_sum($chart_data['bookings']);
+
+// CHECK IF NEW TABLES EXIST (For Migration Hint)
+$tables_missing = false;
+$check = $conn->query("SHOW TABLES LIKE 'services'");
+if ($check->num_rows === 0) $tables_missing = true;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -53,6 +58,9 @@ $total_book_month = array_sum($chart_data['bookings']);
     <?php include 'includes/admin_styles.php'; ?>
 </head>
 <body>
+
+    <?php include 'includes/loading.php'; ?>
+
     <div class="admin-container">
         <?php include 'includes/sidebar.php'; ?>
 
@@ -75,18 +83,29 @@ $total_book_month = array_sum($chart_data['bookings']);
                 </div>
             </div>
 
+            <?php if($tables_missing): ?>
+            <div style="margin: 20px 24px; padding: 20px; background: #fff1f2; border: 2px dashed #fb7185; border-radius: 16px; display: flex; align-items: center; gap: 20px;">
+                <div style="font-size: 32px;">⚠️</div>
+                <div style="flex: 1;">
+                    <h4 style="margin: 0 0 5px 0; color: #9f1239;">Penting: Database Belum Siap</h4>
+                    <p style="margin: 0; font-size: 14px; color: #be123c;">Beberapa tabel (Layanan, FAQ, dll) belum ada di database Kakak. Silakan perbaiki sekarang.</p>
+                </div>
+                <a href="fix_database.php" class="btn btn-primary" style="background: #e11d48; border: none;">Klik Perbaiki Otomatis</a>
+            </div>
+            <?php endif; ?>
+
             <!-- SALES & RESERVATION GRAPH SECTION -->
             <div class="charts-row" style="display: flex; gap: 24px; margin: 30px 24px 24px 24px; flex-wrap: wrap;">
                 
                 <!-- REVENUE CHART -->
-                <div class="chart-card" style="flex: 1; min-width: 320px; background: white; padding: 24px; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
+                <div class="chart-card" style="flex: 1; min-width: 320px;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
                         <div>
-                            <h3 style="margin: 0; color: #1e293b; font-weight: 700; font-size: 1rem;">Daily Revenue</h3>
-                            <p style="margin: 3px 0 0; color: #64748b; font-size: 0.8rem;"><?= date('F Y') ?></p>
+                            <h3 style="margin: 0; color: var(--text-primary); font-weight: 700; font-size: 1rem;">Daily Revenue</h3>
+                            <p style="margin: 3px 0 0; color: var(--text-secondary); font-size: 0.8rem;"><?= date('F Y') ?></p>
                         </div>
                         <div style="text-align: right; display: flex; align-items: center; gap: 8px;">
-                             <button onclick="openRecapModal('revenue')" style="background: none; border: 1px solid #e2e8f0; color: #64748b; padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s;">
+                             <button onclick="openRecapModal('revenue')" style="background: none; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s;">
                                 📅 Recap
                              </button>
                              <span style="font-weight: 600; color: #1e3a8a; background: #eaefff; padding: 3px 10px; border-radius: 6px; font-size: 0.75rem;">Revenue</span>
@@ -95,23 +114,23 @@ $total_book_month = array_sum($chart_data['bookings']);
                     <div style="height: 220px; width: 100%;">
                         <canvas id="revenueChart"></canvas>
                     </div>
-                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between;">
-                        <span style="font-size: 0.85rem; color: #64748b;">Total Revenue</span>
-                        <span style="font-size: 1rem; font-weight: 700; color: #1e3a8a;">
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+                        <span style="font-size: 0.85rem; color: var(--text-secondary);">Total Revenue</span>
+                        <span style="font-size: 1rem; font-weight: 700; color: var(--primary);">
                             Rp <?= number_format($total_rev_month, 0, ',', '.') ?>
                         </span>
                     </div>
                 </div>
 
                 <!-- RESERVATION CHART -->
-                <div class="chart-card" style="flex: 1; min-width: 320px; background: white; padding: 24px; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
+                <div class="chart-card" style="flex: 1; min-width: 320px;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
                         <div>
-                            <h3 style="margin: 0; color: #1e293b; font-weight: 700; font-size: 1rem;">Daily Bookings</h3>
-                            <p style="margin: 3px 0 0; color: #64748b; font-size: 0.8rem;"><?= date('F Y') ?></p>
+                            <h3 style="margin: 0; color: var(--text-primary); font-weight: 700; font-size: 1rem;">Daily Bookings</h3>
+                            <p style="margin: 3px 0 0; color: var(--text-secondary); font-size: 0.8rem;"><?= date('F Y') ?></p>
                         </div>
                          <div style="text-align: right; display: flex; align-items: center; gap: 8px;">
-                             <button onclick="openRecapModal('bookings')" style="background: none; border: 1px solid #e2e8f0; color: #64748b; padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s;">
+                             <button onclick="openRecapModal('bookings')" style="background: none; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s;">
                                 📅 Recap
                              </button>
                              <span style="font-weight: 600; color: #0284c7; background: #e0f2fe; padding: 3px 10px; border-radius: 6px; font-size: 0.75rem;">Bookings</span>
@@ -120,8 +139,8 @@ $total_book_month = array_sum($chart_data['bookings']);
                     <div style="height: 220px; width: 100%;">
                         <canvas id="bookingChart"></canvas>
                     </div>
-                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between;">
-                        <span style="font-size: 0.85rem; color: #64748b;">Total Bookings</span>
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+                        <span style="font-size: 0.85rem; color: var(--text-secondary);">Total Bookings</span>
                         <span style="font-size: 1rem; font-weight: 700; color: #0284c7;">
                             <?= $total_book_month ?> Customers
                         </span>
@@ -230,51 +249,11 @@ $total_book_month = array_sum($chart_data['bookings']);
                         </div>
                     </a>
                 </div>
-            </div>
+
         </div>
     </div>
 
-    <!-- RECAP MODAL -->
-    <div id="recapModal" style="display:none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(5px);">
-        <div style="background-color: #fff; margin: 5% auto; padding: 30px; border-radius: 20px; width: 80%; max-width: 900px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                <div>
-                    <h2 id="modalTitle" style="margin: 0; font-size: 1.5rem; color: #1e293b;">📅 Monthly Recap</h2>
-                    <p style="margin: 5px 0 0; color: #64748b;">Review performance data</p>
-                </div>
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <select id="recapMonth" onchange="updateRecapChart()" style="padding: 8px 15px; border-radius: 10px; border: 1px solid #e2e8f0; color: #475569; font-family: inherit; outline: none;">
-                        <?php 
-                        for($m=1; $m<=12; $m++){ 
-                            $selected = $m == date('m') ? 'selected' : '';
-                            echo "<option value='$m' $selected>".date('F', mktime(0,0,0,$m, 1))."</option>";
-                        } 
-                        ?>
-                    </select>
-                    <select id="recapYear" onchange="updateRecapChart()" style="padding: 8px 15px; border-radius: 10px; border: 1px solid #e2e8f0; color: #475569; font-family: inherit; outline: none;">
-                        <?php 
-                        $curYear = date('Y');
-                        for($y=$curYear; $y>=$curYear-2; $y--){ 
-                            echo "<option value='$y'>$y</option>";
-                        } 
-                        ?>
-                    </select>
-                    <span onclick="document.getElementById('recapModal').style.display='none'" style="cursor: pointer; font-size: 1.5rem; color: #94a3b8; padding: 0 10px;">&times;</span>
-                </div>
-            </div>
 
-            <!-- MODAL CHARTS -->
-            <div style="height: 350px; background: #f8fafc; border-radius: 15px; padding: 15px; position: relative;">
-                <canvas id="modalChartCanvas"></canvas>
-            </div>
-            
-            <!-- MODAL TOTAL FOOTER -->
-            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center;">
-                 <span style="font-size: 0.9rem; color: #64748b; display: block; margin-bottom: 5px;">Total for Selected Month</span>
-                 <span id="modalTotalDisplay" style="font-size: 1.5rem; font-weight: 800; color: #1e293b;">-</span>
-            </div>
-        </div>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -289,11 +268,22 @@ $total_book_month = array_sum($chart_data['bookings']);
         const bookingData = labels.map(day => chartData.bookings[day] || 0);
 
         Chart.defaults.font.family = "'Inter', 'sans-serif'";
-        Chart.defaults.color = '#94a3b8';
         Chart.defaults.font.size = 11;
 
+        // Function to get current theme colors
+        function getThemeColors() {
+            const isDark = document.body.classList.contains('dark-mode');
+            return {
+                text: isDark ? '#94a3b8' : '#64748b',
+                grid: isDark ? 'rgba(30, 41, 59, 0.5)' : '#f1f5f9',
+                ticks: isDark ? '#64748b' : '#94a3b8'
+            };
+        }
+
+        let colors = getThemeColors();
+
         // --- DASHBOARD CHARTS ---
-        new Chart(ctxRevenue, {
+        const revenueChart = new Chart(ctxRevenue, {
             type: 'bar',
             data: {
                 labels: labels,
@@ -310,8 +300,9 @@ $total_book_month = array_sum($chart_data['bookings']);
                 maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    x: { grid: { display: false }, ticks: { maxTicksLimit: 10, color: '#cbd5e1' } },
-                    y: { border: { display: false }, grid: { borderDash: [4, 4], color: '#f1f5f9' }, ticks: {
+                    x: { grid: { display: false }, ticks: { maxTicksLimit: 10, color: colors.ticks } },
+                    y: { border: { display: false }, grid: { borderDash: [4, 4], color: colors.grid }, ticks: {
+                        color: colors.ticks,
                         callback: function(value) {
                             if(value >= 1000000) return (value/1000000).toFixed(0) + 'jt';
                             if(value >= 1000) return (value/1000).toFixed(0) + 'rb';
@@ -322,7 +313,7 @@ $total_book_month = array_sum($chart_data['bookings']);
             }
         });
 
-        new Chart(ctxBooking, {
+        const bookingChart = new Chart(ctxBooking, {
             type: 'bar',
             data: {
                 labels: labels,
@@ -339,11 +330,37 @@ $total_book_month = array_sum($chart_data['bookings']);
                 maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    x: { grid: { display: false }, ticks: { maxTicksLimit: 10, color: '#cbd5e1' } },
-                    y: { border: { display: false }, grid: { borderDash: [4, 4], color: '#f1f5f9' }, ticks: { stepSize: 1, precision: 0 } }
+                    x: { grid: { display: false }, ticks: { maxTicksLimit: 10, color: colors.ticks } },
+                    y: { border: { display: false }, grid: { borderDash: [4, 4], color: colors.grid }, ticks: { stepSize: 1, precision: 0, color: colors.ticks } }
                 }
             }
         });
+
+        // Watch for dark mode changes to update charts
+        const observer = new MutationObserver(() => {
+            const newColors = getThemeColors();
+            [revenueChart, bookingChart, modalChartInstance].forEach(chart => {
+                if (chart) {
+                    chart.options.scales.x.ticks.color = newColors.ticks;
+                    chart.options.scales.y.ticks.color = newColors.ticks;
+                    chart.options.scales.y.grid.color = newColors.grid;
+                    chart.update();
+                }
+            });
+            // Update modal background for chart container
+            const chartContainer = document.getElementById('recapChartContainer');
+            if (chartContainer) {
+                chartContainer.style.background = document.body.classList.contains('dark-mode') ? '#1e293b' : '#f8fafc';
+            }
+            // Update modal text colors
+            const modalTitle = document.getElementById('modalTitle');
+            const modalTotalDisplay = document.getElementById('modalTotalDisplay');
+            if (modalTitle) modalTitle.style.color = document.body.classList.contains('dark-mode') ? '#f8fafc' : '#1e293b';
+            if (modalTotalDisplay && !modalTotalDisplay.innerText.includes('Error')) {
+                // Keep original logic for color in modalTotalDisplay if needed, but ensure readability
+            }
+        });
+        observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
         // --- MODAL LOGIC ---
         let modalChartInstance = null;
@@ -358,7 +375,7 @@ $total_book_month = array_sum($chart_data['bookings']);
                 titleEl.textContent = '📅 Bookings Recap';
             }
             
-            document.getElementById('recapModal').style.display = 'block';
+            document.getElementById('recapModal').style.display = 'flex';
             updateRecapChart();
         }
 
@@ -366,10 +383,21 @@ $total_book_month = array_sum($chart_data['bookings']);
             const m = document.getElementById('recapMonth').value;
             const y = document.getElementById('recapYear').value;
             const totalDisplay = document.getElementById('modalTotalDisplay');
+            const themeColors = getThemeColors();
+            
+            console.log(`Fetching recap for ${m}/${y}...`);
+            totalDisplay.innerText = "Loading data...";
 
             try {
                 const response = await fetch(`api_chart_data.php?month=${m}&year=${y}`);
                 const data = await response.json();
+                console.log("Recap Data Received:", data);
+                
+                if (!data.labels || data.labels.length === 0) {
+                     totalDisplay.innerText = "No data available for this month";
+                     if (modalChartInstance) modalChartInstance.destroy();
+                     return;
+                }
 
                 if (modalChartInstance) modalChartInstance.destroy();
 
@@ -378,8 +406,8 @@ $total_book_month = array_sum($chart_data['bookings']);
                 if (currentRecapMode === 'revenue') {
                     // Update Total Text for Revenue
                     const totalRev = data.revenue.reduce((a, b) => a + b, 0);
-                    totalDisplay.innerText = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalRev);
-                    totalDisplay.style.color = '#1e3a8a';
+                    totalDisplay.innerText = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(totalRev);
+                    totalDisplay.style.color = document.body.classList.contains('dark-mode') ? '#38bdf8' : '#1e3a8a';
 
                     // Render Revenue Line Chart
                     modalChartInstance = new Chart(ctx, {
@@ -392,14 +420,16 @@ $total_book_month = array_sum($chart_data['bookings']);
                                 borderColor: '#ea3671',
                                 backgroundColor: 'rgba(234, 54, 113, 0.1)',
                                 fill: true,
-                                tension: 0.4
+                                tension: 0.4,
+                                pointBackgroundColor: '#ea3671',
+                                pointRadius: 3
                             }]
                         },
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
                             plugins: { 
-                                title: { display: true, text: 'Daily Revenue - ' + data.label_title }, 
+                                title: { display: true, text: 'Daily Revenue - ' + data.label_title, color: themeColors.text }, 
                                 legend: { display: false },
                                 tooltip: {
                                     callbacks: {
@@ -410,8 +440,9 @@ $total_book_month = array_sum($chart_data['bookings']);
                                 }
                             },
                              scales: {
-                                x: { grid: { display: false } },
-                                y: { border: { display: false }, grid: { borderDash: [4, 4] }, ticks: {
+                                x: { grid: { display: false }, ticks: { color: themeColors.ticks } },
+                                y: { border: { display: false }, grid: { borderDash: [4, 4], color: themeColors.grid }, ticks: {
+                                    color: themeColors.ticks,
                                     callback: function(value) {
                                         if(value >= 1000000) return (value/1000000).toFixed(0) + 'jt';
                                         if(value >= 1000) return (value/1000).toFixed(0) + 'rb';
@@ -425,7 +456,7 @@ $total_book_month = array_sum($chart_data['bookings']);
                     // Update Total Text for Bookings
                     const totalBook = data.bookings.reduce((a, b) => a + b, 0);
                     totalDisplay.innerText = totalBook + " Customers";
-                    totalDisplay.style.color = '#0284c7';
+                    totalDisplay.style.color = document.body.classList.contains('dark-mode') ? '#38bdf8' : '#0284c7';
 
                     // Render Bookings Bar Chart
                     modalChartInstance = new Chart(ctx, {
@@ -443,12 +474,12 @@ $total_book_month = array_sum($chart_data['bookings']);
                              responsive: true,
                             maintainAspectRatio: false,
                             plugins: { 
-                                title: { display: true, text: 'Daily Bookings - ' + data.label_title }, 
+                                title: { display: true, text: 'Daily Bookings - ' + data.label_title, color: themeColors.text }, 
                                 legend: { display: false } 
                             },
                              scales: {
-                                x: { grid: { display: false } },
-                                y: { border: { display: false }, grid: { borderDash: [4, 4] }, ticks: { stepSize: 1 } }
+                                x: { grid: { display: false }, ticks: { color: themeColors.ticks } },
+                                y: { border: { display: false }, grid: { borderDash: [4, 4], color: themeColors.grid }, ticks: { stepSize: 1, color: themeColors.ticks } }
                             }
                         }
                     });
@@ -456,7 +487,7 @@ $total_book_month = array_sum($chart_data['bookings']);
 
             } catch (error) {
                 console.error('Error fetching chart data:', error);
-                totalDisplay.innerText = "Error loading data";
+                totalDisplay.innerText = "Error loading data: " + error.message;
             }
         }
         
@@ -468,6 +499,49 @@ $total_book_month = array_sum($chart_data['bookings']);
             }
         }
     </script>
+
+
+    <!-- RECAP MODAL -->
+    <div id="recapModal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; align-items: center; justify-content: center;">
+        <div id="recapModalContent" class="modal-card">
+            <div class="recap-header">
+                <div>
+                    <h2 id="modalTitle">📅 Monthly Recap</h2>
+                    <p class="modal-subtitle">Review performance data</p>
+                </div>
+                <div class="recap-selects">
+                    <select id="recapMonth" onchange="updateRecapChart()">
+                        <?php 
+                        for($m=1; $m<=12; $m++){ 
+                            $selected = $m == date('m') ? 'selected' : '';
+                            echo "<option value='$m' $selected>".date('F', mktime(0,0,0,$m, 1))."</option>";
+                        } 
+                        ?>
+                    </select>
+                    <select id="recapYear" onchange="updateRecapChart()">
+                        <?php 
+                        $curYear = date('Y');
+                        for($y=$curYear; $y>=$curYear-2; $y--){ 
+                            echo "<option value='$y'>$y</option>";
+                        } 
+                        ?>
+                    </select>
+                    <span class="close-modal" onclick="document.getElementById('recapModal').style.display='none'">&times;</span>
+                </div>
+            </div>
+
+            <!-- MODAL CHARTS -->
+            <div id="recapChartContainer">
+                <canvas id="modalChartCanvas"></canvas>
+            </div>
+            
+            <!-- MODAL TOTAL FOOTER -->
+            <div class="recap-footer">
+                 <span class="footer-label">Total for Selected Month</span>
+                 <span id="modalTotalDisplay">-</span>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 

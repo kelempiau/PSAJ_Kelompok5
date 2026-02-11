@@ -41,6 +41,7 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
     <?php include 'includes/admin_styles.php'; ?>
 </head>
 <body>
+    <?php include 'includes/loading.php'; ?>
     <div class="admin-container">
         <?php include 'includes/sidebar.php'; ?>
 
@@ -91,8 +92,12 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
                                 <td>#<?= $u['id'] ?></td>
                                 <td>
                                     <div style="display: flex; align-items: center; gap: 12px;">
-                                        <div class="item-avatar" style="width: 32px; height: 32px; font-size: 12px; font-weight: 700; background: var(--primary-light); color: var(--primary);">
-                                            <?= strtoupper(substr($u['username'], 0, 1)) ?>
+                                        <div class="item-avatar" style="width: 32px; height: 32px; font-size: 12px; font-weight: 700; background: var(--primary-light); color: var(--primary); overflow: hidden;">
+                                            <?php if(!empty($u['profile_pic'])): ?>
+                                                <img src="../<?= $u['profile_pic'] ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                                            <?php else: ?>
+                                                <?= strtoupper(substr($u['username'], 0, 1)) ?>
+                                            <?php endif; ?>
                                         </div>
                                         <div>
                                             <div style="font-weight: 700; color: var(--text-primary);"><?= htmlspecialchars($u['username']) ?></div>

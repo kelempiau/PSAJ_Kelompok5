@@ -46,6 +46,7 @@ $locked_slots = $conn->query("SELECT * FROM locked_slots ORDER BY date, time");
     <?php include 'includes/admin_styles.php'; ?>
 </head>
 <body>
+    <?php include 'includes/loading.php'; ?>
     <div class="admin-container">
         <?php include 'includes/sidebar.php'; ?>
 
@@ -75,8 +76,8 @@ $locked_slots = $conn->query("SELECT * FROM locked_slots ORDER BY date, time");
                     </div>
                 <?php endif; ?>
 
-                <div class="grid" style="display: grid; grid-template-columns: 350px 1fr; gap: 24px; align-items: start;">
-                    <div class="card" style="padding: 24px;">
+                <div class="responsive-grid grid-admin-sidebar-layout">
+                    <div class="card mobile-order-1" style="padding: 24px;">
                         <h3 style="font-size: 16px; margin-bottom: 20px;">Kunci Slot Baru</h3>
                         <form method="POST">
                             <input type="hidden" name="action" value="lock_slot">
@@ -103,7 +104,7 @@ $locked_slots = $conn->query("SELECT * FROM locked_slots ORDER BY date, time");
                         </form>
                     </div>
 
-                    <div class="card">
+                    <div class="card mobile-order-2">
                         <div class="card-header">
                             <h3>Daftar Slot Terblokir</h3>
                             <div class="meta"><?= $locked_slots->num_rows ?> Slots Hidden</div>

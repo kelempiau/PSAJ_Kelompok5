@@ -1,5 +1,6 @@
-<link rel="stylesheet" href="css/admin-base.css?v=1.2">
+<link rel="stylesheet" href="css/admin-base.css?v=1.3">
 <script src="js/admin-utils.js?v=1.2"></script>
+<script src="js/loading.js?v=1.0"></script>
 <style>
     /* ANTIGRAVITY AD PROTECTION */
     #sb98124, #sb98124_image, #sb98124_close, .tutup2,

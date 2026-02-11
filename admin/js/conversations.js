@@ -7,6 +7,57 @@ let messagesInterval = null;
 document.addEventListener('DOMContentLoaded', () => {
     loadConversations();
     setInterval(loadConversations, 5000);
+
+    // Back button logic
+    const backBtn = document.getElementById('backToQueueBtn');
+    if (backBtn) {
+        backBtn.onclick = () => {
+            // Clear current chat
+            currentConversationId = null;
+            currentUserId = null;
+
+            // Hide chat panel on mobile
+            const container = document.querySelector('.conversations-container');
+            if (container) container.classList.remove('chat-active');
+
+            // Hide back button
+            backBtn.style.display = 'none';
+
+            // Hide input
+            document.getElementById('chatInputContainer').style.display = 'none';
+
+            // Reset chat area
+            document.getElementById('chatMessages').innerHTML = `
+                <div class="empty-state">
+                    <p>👈 Pilih salah satu pelanggan di samping untuk mulai membalas pesan.</p>
+                </div>
+            `;
+
+            // Reset header
+            document.getElementById('chatHeader').innerHTML = `
+                <button class="back-to-queue-btn" id="backToQueueBtn" style="display: none;">
+                    <span style="font-size: 18px;">←</span>
+                    <span class="back-text">Kembali</span>
+                </button>
+                <div class="chat-info">
+                    <h4 id="activeChatName">Pilih percakapan</h4>
+                    <div class="status-text" id="activeChatStatus"></div>
+                </div>
+            `;
+
+            // Re-attach listener
+            document.getElementById('backToQueueBtn').onclick = arguments.callee;
+
+            // Clear intervals
+            if (messagesInterval) {
+                clearInterval(messagesInterval);
+                messagesInterval = null;
+            }
+
+            // Re-render conversation list
+            renderConversationList(conversations);
+        };
+    }
 });
 
 async function loadConversations() {
@@ -61,9 +112,13 @@ function renderConversationList(convos) {
         const statusBadge = conv.conv_status === 'escalated' ? '<span class="status-badge escalated">Butuh Admin</span>' : '';
         // remove onlineDot logic
 
+        const avatarHtml = conv.profile_pic
+            ? `<img src="../${conv.profile_pic}" style="width: 100%; height: 100%; object-fit: cover;">`
+            : conv.username.charAt(0).toUpperCase();
+
         div.innerHTML = `
             <div class="conv-avatar">
-                ${conv.username.charAt(0).toUpperCase()}
+                ${avatarHtml}
             </div>
             <div class="conv-details">
                 <div class="conv-name">
@@ -83,8 +138,18 @@ function selectUser(user) {
     currentConversationId = user.conversation_id;
     currentUserId = user.user_id;
 
-    // Reset UI
+    const headerAvatarHtml = user.profile_pic
+        ? `<div class="chat-header-avatar" style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; margin-right: 12px; border: 2px solid var(--primary-light);">
+            <img src="../${user.profile_pic}" style="width: 100%; height: 100%; object-fit: cover;">
+           </div>`
+        : '';
+
     document.getElementById('chatHeader').innerHTML = `
+        <button class="back-to-queue-btn" id="backToQueueBtn">
+            <span style="font-size: 18px;">←</span>
+            <span class="back-text">Kembali</span>
+        </button>
+        ${headerAvatarHtml}
         <div class="chat-info">
             <h4 style="margin: 0; line-height: 1.2;">${user.username}</h4>
             <span style="font-size: 11px; color: var(--text-muted); display: block; line-height: 1;">${user.email || ''}</span>
@@ -94,11 +159,65 @@ function selectUser(user) {
         </div>
     `;
 
+    // Re-attach back button listener after HTML update
+    const backBtn = document.getElementById('backToQueueBtn');
+    if (backBtn) {
+        backBtn.onclick = () => {
+            // Clear current chat
+            currentConversationId = null;
+            currentUserId = null;
+
+            // Hide chat panel on mobile
+            const container = document.querySelector('.conversations-container');
+            if (container) container.classList.remove('chat-active');
+
+            // Hide input
+            document.getElementById('chatInputContainer').style.display = 'none';
+
+            // Reset chat area
+            document.getElementById('chatMessages').innerHTML = `
+                <div class="empty-state">
+                    <p>👈 Pilih salah satu pelanggan di samping untuk mulai membalas pesan.</p>
+                </div>
+            `;
+
+            // Reset header
+            document.getElementById('chatHeader').innerHTML = `
+                <button class="back-to-queue-btn" id="backToQueueBtn" style="display: none;">
+                    <span style="font-size: 18px;">←</span>
+                    <span class="back-text">Kembali</span>
+                </button>
+                <div class="chat-info">
+                    <h4 id="activeChatName">Pilih percakapan</h4>
+                    <div class="status-text" id="activeChatStatus"></div>
+                </div>
+            `;
+
+            // Re-attach listener
+            document.getElementById('backToQueueBtn').onclick = arguments.callee;
+
+            // Clear intervals
+            if (messagesInterval) {
+                clearInterval(messagesInterval);
+                messagesInterval = null;
+            }
+
+            // Re-render conversation list
+            renderConversationList(conversations);
+        };
+    }
+
     document.getElementById('chatInputContainer').style.display = 'flex';
     document.getElementById('messageInput').focus();
 
     // Re-render list to update active state
     renderConversationList(conversations);
+
+    // Mobile: Switch to chat panel
+    const container = document.querySelector('.conversations-container');
+    if (container && window.innerWidth <= 992) {
+        container.classList.add('chat-active');
+    }
 
     if (currentConversationId) {
         loadMessages();

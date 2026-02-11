@@ -75,6 +75,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     </style>
 </head>
 <body>
+    <?php include 'includes/loading.php'; ?>
     <div class="admin-container">
         <?php include 'includes/sidebar.php'; ?>
 
@@ -112,6 +113,10 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 
                 <div class="chat-panel">
                     <div class="chat-header" id="chatHeader">
+                        <button class="back-to-queue-btn" id="backToQueueBtn" style="display: none;">
+                            <span style="font-size: 18px;">←</span>
+                            <span class="back-text">Kembali</span>
+                        </button>
                         <div class="chat-info">
                             <h4 id="activeChatName">Pilih percakapan</h4>
                             <div class="status-text" id="activeChatStatus"></div>

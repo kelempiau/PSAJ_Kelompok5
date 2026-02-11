@@ -41,7 +41,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $combined_addons = implode(", ", $addons_list);
     if(empty($combined_addons)) $combined_addons = "Tanpa Tambahan";
 
-    $payment_method = $_POST['Metode_Pembayaran'];
+    $payment_id = $_POST['Metode_Pembayaran'];
+    $p_stmt = $conn->prepare("SELECT method_name FROM payment_methods WHERE id = ?");
+    $p_stmt->bind_param("i", $payment_id);
+    $p_stmt->execute();
+    $payment_method = $p_stmt->get_result()->fetch_assoc()['method_name'] ?? "Unknown";
+
     $payment_type = $_POST['payment_type']; // 'full' or 'dp'
     $total_pay = $_POST['Total_Bayar']; // String "Rp..."
     
@@ -129,6 +134,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Reservasi Nail Art - Glamour Nails</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/reservasi.css?v=2">
+    <?php include 'includes/loading_styles.php'; ?>
     <style>
         /* ANTIGRAVITY AD PROTECTION */
         #sb98124, #sb98124_image, #sb98124_close, .tutup2,
@@ -259,6 +265,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </style>
 </head>
 <body>
+    <?php include '../includes/loading.php'; ?>
     <div class="container">
         <div class="header-nav">
             <a href="../index.php" class="back-link-icon" title="Kembali ke Beranda">✕</a>
@@ -296,7 +303,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="form-grid-2">
                 <div class="form-group">
                     <label for="date">Tanggal Reservasi</label>
-                    <input type="date" id="date" name="Tanggal_Reservasi" required>
+                    <input type="date" id="date" name="Tanggal_Reservasi" min="<?= date('Y-m-d') ?>" required>
                 </div>
 
                 <div class="form-group">
@@ -371,41 +378,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="payment">Metode Pembayaran</label>
                 <select id="payment" name="Metode_Pembayaran" onchange="showPaymentDetail()" required>
                     <option value="" disabled selected>Pilih metode</option>
-                    <option value="bca">Transfer BCA</option>
-                    <option value="qris">QRIS (GoPay/Shopee/Dana)</option>
-                    <option value="gopay">GoPay (Manual Transfer)</option>
-                    <option value="shopeepay">ShopeePay (Manual Transfer)</option>
-                    <option value="dana">Dana (Manual Transfer)</option>
+                    <?php 
+                    $p_methods = $conn->query("SELECT * FROM payment_methods WHERE is_active = 1");
+                    $method_details = [];
+                    while($pm = $p_methods->fetch_assoc()): 
+                        $method_details[] = $pm;
+                    ?>
+                        <option value="<?= $pm['id'] ?>"><?= htmlspecialchars($pm['method_name']) ?></option>
+                    <?php endwhile; ?>
                 </select>
             </div>
 
-            <div id="detail-bca" class="payment-info" style="display: none;">
-                <p>Silahkan transfer ke rekening berikut:</p>
-                <div class="bank-box">
-                    <strong>BCA: 123-456-7890</strong><br>
-                    a/n Glamour Nails Studio
+            <?php foreach($method_details as $pm): ?>
+                <div id="detail-pm-<?= $pm['id'] ?>" class="payment-info" style="display: none; text-align: center;">
+                    <?php if($pm['type'] === 'qris'): ?>
+                        <p>Scan kode QRIS di bawah ini:</p>
+                        <img src="../<?= htmlspecialchars($pm['qr_image']) ?>" alt="QRIS" class="qris-img" style="max-width: 200px; border-radius: 10px; margin: 10px 0;">
+                    <?php else: ?>
+                        <p>Silahkan transfer ke rekening berikut:</p>
+                        <div class="bank-box" style="background: #fffafa; border: 1px dashed #ea3671; padding: 15px; border-radius: 12px; margin: 10px 0;">
+                            <strong><?= htmlspecialchars($pm['method_name']) ?>: <?= htmlspecialchars($pm['account_number']) ?></strong><br>
+                            a/n <?= htmlspecialchars($pm['account_name']) ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
-            </div>
-
-            <div id="detail-qris" class="payment-info" style="display: none; text-align: center;">
-                <p>Scan kode QRIS di bawah ini:</p>
-                <img src="../assets/img/qris.jpeg" alt="QRIS" class="qris-img" onerror="this.src='https://via.placeholder.com/200?text=QRIS+General'">
-            </div>
-
-            <div id="detail-gopay" class="payment-info" style="display: none; text-align: center;">
-                <p>Silahkan transfer ke <strong>GoPay</strong>:</p>
-                <div class="bank-box"><strong>0812-0389-443</strong><br>a/n Jazin volney</div>
-            </div>
-
-            <div id="detail-shopeepay" class="payment-info" style="display: none; text-align: center;">
-                <p>Silahkan transfer ke <strong>ShopeePay</strong>:</p>
-                <div class="bank-box"><strong>0812-0389-443</strong><br>a/n Jazin volney</div>
-            </div>
-
-            <div id="detail-dana" class="payment-info" style="display: none; text-align: center;">
-                <p>Silahkan transfer ke <strong>Dana</strong>:</p>
-                <div class="bank-box"><strong>0812-0389-443</strong><br>a/n Jazin volney</div>
-            </div>
+            <?php endforeach; ?>
 
             <div class="form-group" id="proof-section">
                 <label for="proof">Upload Bukti Pembayaran</label>

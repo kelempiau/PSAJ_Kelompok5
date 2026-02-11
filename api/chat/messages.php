@@ -17,7 +17,7 @@ if ($conversation_id === 0) {
     exit;
 }
 
-$sql = "SELECT m.*, u.username 
+$sql = "SELECT m.*, u.username, u.profile_pic 
         FROM messages m 
         LEFT JOIN users u ON m.sender_id = u.id 
         WHERE m.conversation_id = ? 

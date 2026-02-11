@@ -50,6 +50,7 @@ $reservations = $conn->query("SELECT reservations.*, users.username FROM reserva
     <?php include 'includes/admin_styles.php'; ?>
 </head>
 <body>
+    <?php include 'includes/loading.php'; ?>
     <div class="admin-container">
         <?php include 'includes/sidebar.php'; ?>
 

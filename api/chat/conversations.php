@@ -26,6 +26,7 @@ $sql = "SELECT
             u.username, 
             u.email, 
             u.last_seen,
+            u.profile_pic,
             c.id as conversation_id, 
             c.status as conv_status,
             COALESCE((SELECT COUNT(*) FROM messages WHERE conversation_id = c.id AND is_read = FALSE AND sender_type = 'customer'), 0) as unread_count,

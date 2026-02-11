@@ -31,6 +31,7 @@ $result = $stmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Status Refund - Neydream</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <?php include 'includes/loading_styles.php'; ?>
     <style>
         /* ANTIGRAVITY AD PROTECTION */
         #sb98124, #sb98124_image, #sb98124_close, .tutup2,
@@ -269,6 +270,7 @@ $result = $stmt->get_result();
     </style>
 </head>
 <body>
+    <?php include '../includes/loading.php'; ?>
     <div class="container">
         <div class="header">
             <h1>🔄 Status Refund</h1>

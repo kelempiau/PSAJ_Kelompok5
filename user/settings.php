@@ -20,10 +20,20 @@ if (isset($_SESSION['temp_new_password'])) {
 }
 
 // Fetch User Data
-$stmt = $conn->prepare("SELECT username, email, phone, password, loyalty_level FROM users WHERE id = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$user = $stmt->get_result()->fetch_assoc();
+$user = ['username' => '', 'email' => '', 'phone' => '', 'password' => '', 'loyalty_level' => '', 'profile_pic' => null];
+$colCheck = $conn->query("SHOW COLUMNS FROM users LIKE 'profile_pic'");
+if ($colCheck && $colCheck->num_rows > 0) {
+    $stmt = $conn->prepare("SELECT username, email, phone, password, loyalty_level, profile_pic FROM users WHERE id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $user = $stmt->get_result()->fetch_assoc();
+} else {
+    $stmt = $conn->prepare("SELECT username, email, phone, password, loyalty_level FROM users WHERE id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $userData = $stmt->get_result()->fetch_assoc();
+    if ($userData) $user = array_merge($user, $userData);
+}
 
 // Statistics: Count Reservations
 $res_count_query = $conn->prepare("SELECT COUNT(*) as total FROM reservations WHERE user_id = ?");
@@ -73,6 +83,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             }
         } else { $error_message = "Password saat ini salah."; }
     }
+    elseif ($action === 'update_profile_pic') {
+        if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === 0) {
+            $targetDir = "../assets/img/profiles/";
+            if (!file_exists($targetDir)) mkdir($targetDir, 0777, true);
+            
+            $fileExtension = pathinfo($_FILES['profile_pic']['name'], PATHINFO_EXTENSION);
+            $fileName = "user_" . $user_id . "_" . time() . "." . $fileExtension;
+            $targetFile = $targetDir . $fileName;
+
+            if (move_uploaded_file($_FILES['profile_pic']['tmp_name'], $targetFile)) {
+                $picPath = "assets/img/profiles/" . $fileName;
+                
+                // Self-healing: Check if column exists, if not, add it
+                $colCheck = $conn->query("SHOW COLUMNS FROM users LIKE 'profile_pic'");
+                if ($colCheck && $colCheck->num_rows == 0) {
+                    $conn->query("ALTER TABLE users ADD COLUMN profile_pic VARCHAR(255) DEFAULT NULL");
+                }
+
+                $update = $conn->prepare("UPDATE users SET profile_pic = ? WHERE id = ?");
+                $update->bind_param("si", $picPath, $user_id);
+                if ($update->execute()) { 
+                    $success_popup = true; 
+                }
+            } else {
+                $error_message = "Gagal mengunggah gambar.";
+            }
+        }
+    }
     elseif ($action === 'delete_account') {
         $conn->query("DELETE FROM reservations WHERE user_id = $user_id");
         $conn->query("DELETE FROM feedback WHERE user_id = $user_id");
@@ -98,6 +136,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Profil - Neydream</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <?php include 'includes/loading_styles.php'; ?>
     <style>
         /* ANTIGRAVITY AD PROTECTION */
         #sb98124, #sb98124_image, #sb98124_close, .tutup2,
@@ -158,7 +197,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             border-radius: 35px; display: flex; align-items: center; justify-content: center;
             font-size: 3rem; font-weight: 800; margin: 0 auto 15px;
             box-shadow: 0 10px 25px rgba(234, 54, 113, 0.3); transform: rotate(-5deg);
+            position: relative; overflow: hidden;
         }
+        .avatar-large img { width: 100%; height: 100%; object-fit: cover; }
+        .edit-avatar-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.5);
+            color: white; font-size: 0.7rem; padding: 4px 0; cursor: pointer; opacity: 0; transition: 0.3s;
+        }
+        .avatar-large:hover .edit-avatar-overlay { opacity: 1; }
         .header-section h2 { font-size: 1.8rem; font-weight: 800; color: var(--secondary); }
         .header-section p { color: var(--text-muted); font-size: 0.9rem; }
 
@@ -276,11 +322,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
     </style>
 </head>
 <body>
-
+    <?php include '../includes/loading.php'; ?>
     <div class="profile-container">
         <button onclick="openModal('deleteModal')" class="btn-delete-icon" title="Hapus Akun">🗑️</button>
         <div class="header-section">
-            <div class="avatar-large"><?= strtoupper(substr($user['username'], 0, 1)) ?></div>
+            <div class="avatar-large" onclick="document.getElementById('picInput').click()">
+                <?php if(!empty($user['profile_pic'])): ?>
+                    <img src="../<?= $user['profile_pic'] ?>" alt="Profile">
+                <?php else: ?>
+                    <?= strtoupper(substr($user['username'], 0, 1)) ?>
+                <?php endif; ?>
+                <div class="edit-avatar-overlay">Ganti</div>
+            </div>
+            <form id="picForm" method="POST" enctype="multipart/form-data" style="display:none;">
+                <input type="hidden" name="action" value="update_profile_pic">
+                <input type="file" id="picInput" name="profile_pic" onchange="document.getElementById('picForm').submit()" accept="image/*">
+            </form>
             <h2><?= htmlspecialchars($user['username']) ?></h2>
             <p>Customer Premium Neydream</p>
         </div>

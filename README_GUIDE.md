@@ -89,5 +89,4 @@ git pull origin v2-modernized-structure
 - **Responsive**: Web ini sudah 100% aman dibuka di HP ukuran apa saja tanpa "geser-geser" ke samping.
 - **Warna**: Gunakan Kode warna `#ea3671` (Dark Pink) dan `#ff85a1` (Light Pink) jika ingin menambah komponen baru agar desain tetap harmonis.
 
----
-**Dibuat dengan ❤️ oleh Antigravity untuk Neydream Studio.**
+
