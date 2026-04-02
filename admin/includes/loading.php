@@ -1,4 +1,4 @@
-<!-- Loading Screen Overlay -->
+
 <div id="loadingOverlay" class="loading-overlay">
     <div class="loading-content">
         <div class="loading-star">

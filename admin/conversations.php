@@ -149,6 +149,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
         </div>
     </div>
 
-    <script src="js/conversations.js"></script>
+    <script src="js/conversations.js?v=<?= time() ?>"></script>
 </body>
 </html>

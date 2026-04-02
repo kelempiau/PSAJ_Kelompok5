@@ -1,7 +1,7 @@
 <?php
 require '../core/config.php';
 
-// Check if logged in
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
     exit();
@@ -10,16 +10,16 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $success_popup = false;
 $error_message = "";
-$visible_password = "•••••••••••••"; // Default censored view
+$visible_password = "•••••••••••••"; 
 
-// Logic to show NEW password after change
+
 if (isset($_SESSION['temp_new_password'])) {
     $visible_password = $_SESSION['temp_new_password'];
-    // Optional: unset it immediately if you want it shown only ONCE (refresh will hide it)
-    // unset($_SESSION['temp_new_password']); 
+    
+    
 }
 
-// Fetch User Data
+
 $user = ['username' => '', 'email' => '', 'phone' => '', 'password' => '', 'loyalty_level' => '', 'profile_pic' => null];
 $colCheck = $conn->query("SHOW COLUMNS FROM users LIKE 'profile_pic'");
 if ($colCheck && $colCheck->num_rows > 0) {
@@ -35,14 +35,14 @@ if ($colCheck && $colCheck->num_rows > 0) {
     if ($userData) $user = array_merge($user, $userData);
 }
 
-// Statistics: Count Reservations
+
 $res_count_query = $conn->prepare("SELECT COUNT(*) as total FROM reservations WHERE user_id = ?");
 $res_count_query->bind_param("i", $user_id);
 $res_count_query->execute();
 $stats = $res_count_query->get_result()->fetch_assoc();
 $total_reservations = $stats['total'] ?? 0;
 
-// Handle POST actions
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
     $action = $_POST['action'];
 
@@ -76,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
                 $update->bind_param("si", $new_hash, $user_id);
                 if ($update->execute()) { 
                     $success_popup = true; 
-                    // Store new password in session temporarily to display it
+                    
                     $_SESSION['temp_new_password'] = $new_pass;
                     $visible_password = $new_pass;
                 }
@@ -95,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             if (move_uploaded_file($_FILES['profile_pic']['tmp_name'], $targetFile)) {
                 $picPath = "assets/img/profiles/" . $fileName;
                 
-                // Self-healing: Check if column exists, if not, add it
+                
                 $colCheck = $conn->query("SHOW COLUMNS FROM users LIKE 'profile_pic'");
                 if ($colCheck && $colCheck->num_rows == 0) {
                     $conn->query("ALTER TABLE users ADD COLUMN profile_pic VARCHAR(255) DEFAULT NULL");
@@ -205,7 +205,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             color: white; font-size: 0.7rem; padding: 4px 0; cursor: pointer; opacity: 0; transition: 0.3s;
         }
         .avatar-large:hover .edit-avatar-overlay { opacity: 1; }
-        .header-section h2 { font-size: 1.8rem; font-weight: 800; color: var(--secondary); }
+        .header-section h2 { 
+            font-size: 1.8rem; 
+            font-weight: 800; 
+            color: var(--secondary); 
+            word-break: break-word;
+            max-width: 100%;
+            margin: 0 auto;
+        }
         .header-section p { color: var(--text-muted); font-size: 0.9rem; }
 
         .stats-row {
@@ -228,7 +235,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
         }
         .detail-item:last-child { border-bottom: none; }
         .detail-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
-        .detail-value { font-size: 0.95rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+        .detail-value { 
+            font-size: 0.95rem; 
+            font-weight: 600; 
+            color: var(--text-main); 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            word-break: break-all; 
+            max-width: 70%;
+            text-align: right;
+        }
         .edit-icon { cursor: pointer; color: var(--primary); font-size: 1.1rem; transition: 0.2s; }
         .edit-icon:hover { transform: scale(1.2); }
 
@@ -319,6 +336,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             background: #fee2e2;
             box-shadow: 0 6px 15px rgba(239, 68, 68, 0.2);
         }
+
+        @media (max-width: 480px) {
+            .profile-container { padding: 30px 20px; border-radius: 30px; }
+            .header-section h2 { font-size: 1.5rem; }
+            .stats-row { padding: 15px; }
+            .detail-item { flex-direction: column; align-items: flex-start; gap: 5px; }
+            .detail-value { width: 100%; justify-content: space-between; max-width: 100%; text-align: left; }
+            .modal-content {
+                padding: 30px 20px;
+                width: 95%;
+                border-radius: 20px;
+            }
+            .modal h3 { font-size: 1.2rem; }
+            .modal p { font-size: 0.8rem; margin-bottom: 15px; }
+            input.modal-input { padding: 10px 15px; font-size: 0.9rem; }
+        }
     </style>
 </head>
 <body>
@@ -326,20 +359,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
     <div class="profile-container">
         <button onclick="openModal('deleteModal')" class="btn-delete-icon" title="Hapus Akun">🗑️</button>
         <div class="header-section">
-            <div class="avatar-large" onclick="document.getElementById('picInput').click()">
-                <?php if(!empty($user['profile_pic'])): ?>
-                    <img src="../<?= $user['profile_pic'] ?>" alt="Profile">
-                <?php else: ?>
-                    <?= strtoupper(substr($user['username'], 0, 1)) ?>
-                <?php endif; ?>
-                <div class="edit-avatar-overlay">Ganti</div>
+            <div class="avatar-large">
+                <?= strtoupper(substr($user['username'], 0, 1)) ?>
             </div>
-            <form id="picForm" method="POST" enctype="multipart/form-data" style="display:none;">
-                <input type="hidden" name="action" value="update_profile_pic">
-                <input type="file" id="picInput" name="profile_pic" onchange="document.getElementById('picForm').submit()" accept="image/*">
-            </form>
-            <h2><?= htmlspecialchars($user['username']) ?></h2>
-            <p>Customer Premium Neydream</p>
+            <h2 style="padding: 0 10px;"><?= htmlspecialchars($user['username']) ?></h2>
         </div>
 
         <div class="stats-row">
@@ -358,14 +381,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             <div class="detail-item">
                 <span class="detail-label">Email</span>
                 <div class="detail-value">
-                    <span><?= htmlspecialchars($user['email']) ?></span>
+                    <span><?= htmlspecialchars($user['email'] ?? '') ?></span>
                     <span class="edit-icon" onclick="openModal('emailModal')">✏️</span>
                 </div>
             </div>
             <div class="detail-item">
                 <span class="detail-label">Nomor HP</span>
                 <div class="detail-value">
-                    <span><?= htmlspecialchars($user['phone']) ?></span>
+                    <span><?= htmlspecialchars($user['phone'] ?? '') ?></span>
                     <span class="edit-icon" onclick="openModal('phoneModal')">✏️</span>
                 </div>
             </div>
@@ -376,7 +399,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
                     <span id="passText">•••••••••••••</span>
                     <span class="eye-icon" onclick="togglePass()">👁️</span>
                 </div>
-                <!-- Logic Note: If user just changed password, we have it in PHP var $visible_password -->
+                
                 <input type="hidden" id="realPass" value="<?= htmlspecialchars($visible_password) ?>">
             </div>
         </div>
@@ -386,7 +409,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
         <a href="../index.php" class="btn-back">← Kembali ke Beranda</a>
     </div>
 
-    <!-- Modals (Email/Phone same as before) -->
+    
     
     <div id="emailModal" class="modal">
         <div class="modal-content">
@@ -394,7 +417,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             <p>Masukkan alamat email baru Kamu.</p>
             <form method="POST">
                 <input type="hidden" name="action" value="update_email">
-                <input type="email" name="new_email" class="modal-input" required value="<?= $user['email'] ?>">
+                <input type="email" name="new_email" class="modal-input" required value="<?= htmlspecialchars($user['email'] ?? '') ?>">
                 <div class="modal-btns">
                     <button type="button" onclick="closeModal('emailModal')" class="btn-modal btn-cancel">Batal</button>
                     <button type="submit" class="btn-modal btn-confirm">Perbarui</button>
@@ -409,7 +432,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
             <p>Masukkan nomor WhatsApp baru Kamu.</p>
             <form method="POST">
                 <input type="hidden" name="action" value="update_phone">
-                <input type="tel" name="new_phone" class="modal-input" required value="<?= $user['phone'] ?>">
+                <input type="tel" name="new_phone" class="modal-input" required value="<?= htmlspecialchars($user['phone'] ?? '') ?>">
                 <div class="modal-btns">
                     <button type="button" onclick="closeModal('phoneModal')" class="btn-modal btn-cancel">Batal</button>
                     <button type="submit" class="btn-modal btn-confirm">Perbarui</button>
@@ -450,7 +473,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action'])) {
         </div>
     </div>
 
-    <!-- Password Warning Modal -->
+    
     <div id="passWarningModal" class="modal">
         <div class="modal-content">
             <span style="font-size: 3rem; margin-bottom: 15px; display: block;">🔒</span>

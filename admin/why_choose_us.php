@@ -103,7 +103,7 @@ try {
                                 <button onclick="confirmDeleteFeature(<?= $f['id'] ?>, '<?= addslashes($f['title']) ?>')" class="btn btn-outline" style="flex:1; justify-content: center; color: #ef4444;">Hapus</button>
                             </div>
 
-                            <!-- Hidden form for deletion -->
+                            
                             <form id="delete-form-<?= $f['id'] ?>" method="POST" style="display:none;">
                                 <input type="hidden" name="action" value="delete_feature">
                                 <input type="hidden" name="feature_id" value="<?= $f['id'] ?>">
@@ -116,7 +116,7 @@ try {
         </div>
     </div>
 
-    <!-- MODAL POIN -->
+    
     <div id="featureModal" class="modal-overlay" style="display: none;">
         <div class="modal-card" style="max-width: 500px;">
             <h3 id="modalTitle" style="text-align: center; margin-bottom: 24px;">Tambah Keunggulan</h3>

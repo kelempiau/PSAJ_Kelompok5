@@ -6,7 +6,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// Handle POST actions for loyalty management
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($_POST['action'] === 'update_loyalty') {
         $id = intval($_POST['user_id']);
@@ -102,16 +102,16 @@ $users = $conn->query("SELECT * FROM users WHERE role = 'user' ORDER BY created_
                         <table>
                         <thead>
                             <tr>
-                                <th width="80">UID</th>
+                                <th width="80">No</th>
                                 <th>Informasi Pengguna</th>
                                 <th>Loyalty Level</th>
                                 <th width="120">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php while($u = $users->fetch_assoc()): ?>
+                            <?php $no = 1; while($u = $users->fetch_assoc()): ?>
                             <tr>
-                                <td>#<?= $u['id'] ?></td>
+                                <td>#<?= $no++ ?></td>
                                 <td>
                                     <div style="display: flex; align-items: center; gap: 12px;">
                                         <div class="item-avatar" style="width: 32px; height: 32px; font-size: 12px; font-weight: 700; background: #fffbeb; color: #f59e0b; border: 1px solid #fef3c7;">

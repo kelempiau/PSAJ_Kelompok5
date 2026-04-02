@@ -1,5 +1,5 @@
 <?php
-// Report all errors
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -9,7 +9,7 @@ $results = [];
 
 echo "<h1>🛠️ Database Migration v2</h1>";
 
-// 1. Check & Add to users table
+
 $check_user = $conn->query("SHOW COLUMNS FROM users LIKE 'profile_pic'");
 if ($check_user->num_rows == 0) {
     echo "Attempting to add 'profile_pic' to 'users'...<br>";
@@ -22,7 +22,7 @@ if ($check_user->num_rows == 0) {
     echo "ℹ️ Kolom 'profile_pic' sudah ada di tabel users.<br>";
 }
 
-// 2. Check & Add to studio_settings table
+
 $check_admin = $conn->query("SHOW COLUMNS FROM studio_settings LIKE 'admin_profile_pic'");
 if ($check_admin->num_rows == 0) {
     echo "Attempting to add 'admin_profile_pic' to 'studio_settings'...<br>";

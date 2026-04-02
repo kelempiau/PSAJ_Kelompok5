@@ -1,7 +1,7 @@
 <?php
 require '../core/config.php';
 
-// Check if user is logged in
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
     exit();
@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 $booking_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $user_id = $_SESSION['user_id'];
 
-// Fetch booking details
+
 $sql = "SELECT r.*, u.username, u.email 
         FROM reservations r 
         LEFT JOIN users u ON r.user_id = u.id 
@@ -234,11 +234,20 @@ $booking = $result->fetch_assoc();
 </head>
 <body>
     <?php include '../includes/loading.php'; ?>
+<?php
+$settingsRes = $conn->query("SELECT * FROM studio_settings WHERE id = 1");
+$st = $settingsRes ? $settingsRes->fetch_assoc() : [];
+$st_name = (!empty($st['studio_name'])) ? $st['studio_name'] : 'Neydream Nail Art Studio';
+$st_loc = (!empty($st['full_address'])) ? $st['full_address'] . ', ' . $st['city'] : 'Pusat Kota';
+$st_hp = (!empty($st['whatsapp'])) ? $st['whatsapp'] : '0812-xxxx-xxxx';
+$st_email = (!empty($st['email'])) ? $st['email'] : 'hello@neydream.com';
+$st_tahun = date('Y');
+?>
     <div class="receipt">
         <div class="header">
-            <h1>🎨 Neydream Nail Art Studio</h1>
+            <h1>🎨 <?= htmlspecialchars($st_name) ?></h1>
             <p>Beautiful Nails, Beautiful You</p>
-            <p style="margin-top: 10px;">📍 Pusat Kota | 📞 0812-xxxx-xxxx | 📧 hello@neydream.com</p>
+            <p style="margin-top: 10px;">📍 <?= htmlspecialchars($st_loc) ?> | 📞 <?= htmlspecialchars($st_hp) ?> | 📧 <?= htmlspecialchars($st_email) ?></p>
         </div>
 
         <h2 style="text-align: center; color: #5f162e; margin-bottom: 20px;">
@@ -345,7 +354,7 @@ $booking = $result->fetch_assoc();
         <div class="footer">
             <p><strong>Terima kasih atas kepercayaan Anda!</strong></p>
             <p>Kwitansi ini dicetak secara otomatis dan sah tanpa tanda tangan.</p>
-            <p style="margin-top: 10px;">© 2026 Neydream Nail Art Studio. All rights reserved.</p>
+            <p style="margin-top: 10px;">© <?= $st_tahun ?> <?= htmlspecialchars($st_name) ?>. All rights reserved.</p>
         </div>
     </div>
 </body>

@@ -5,7 +5,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     die("Unauthorized access.");
 }
 
-// 1. Create payment_methods table
+
 $sql1 = "CREATE TABLE IF NOT EXISTS payment_methods (
     id INT AUTO_INCREMENT PRIMARY KEY,
     method_name VARCHAR(100) NOT NULL,
@@ -17,7 +17,7 @@ $sql1 = "CREATE TABLE IF NOT EXISTS payment_methods (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
 
-// 2. Create studio_settings table
+
 $sql2 = "CREATE TABLE IF NOT EXISTS studio_settings (
     id INT PRIMARY KEY DEFAULT 1,
     province VARCHAR(100) NULL,
@@ -26,7 +26,7 @@ $sql2 = "CREATE TABLE IF NOT EXISTS studio_settings (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )";
 
-// 3. Create services table
+
 $sql3 = "CREATE TABLE IF NOT EXISTS services (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -37,7 +37,7 @@ $sql3 = "CREATE TABLE IF NOT EXISTS services (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
 
-// 4. Create why_choose_us table
+
 $sql4 = "CREATE TABLE IF NOT EXISTS why_choose_us (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
@@ -46,7 +46,7 @@ $sql4 = "CREATE TABLE IF NOT EXISTS why_choose_us (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
 
-// 5. Create faq table
+
 $sql5 = "CREATE TABLE IF NOT EXISTS faq (
     id INT AUTO_INCREMENT PRIMARY KEY,
     question TEXT NOT NULL,
@@ -55,10 +55,10 @@ $sql5 = "CREATE TABLE IF NOT EXISTS faq (
 )";
 
 if ($conn->query($sql1) && $conn->query($sql2) && $conn->query($sql3) && $conn->query($sql4) && $conn->query($sql5)) {
-    // Initial data for location
+    
     $conn->query("INSERT IGNORE INTO studio_settings (id, province, city, full_address) VALUES (1, 'Kalimantan Barat', 'Pontianak', 'Jl. Contoh No. 123, Pontianak')");
     
-    // Initial data for services
+    
     $checkServices = $conn->query("SELECT id FROM services LIMIT 1");
     if ($checkServices->num_rows === 0) {
         $conn->query("INSERT INTO services (name, description, details, price_start, image_path) VALUES 
@@ -68,7 +68,7 @@ if ($conn->query($sql1) && $conn->query($sql2) && $conn->query($sql3) && $conn->
             ('Add Ons', 'Memberi tambahan pada NailArt sesuai keinginan anda dengan tambahan biaya yang tersedia.', 'Diamond, Sticker, 3D Charm, Cat Eye Effect', 2000, 'assets/img/img7.png')");
     }
 
-    // Initial data for Why Choose Us
+    
     $checkWhy = $conn->query("SELECT id FROM why_choose_us LIMIT 1");
     if ($checkWhy->num_rows === 0) {
         $conn->query("INSERT INTO why_choose_us (title, description, icon) VALUES 
@@ -77,7 +77,7 @@ if ($conn->query($sql1) && $conn->query($sql2) && $conn->query($sql3) && $conn->
             ('Hygienic Tools', 'Kebersihan dan keamanan adalah prioritas utama kami. Seluruh alat yang digunakan melalui proses sterilisasi menyeluruh sebelum dan sesudah pemakaian.', '🛡️')");
     }
 
-    // Initial data for FAQ
+    
     $checkFaq = $conn->query("SELECT id FROM faq LIMIT 1");
     if ($checkFaq->num_rows === 0) {
         $conn->query("INSERT INTO faq (question, answer) VALUES 
@@ -88,7 +88,7 @@ if ($conn->query($sql1) && $conn->query($sql2) && $conn->query($sql3) && $conn->
             ('Kenapa namanya ganti menjadi Neydream?', 'Neydream Studio sebelumnya dikenal sebagai Glamour Nails. Kami melakukan rebranding agar tampil lebih fresh dan modern.')");
     }
 
-    // Existing payment logic...
+    
     $checkPay = $conn->query("SELECT id FROM payment_methods LIMIT 1");
     if ($checkPay->num_rows === 0) {
         $conn->query("INSERT INTO payment_methods (method_name, account_name, account_number, type) VALUES 

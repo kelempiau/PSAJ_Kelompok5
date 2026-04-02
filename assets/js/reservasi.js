@@ -1,4 +1,3 @@
-// Check availability for date and update time slots
 async function checkAvailability() {
     const dateInput = document.getElementById('date');
     const timeSelect = document.getElementById('time');
@@ -13,11 +12,9 @@ async function checkAvailability() {
         const data = await response.json();
 
         if (data.success && data.unavailable_times) {
-            // Update time options
             const timeOptions = timeSelect.querySelectorAll('option');
             timeOptions.forEach(option => {
                 if (option.value) {
-                    // Store original text if not stored yet
                     if (!option.dataset.originalText) {
                         option.dataset.originalText = option.textContent;
                     }
@@ -29,19 +26,16 @@ async function checkAvailability() {
                         option.style.color = '#ccc';
                         option.textContent = option.dataset.originalText + (data.is_past_date ? ' (Sudah Lewat)' : ' (Penuh)');
                     } else {
-                        // Reset to available
                         option.style.color = '';
                         option.textContent = option.dataset.originalText;
                     }
                 }
             });
 
-            // Special handling for past dates
             if (data.is_past_date) {
                 showPastDateWarning();
                 timeSelect.value = '';
             } else if (timeSelect.value && data.unavailable_times.includes(timeSelect.value)) {
-                // Check if currently selected time is unavailable (booked or past)
                 showAvailabilityWarning(timeSelect.value);
                 timeSelect.value = '';
             } else if (warningDiv) {
@@ -53,7 +47,6 @@ async function checkAvailability() {
     }
 }
 
-// Check when time is selected
 async function checkTimeAvailability() {
     const dateInput = document.getElementById('date');
     const timeSelect = document.getElementById('time');
@@ -77,7 +70,6 @@ async function checkTimeAvailability() {
     }
 }
 
-// Show warning for past dates
 function showPastDateWarning() {
     let warningDiv = document.getElementById('availability-warning');
 
@@ -94,7 +86,6 @@ function showPastDateWarning() {
     warningDiv.style.display = 'flex';
 }
 
-// Helper to create warning div
 function createWarningDiv() {
     const div = document.createElement('div');
     div.id = 'availability-warning';
@@ -115,7 +106,6 @@ function createWarningDiv() {
     return div;
 }
 
-// Show warning message
 function showAvailabilityWarning(time) {
     let warningDiv = document.getElementById('availability-warning');
 
@@ -125,13 +115,11 @@ function showAvailabilityWarning(time) {
         if (dateGroup) dateGroup.appendChild(warningDiv);
     }
 
-    // Determine if it's past or booked
     const now = new Date();
     const currentHour = now.getHours();
     const currentMin = now.getMinutes();
     const [h, m] = time.split(':').map(Number);
 
-    // Simple logic: if today and slot time <= current time, it's "Sudah Lewat"
     const dateInput = document.getElementById('date');
     const isToday = dateInput.value === new Date().toISOString().split('T')[0];
 
@@ -149,7 +137,6 @@ function showAvailabilityWarning(time) {
     warningDiv.style.display = 'flex';
 }
 
-// Hide warning message
 function hideAvailabilityWarning() {
     const warningDiv = document.getElementById('availability-warning');
     if (warningDiv) {
@@ -164,7 +151,6 @@ function calculateTotal() {
     const paymentTypeSelect = document.getElementById('payment_type');
     const dpWarning = document.getElementById('dp-warning');
 
-    // Robust check for required elements
     if (!typeSelect || !addon1Select || !addon2Select || !paymentTypeSelect) {
         console.error("Missing required elements for calculation");
         return;
@@ -177,54 +163,53 @@ function calculateTotal() {
 
     const baseTotal = mainPrice + addon1Price + addon2Price;
 
-    // Check if it is a DP type (dp_transfer, dp_cash)
     const isDP = paymentType.indexOf('dp') !== -1;
-    const toPay = isDP ? (baseTotal / 2) : baseTotal;
+    const dpPercent = window.MIN_DP_PERCENT || 50;
+    const toPay = isDP ? (baseTotal * (dpPercent / 100)) : baseTotal;
 
     const formattedTotal = 'Rp' + baseTotal.toLocaleString('id-ID');
     const formattedToPay = 'Rp' + toPay.toLocaleString('id-ID');
 
-    // 1. Update Top Price Display
     const totalPriceEl = document.getElementById('total-price');
     if (totalPriceEl) {
         totalPriceEl.innerText = formattedToPay;
     }
 
-    // 2. Update Hidden Field for Server
     const hiddenTotalEl = document.getElementById('hidden-total');
+    const hiddenServiceNameEl = document.getElementById('hidden-service-name');
+
     if (hiddenTotalEl) {
         hiddenTotalEl.value = formattedTotal;
     }
 
-    // 3. DP Warning Visibility
+    if (hiddenServiceNameEl && mainPrice > 0) {
+        const fullLabel = typeSelect.options[typeSelect.selectedIndex].text;
+        hiddenServiceNameEl.value = fullLabel.split(' - ')[0].trim();
+    }
+
     if (dpWarning) {
         dpWarning.style.display = isDP ? 'block' : 'none';
     }
 
-    // 4. Populate Order Summary List
     const summaryList = document.getElementById('summary-list');
     if (summaryList) {
         summaryList.innerHTML = '';
 
-        // Main Service Row
         if (mainPrice > 0) {
             const label = typeSelect.options[typeSelect.selectedIndex].text;
             addSummaryRow(summaryList, label, mainPrice);
         }
 
-        // Addon 1 Row
         if (addon1Price > 0) {
             const label = addon1Select.options[addon1Select.selectedIndex].text;
             addSummaryRow(summaryList, label, addon1Price);
         }
 
-        // Addon 2 Row
         if (addon2Price > 0) {
             const label = addon2Select.options[addon2Select.selectedIndex].text;
             addSummaryRow(summaryList, label, addon2Price);
         }
 
-        // DP Deduction Row (If applicable)
         if (isDP) {
             const dpRow = document.createElement('li');
             dpRow.className = 'summary-item';
@@ -233,18 +218,16 @@ function calculateTotal() {
             dpRow.style.marginTop = '5px';
             dpRow.style.paddingTop = '5px';
             dpRow.style.borderTop = '1px dashed #eee';
-            dpRow.innerHTML = `<span>Potongan DP (50%)</span><span class="price">-Rp${(baseTotal / 2).toLocaleString('id-ID')}</span>`;
+            dpRow.innerHTML = `<span>Potongan DP (${dpPercent}%)</span><span class="price">-Rp${(baseTotal * (dpPercent / 100)).toLocaleString('id-ID')}</span>`;
             summaryList.appendChild(dpRow);
         }
     }
 
-    // 5. Update Payment Summary Box
     const summaryPayEl = document.getElementById('summary-pay');
     if (summaryPayEl) {
         summaryPayEl.innerText = formattedToPay;
     }
 
-    // 6. Update Bottom Note
     const dpNote = document.getElementById('dp-note');
     if (dpNote) {
         if (isDP) {
@@ -263,7 +246,6 @@ function addSummaryRow(parent, label, price) {
     li.style.justifyContent = 'space-between';
     li.style.marginBottom = '5px';
 
-    // Clean label (e.g., "Gel Polish - Rp50.000" -> "Gel Polish")
     let cleanLabel = label.split(' - ')[0].split(' (+')[0];
 
     li.innerHTML = `<span style="color: #666;">${cleanLabel}</span><span class="price" style="font-weight: 600; color: #333;">Rp${price.toLocaleString('id-ID')}</span>`;
@@ -275,32 +257,37 @@ function showPaymentDetail() {
     if (!methodSelect) return;
 
     const selectedId = methodSelect.value;
+
     const allDetailDivs = document.querySelectorAll('.payment-info');
 
-    // Hide all first
     allDetailDivs.forEach(div => {
         div.style.display = 'none';
+        div.classList.remove('active');
     });
 
-    // Show selected
+    if (!selectedId) return;
+
     const targetDiv = document.getElementById('detail-pm-' + selectedId);
     if (targetDiv) {
         targetDiv.style.display = 'block';
+        targetDiv.classList.add('active');
+
+        targetDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+        if (allDetailDivs.length === 1) {
+            allDetailDivs[0].style.display = 'block';
+            allDetailDivs[0].classList.add('active');
+        }
     }
 }
 
-// Ensure first run after DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
         calculateTotal();
         showPaymentDetail();
-    });
-} else {
-    calculateTotal();
-    showPaymentDetail();
-}
+    }, 100);
+});
 
-// Add event listeners as fallback to onchange attributes
 window.onload = function () {
     ['type', 'addon', 'addon2', 'payment_type'].forEach(id => {
         const el = document.getElementById(id);
@@ -310,12 +297,10 @@ window.onload = function () {
     const payEl = document.getElementById('payment');
     if (payEl) payEl.addEventListener('change', showPaymentDetail);
 
-    // Add availability checking
     const dateEl = document.getElementById('date');
     if (dateEl) {
         dateEl.addEventListener('change', checkAvailability);
 
-        // Also check on load if date is pre-selected
         if (dateEl.value) {
             checkAvailability();
         }
@@ -325,9 +310,23 @@ window.onload = function () {
     if (timeEl) {
         timeEl.addEventListener('change', checkTimeAvailability);
     }
+
+    // Prevent submitting if total is 0
+    const reservasiForm = document.querySelector('.reservasi-form');
+    if (reservasiForm) {
+        reservasiForm.addEventListener('submit', function (e) {
+            const totalStr = document.getElementById('hidden-total')?.value || 'Rp0';
+            const totalVal = parseInt(totalStr.replace(/[^0-9]/g, '')) || 0;
+
+            if (totalVal <= 0) {
+                e.preventDefault();
+                alert('Silakan pilih layanan terlebih dahulu ya Kak! ✨');
+                return false;
+            }
+        });
+    }
 };
 
-// Add CSS animation for warning
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideDown {

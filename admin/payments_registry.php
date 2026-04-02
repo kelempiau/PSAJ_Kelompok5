@@ -6,7 +6,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// Handle POST actions
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($_POST['action'] === 'settle_balance') {
         $id = intval($_POST['res_id']);
@@ -27,9 +27,9 @@ if (isset($_SESSION['msg'])) {
     unset($_SESSION['msg']);
 }
 
-// Only show reservations that are not Full Payment (only DP Transfer/Cash) or all for registry?
-// User said: "daftar pelunasan jadi yang sudah atau yang belum bayar sisa dpnya bakal ada datanya"
-// Better show all reservations that have balance_due > 0 or have had balance_due in the past (DP orders).
+
+
+
 $reservations = $conn->query("SELECT reservations.*, users.username FROM reservations LEFT JOIN users ON reservations.user_id = users.id WHERE payment_type != 'full' ORDER BY reservation_date DESC, reservation_time ASC");
 ?>
 <!DOCTYPE html>
@@ -99,72 +99,94 @@ $reservations = $conn->query("SELECT reservations.*, users.username FROM reserva
                         </div>
                     <?php endif; ?>
 
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Client & Jadwal</th>
-                                    <th>Status Pembayaran</th>
-                                    <th>Metode & Tipe DP</th>
-                                    <th>Manajemen Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if($reservations->num_rows == 0): ?>
-                                    <tr>
-                                        <td colspan="4" style="text-align: center; padding: 60px; color: var(--text-muted); font-style: italic;">Tidak ada data pelunasan sisa saat ini.</td>
-                                    </tr>
-                                <?php else: ?>
-                                    <?php while($r = $reservations->fetch_assoc()): ?>
-                                    <tr>
-                                        <td>
-                                            <div class="user-info-cell">
-                                                <div class="user-avatar-small" style="background: var(--primary-light); color: var(--primary); font-size: 16px;">👤</div>
-                                                <div>
-                                                    <div style="font-weight: 800; color: var(--text-primary); font-size: 15px;"><?= htmlspecialchars($r['name'] ?? $r['username']) ?></div>
-                                                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">📅 <?= date('d M Y', strtotime($r['reservation_date'])) ?> • <?= $r['reservation_time'] ?></div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div style="font-weight: 700; font-size: 16px;">Sisa: <span style="color: <?= $r['balance_due'] > 0 ? '#ef4444' : '#10b981' ?>;">Rp<?= number_format($r['balance_due']) ?></span></div>
-                                            <div style="font-size: 11px; margin-top: 6px; color: var(--text-secondary);">
-                                                Total: Rp<?= number_format($r['total_price']) ?> | Terbayar: Rp<?= number_format($r['amount_paid']) ?>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div style="font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;"><?= str_replace('_', ' ', $r['payment_type']) ?></div>
-                                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;"><?= strtoupper($r['payment_method']) ?></div>
-                                        </td>
-                                        <td>
-                                            <div style="display: flex; flex-direction: column; gap: 8px;">
-                                                <?php if($r['payment_proof']): ?>
-                                                    <button onclick="openProofModal('../<?= $r['payment_proof'] ?>', 'Bukti Transaksi')" class="btn btn-blue btn-text" style="padding: 10px; font-size: 11px; border-radius: 8px; justify-content: center; border:none; width:100%; cursor:pointer;">Bukti Transaksi</button>
-                                                <?php endif; ?>
+<?php
+$resByDate = [];
+$total_bookings = $reservations->num_rows;
 
-                                                <?php if($r['balance_due'] > 0): ?>
-                                                    <button onclick="confirmSettle(<?= $r['id'] ?>)" class="btn btn-green btn-text" style="padding: 10px; font-size: 11px; border-radius: 8px; justify-content: center; border:none; width:100%; cursor:pointer;">Lunasi</button>
-                                                    
-                                                    <?php if(!empty($r['final_payment_proof'])): ?>
-                                                        <button onclick="openProofModal('../<?= $r['final_payment_proof'] ?>', 'Bukti Pelunasan')" class="btn btn-blue btn-text" style="padding: 10px; font-size: 11px; border-radius: 8px; justify-content: center; border:none; width:100%; cursor:pointer;">Bukti Pelunasan</button>
+while ($r = $reservations->fetch_assoc()) {
+    $date = $r['reservation_date'];
+    if (!isset($resByDate[$date])) {
+        $resByDate[$date] = [];
+    }
+    $resByDate[$date][] = $r;
+}
+?>
+                    <?php if($total_bookings == 0): ?>
+                        <div class="card" style="text-align: center; padding: 60px; color: var(--text-muted); font-style: italic;">Tidak ada data pelunasan sisa saat ini.</div>
+                    <?php else: ?>
+                        <?php foreach($resByDate as $date => $dailyRes): ?>
+                        <div class="card" style="margin-bottom: 30px; border-radius: 16px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+                            <div class="card-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 15px 24px;">
+                                <h3 style="margin: 0; color: #334155; font-size: 1.1rem; display: flex; align-items: center; gap: 10px;">
+                                    📅 <?= date('d M Y', strtotime($date)) ?>
+                                </h3>
+                                <div class="meta" style="background: #ea3671; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 12px;">
+                                    <?= count($dailyRes) ?> Reservasi Belum Lunas
+                                </div>
+                            </div>
+                            <div class="table-container" style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr>
+                                            <th style="padding: 12px 24px; text-align: left; border-bottom: 1px solid #e2e8f0;">Client & Jadwal</th>
+                                            <th style="padding: 12px 24px; text-align: left; border-bottom: 1px solid #e2e8f0;">Status Pembayaran</th>
+                                            <th style="padding: 12px 24px; text-align: left; border-bottom: 1px solid #e2e8f0;">Metode & Tipe DP</th>
+                                            <th style="padding: 12px 24px; text-align: left; border-bottom: 1px solid #e2e8f0;">Manajemen Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($dailyRes as $r): ?>
+                                        <tr>
+                                            <td style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0;">
+                                                <div class="user-info-cell" style="display: flex; align-items: center; gap: 12px;">
+                                                    <div class="user-avatar-small" style="background: rgba(255,255,255,0.6); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 18px;">👤</div>
+                                                    <div>
+                                                        <div style="font-weight: 800; color: #1e293b; font-size: 15px;"><?= htmlspecialchars($r['name'] ?? $r['username']) ?></div>
+                                                        <div style="font-size: 12px; color: #64748b; margin-top: 2px;">⏰ <?= $r['reservation_time'] ?></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0;">
+                                                <div style="font-weight: 800; font-size: 15px;">Sisa: <span style="color: <?= $r['balance_due'] > 0 ? '#ef4444' : '#10b981' ?>;">Rp<?= number_format($r['balance_due']) ?></span></div>
+                                                <div style="font-size: 11px; margin-top: 6px; color: #64748b; font-weight: 500;">
+                                                    Total: Rp<?= number_format($r['total_price']) ?> | Terbayar: Rp<?= number_format($r['amount_paid']) ?>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0;">
+                                                <div style="font-size: 12px; font-weight: 800; color: #ea3671; text-transform: uppercase; letter-spacing: 0.5px;"><?= str_replace('_', ' ', $r['payment_type']) ?></div>
+                                                <div style="font-size: 11px; color: #64748b; margin-top: 4px; font-weight: 700;"><?= strtoupper($r['payment_method']) ?></div>
+                                            </td>
+                                            <td style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0;">
+                                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                                    <?php if($r['payment_proof']): ?>
+                                                        <button onclick="openProofModal('../<?= $r['payment_proof'] ?>', 'Bukti Transaksi')" class="btn btn-blue btn-text" style="padding: 8px 10px; font-size: 11px; border-radius: 8px; justify-content: center; border:none; width:100%; cursor:pointer; box-shadow: 0 2px 4px rgba(59,130,246,0.2);">Bukti Transaksi</button>
                                                     <?php endif; ?>
-                                                <?php else: ?>
-                                                    <div style="color: #10b981; font-weight: 800; font-size: 11px; text-align: center; background: #ecfdf5; padding: 8px; border-radius: 8px;">✨ TERBAYAR LUNAS</div>
-                                                <?php endif; ?>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <?php endwhile; ?>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-                    </div>
+
+                                                    <?php if($r['balance_due'] > 0): ?>
+                                                        <button onclick="confirmSettle(<?= $r['id'] ?>)" class="btn btn-green btn-text" style="padding: 8px 10px; font-size: 11px; border-radius: 8px; justify-content: center; border:none; width:100%; cursor:pointer; box-shadow: 0 2px 4px rgba(16,185,129,0.2);">Lunasi Manual</button>
+                                                        
+                                                        <?php if(!empty($r['final_payment_proof'])): ?>
+                                                            <button onclick="openProofModal('../<?= $r['final_payment_proof'] ?>', 'Bukti Pelunasan')" class="btn btn-blue btn-text" style="padding: 8px 10px; font-size: 11px; border-radius: 8px; justify-content: center; border:none; width:100%; cursor:pointer; box-shadow: 0 2px 4px rgba(59,130,246,0.2);">Bukti Pelunasan</button>
+                                                        <?php endif; ?>
+                                                    <?php else: ?>
+                                                        <div style="color: #10b981; font-weight: 800; font-size: 11px; text-align: center; background: #ecfdf5; padding: 8px; border-radius: 8px; width: 100%;">✨ TERBAYAR LUNAS</div>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </main>
         </div>
     </div>
 
-    <!-- Custom Modal Popup -->
+    
     <div id="settleModal" class="modal-fancy">
         <div class="modal-fancy-content">
             <div style="font-size: 3.5rem; margin-bottom: 20px;">💰</div>
@@ -182,7 +204,7 @@ $reservations = $conn->query("SELECT reservations.*, users.username FROM reserva
         </div>
     </div>
 
-    <!-- Image Viewer Modal -->
+    
     <div id="proofModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100000; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s;">
         <div style="position: relative; max-width: 90%; max-height: 90%;">
 
@@ -200,7 +222,6 @@ $reservations = $conn->query("SELECT reservations.*, users.username FROM reserva
             document.getElementById('proofImage').src = src;
             document.getElementById('proofTitle').innerText = title || 'Bukti Transfer';
             modal.style.display = 'flex';
-            // Trigger reflow for transition
             setTimeout(() => { modal.style.opacity = '1'; }, 10);
         }
 
@@ -209,8 +230,6 @@ $reservations = $conn->query("SELECT reservations.*, users.username FROM reserva
             modal.style.opacity = '0';
             setTimeout(() => { modal.style.display = 'none'; }, 300);
         }
-
-        // Close on clicking outside
         document.getElementById('proofModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeProofModal();

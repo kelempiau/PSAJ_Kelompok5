@@ -2,38 +2,23 @@ let currentConversationId = null;
 let currentUserId = null;
 let conversations = [];
 let messagesInterval = null;
-
-// Initial Load
 document.addEventListener('DOMContentLoaded', () => {
     loadConversations();
     setInterval(loadConversations, 5000);
-
-    // Back button logic
     const backBtn = document.getElementById('backToQueueBtn');
     if (backBtn) {
         backBtn.onclick = () => {
-            // Clear current chat
             currentConversationId = null;
             currentUserId = null;
-
-            // Hide chat panel on mobile
             const container = document.querySelector('.conversations-container');
             if (container) container.classList.remove('chat-active');
-
-            // Hide back button
             backBtn.style.display = 'none';
-
-            // Hide input
             document.getElementById('chatInputContainer').style.display = 'none';
-
-            // Reset chat area
             document.getElementById('chatMessages').innerHTML = `
                 <div class="empty-state">
                     <p>👈 Pilih salah satu pelanggan di samping untuk mulai membalas pesan.</p>
                 </div>
             `;
-
-            // Reset header
             document.getElementById('chatHeader').innerHTML = `
                 <button class="back-to-queue-btn" id="backToQueueBtn" style="display: none;">
                     <span style="font-size: 18px;">←</span>
@@ -44,42 +29,60 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="status-text" id="activeChatStatus"></div>
                 </div>
             `;
-
-            // Re-attach listener
             document.getElementById('backToQueueBtn').onclick = arguments.callee;
-
-            // Clear intervals
             if (messagesInterval) {
                 clearInterval(messagesInterval);
                 messagesInterval = null;
             }
-
-            // Re-render conversation list
             renderConversationList(conversations);
         };
     }
 });
+console.log("Admin Chat Engine v4.1.0 Loaded.");
+function parseSafeJSON(text) {
+    try {
+        const START = "!!!JSON_START!!!";
+        const END = "!!!JSON_END!!!";
+        const sIdx = text.indexOf(START);
+        const eIdx = text.lastIndexOf(END);
+
+        if (sIdx !== -1 && eIdx !== -1) {
+            return JSON.parse(text.substring(sIdx + START.length, eIdx).trim());
+        }
+        const match = text.match(/\{[\s\S]*\}/);
+        if (match) {
+            try {
+                return JSON.parse(match[0]);
+            } catch (inner) {
+                let cleaned = match[0].replace(/<\/?[^>]+(>|$)/g, "");
+                return JSON.parse(cleaned);
+            }
+        }
+        return JSON.parse(text.trim());
+    } catch (e) {
+        console.error("JSON Parse Fail:", e, "Raw:", text);
+        throw new Error("Data Error: " + text.substring(0, 50) + "...");
+    }
+}
 
 async function loadConversations() {
     try {
         const response = await fetch('../api/chat/conversations.php');
-        const text = await response.text(); // Read as text first to debug
+        const text = await response.text();
 
         try {
-            const data = JSON.parse(text);
+            const data = parseSafeJSON(text);
             if (data.success) {
                 conversations = data.conversations;
                 renderConversationList(conversations);
             } else {
-                console.error('API Logic Error:', data.error);
-                document.getElementById('conversationList').innerHTML = `<div class="empty-list">API Error: ${data.error}</div>`;
+                throw new Error(data.error || "Unknown API Error");
             }
         } catch (e) {
             console.error('JSON Parse Error:', e);
-            console.log('Raw Output:', text);
             document.getElementById('conversationList').innerHTML = `<div class="empty-list">
                 <strong>Error Parse JSON</strong><br>
-                <small style="font-size:10px; color:red;">${text.substring(0, 100)}...</small>
+                <small style="font-size:10px; color:red; word-break: break-all;">${e.message}<br>Data: ${text.substring(0, 50)}...</small>
             </div>`;
         }
     } catch (error) {
@@ -100,8 +103,6 @@ function renderConversationList(convos) {
     convos.forEach(conv => {
         const div = document.createElement('div');
         div.className = 'conversation-item';
-
-        // Active item check by User ID or Conversation ID
         if (conv.user_id == currentUserId) {
             div.classList.add('active');
         }
@@ -110,7 +111,6 @@ function renderConversationList(convos) {
         div.onclick = () => selectUser(conv);
 
         const statusBadge = conv.conv_status === 'escalated' ? '<span class="status-badge escalated">Butuh Admin</span>' : '';
-        // remove onlineDot logic
 
         const avatarHtml = conv.profile_pic
             ? `<img src="../${conv.profile_pic}" style="width: 100%; height: 100%; object-fit: cover;">`
@@ -158,30 +158,19 @@ function selectUser(user) {
             <button class="btn btn-outline" style="padding: 6px 12px; font-size: 11px; color: #ef4444; border-color: var(--primary-light);" onclick="openAdminDeleteModal()">Hapus Riwayat</button>
         </div>
     `;
-
-    // Re-attach back button listener after HTML update
     const backBtn = document.getElementById('backToQueueBtn');
     if (backBtn) {
         backBtn.onclick = () => {
-            // Clear current chat
             currentConversationId = null;
             currentUserId = null;
-
-            // Hide chat panel on mobile
             const container = document.querySelector('.conversations-container');
             if (container) container.classList.remove('chat-active');
-
-            // Hide input
             document.getElementById('chatInputContainer').style.display = 'none';
-
-            // Reset chat area
             document.getElementById('chatMessages').innerHTML = `
                 <div class="empty-state">
                     <p>👈 Pilih salah satu pelanggan di samping untuk mulai membalas pesan.</p>
                 </div>
             `;
-
-            // Reset header
             document.getElementById('chatHeader').innerHTML = `
                 <button class="back-to-queue-btn" id="backToQueueBtn" style="display: none;">
                     <span style="font-size: 18px;">←</span>
@@ -192,28 +181,18 @@ function selectUser(user) {
                     <div class="status-text" id="activeChatStatus"></div>
                 </div>
             `;
-
-            // Re-attach listener
             document.getElementById('backToQueueBtn').onclick = arguments.callee;
-
-            // Clear intervals
             if (messagesInterval) {
                 clearInterval(messagesInterval);
                 messagesInterval = null;
             }
-
-            // Re-render conversation list
             renderConversationList(conversations);
         };
     }
 
     document.getElementById('chatInputContainer').style.display = 'flex';
     document.getElementById('messageInput').focus();
-
-    // Re-render list to update active state
     renderConversationList(conversations);
-
-    // Mobile: Switch to chat panel
     const container = document.querySelector('.conversations-container');
     if (container && window.innerWidth <= 992) {
         container.classList.add('chat-active');
@@ -223,15 +202,12 @@ function selectUser(user) {
         loadMessages();
         if (messagesInterval) clearInterval(messagesInterval);
         messagesInterval = setInterval(loadMessages, 3000);
-
-        // Mark as read
         fetch('../api/chat/mark_read.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `conversation_id=${currentConversationId}`
         });
     } else {
-        // New conversation
         document.getElementById('chatMessages').innerHTML = `
             <div class="empty-state">
                 <p>Mulai percakapan baru dengan <b>${user.username}</b></p>
@@ -247,7 +223,8 @@ async function loadMessages() {
 
     try {
         const response = await fetch(`../api/chat/messages.php?conversation_id=${currentConversationId}`);
-        const data = await response.json();
+        const text = await response.text();
+        const data = parseSafeJSON(text);
         if (data.success) {
             renderMessages(data.messages);
         }
@@ -327,8 +304,6 @@ async function sendAdminMessage() {
     if (fileInput.files.length > 0) {
         formData.append('image', fileInput.files[0]);
     }
-
-    // Disable input while sending
     input.disabled = true;
 
     try {
@@ -337,14 +312,14 @@ async function sendAdminMessage() {
             body: formData
         });
 
-        const data = await response.json();
+        const text = await response.text();
+        const data = parseSafeJSON(text);
         if (data.success) {
             input.value = '';
             fileInput.value = '';
-            handleAdminFileSelect(fileInput); // Reset icon color
+            handleAdminFileSelect(fileInput);
             if (data.conversation_id && !currentConversationId) {
                 currentConversationId = data.conversation_id;
-                // Start polling
                 loadMessages();
                 messagesInterval = setInterval(loadMessages, 3000);
             }
@@ -379,8 +354,6 @@ function handleAdminFileSelect(input) {
 function handleKeyPress(e) {
     if (e.key === 'Enter') sendAdminMessage();
 }
-
-// Global modal handlers
 function openAdminDeleteModal() {
     if (!currentConversationId) return;
     document.getElementById('deleteModal').style.display = 'flex';
@@ -402,7 +375,8 @@ async function executeAdminDeleteChat() {
             body: formData
         });
 
-        const data = await response.json();
+        const text = await response.text();
+        const data = parseSafeJSON(text);
         if (data.success) {
             document.getElementById('chatMessages').innerHTML = '<div class="empty-state"><p>Riwayat chat telah dihapus.</p></div>';
             closeAdminDeleteModal();

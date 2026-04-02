@@ -9,7 +9,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 $msg = "";
 $error = "";
 
-// --- HANDLE POST ACTIONS ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
@@ -21,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $price = floatval($_POST['price_start']);
         $image_path = $_POST['existing_image'] ?? '';
 
-        // Handle Image Upload
         if (isset($_FILES['service_image']) && $_FILES['service_image']['error'] === 0) {
             $targetDir = "../assets/img/";
             if (!file_exists($targetDir)) mkdir($targetDir, 0777, true);
@@ -126,7 +124,6 @@ try {
                                 <button onclick="confirmDeleteService(<?= $s['id'] ?>, '<?= addslashes($s['name']) ?>')" class="btn btn-outline" style="flex:1; justify-content: center; color: #ef4444; border-color: #fee2e2;">Hapus</button>
                             </div>
 
-                            <!-- Hidden form for deletion -->
                             <form id="delete-form-<?= $s['id'] ?>" method="POST" style="display:none;">
                                 <input type="hidden" name="action" value="delete_service">
                                 <input type="hidden" name="service_id" value="<?= $s['id'] ?>">
@@ -139,7 +136,6 @@ try {
         </div>
     </div>
 
-    <!-- MODAL LAYANAN -->
     <div id="serviceModal" class="modal-overlay" style="display: none;">
         <div class="modal-card" style="max-width: 500px;">
             <h3 id="modalTitle" style="text-align: center; margin-bottom: 24px;">Tambah Layanan</h3>

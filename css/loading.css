@@ -1,4 +1,3 @@
-/* ==================== LOADING SCREEN (USER VERSION - PINK) ==================== */
 .loading-overlay {
     position: fixed;
     top: 0;
@@ -34,7 +33,7 @@
     width: 100%;
     height: 100%;
     fill: #ea3671;
-    /* Pink color */
+
     filter: drop-shadow(0 4px 12px rgba(234, 54, 113, 0.4));
 }
 
@@ -42,7 +41,7 @@
     font-size: 16px;
     font-weight: 600;
     color: #ea3671;
-    /* Pink color */
+
     margin-top: 16px;
     letter-spacing: 0.5px;
 }
@@ -52,7 +51,7 @@
     animation: dots 1.5s steps(4, end) infinite;
 }
 
-/* Loading Animations */
+
 @keyframes spin {
     from {
         transform: rotate(0deg);
@@ -104,18 +103,18 @@
     }
 }
 
-/* Dark Mode Loading (Optional for user - same pink) */
+
 body.dark-mode .loading-overlay {
     background: linear-gradient(135deg, #0b1120 0%, #1a0811 100%);
 }
 
 body.dark-mode .loading-star svg {
     fill: #ff5a9d;
-    /* Lighter pink for dark mode */
+
     filter: drop-shadow(0 4px 12px rgba(255, 90, 157, 0.5));
 }
 
 body.dark-mode .loading-text {
     color: #ff5a9d;
-    /* Lighter pink for dark mode */
+
 }

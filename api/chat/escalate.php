@@ -1,28 +1,28 @@
 <?php
 require '../../core/config.php';
-
-header('Content-Type: application/json');
+header('Content-Type: text/plain');
+header('X-Chat-Engine-Version: 4.0.0');
 
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'error' => 'Not authenticated']);
+    ob_clean();
+    echo "!!!JSON_START!!!" . json_encode(['success' => false, 'error' => 'Not authenticated']) . "!!!JSON_END!!!";
     exit;
 }
 
 $conversation_id = isset($_POST['conversation_id']) ? intval($_POST['conversation_id']) : 0;
-
 if ($conversation_id === 0) {
-    echo json_encode(['success' => false, 'error' => 'Conversation ID required']);
+    ob_clean();
+    echo "!!!JSON_START!!!" . json_encode(['success' => false, 'error' => 'ID required']) . "!!!JSON_END!!!";
     exit;
 }
 
 $stmt = $conn->prepare("UPDATE conversations SET status = 'escalated' WHERE id = ?");
 $stmt->bind_param("i", $conversation_id);
-
 if ($stmt->execute()) {
-    // $bot_message = "maaf saya tidak tahu chat ini akan dijawab oleh admin";
-    // SQL Insert removed to avoid duplicates (JS handles it)
-    
-    echo json_encode(['success' => true, 'message' => 'Escalated to admin']);
+    $out = ['success' => true, 'message' => 'Escalated'];
 } else {
-    echo json_encode(['success' => false, 'error' => 'Failed to escalate']);
+    $out = ['success' => false, 'error' => 'Failed'];
 }
+ob_clean();
+echo "!!!JSON_START!!!" . json_encode($out) . "!!!JSON_END!!!";
+exit;

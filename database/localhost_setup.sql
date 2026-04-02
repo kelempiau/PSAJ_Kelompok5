@@ -1,12 +1,10 @@
--- Setup Database Lengkap untuk Localhost
+
 
 CREATE DATABASE IF NOT EXISTS neydream_db;
 USE neydream_db;
 
--- Import dari database.sql yang sudah ada
--- (Kakak import manual file database/database.sql via phpMyAdmin)
 
--- Tambahan: Install Chat System
+
 CREATE TABLE IF NOT EXISTS `conversations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
@@ -31,16 +29,15 @@ CREATE TABLE IF NOT EXISTS `messages` (
   KEY `conversation_id` (`conversation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Update config untuk localhost
--- File: C:\xampp\htdocs\neydream\core\config.php
--- Ganti:
--- $host = 'sql108.infinityfree.com';
--- $db = 'if0_37974518_neydream_db';
--- $user = 'if0_37974518';
--- $pass = 'zk0hWKZWsw';
--- 
--- Menjadi:
--- $host = 'localhost';
--- $db = 'neydream_db';
--- $user = 'root';
--- $pass = '';
+
+
+
+
+
+
+
+
+
+
+
+

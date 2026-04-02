@@ -12,7 +12,7 @@ if (!$id) {
     exit();
 }
 
-// Fetch reservation details
+
 if (isset($_SESSION['admin_id'])) {
     $stmt = $conn->prepare("SELECT * FROM reservations WHERE id = ?");
     $stmt->bind_param("i", $id);
@@ -38,7 +38,7 @@ $message = "";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $payment_method = $_POST['Metode_Pembayaran'];
     
-    // Handle File Upload
+    
     $proofPath = "";
     if (isset($_FILES['bukti_pelunasan']) && $_FILES['bukti_pelunasan']['error'] == 0) {
         $uploadDir = '../uploads/proofs/';
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (move_uploaded_file($_FILES['bukti_pelunasan']['tmp_name'], $targetPath)) {
             $proofPath = 'uploads/proofs/' . $filename;
             
-            // Update Database
+            
             $new_amount = $reservation['amount_paid'] + $reservation['balance_due'];
             $stmt = $conn->prepare("UPDATE reservations SET amount_paid = ?, balance_due = 0, final_payment_proof = ? WHERE id = ?");
             $stmt->bind_param("dsi", $new_amount, $proofPath, $id);
@@ -156,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </select>
             </div>
 
-            <!-- Payment Details (Appears only if selected) -->
+            
             <?php foreach($method_details as $pm): ?>
                 <div id="detail-pm-<?= $pm['id'] ?>" class="payment-info" style="display: none; padding: 20px; background: #fffafb; border-radius: 20px; margin-bottom: 25px; text-align: center; border: 1px solid #ffe4e6;">
                     <?php if($pm['type'] === 'qris'): ?>
@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
     </div>
 
-    <!-- Success Modal -->
+    
     <div id="successModal" style="display: <?= ($message === 'SUCCESS_MODAL') ? 'flex' : 'none' ?>; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 20000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
         <div class="modal-content" style="background:white; max-width: 400px; padding: 40px; border-radius: 30px; text-align: center;">
             <div style="font-size: 4rem; margin-bottom: 20px;">✨</div>
@@ -194,10 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <script>
         function showPaymentDetail(id) {
-            // Hide all
             document.querySelectorAll('.payment-info').forEach(el => el.style.display = 'none');
-            
-            // Show selected
             const target = document.getElementById('detail-pm-' + id);
             if (target) {
                 target.style.display = 'block';

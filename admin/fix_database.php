@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 
 $results = [];
 
-// 1. Create services table
+
 $sql1 = "CREATE TABLE IF NOT EXISTS services (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -18,7 +18,7 @@ $sql1 = "CREATE TABLE IF NOT EXISTS services (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
 
-// 2. Create why_choose_us table
+
 $sql2 = "CREATE TABLE IF NOT EXISTS why_choose_us (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
@@ -27,7 +27,7 @@ $sql2 = "CREATE TABLE IF NOT EXISTS why_choose_us (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
 
-// 3. Create faq table
+
 $sql3 = "CREATE TABLE IF NOT EXISTS faq (
     id INT AUTO_INCREMENT PRIMARY KEY,
     question TEXT NOT NULL,
@@ -35,7 +35,7 @@ $sql3 = "CREATE TABLE IF NOT EXISTS faq (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
 
-// 4. Create studio_settings table (if not exists)
+
 $sql4 = "CREATE TABLE IF NOT EXISTS studio_settings (
     id INT PRIMARY KEY DEFAULT 1,
     province VARCHAR(100) NULL,
@@ -49,10 +49,10 @@ if ($conn->query($sql2)) $results[] = "✅ Table 'why_choose_us' ready."; else $
 if ($conn->query($sql3)) $results[] = "✅ Table 'faq' ready."; else $results[] = "❌ Error 'faq': " . $conn->error;
 if ($conn->query($sql4)) $results[] = "✅ Table 'studio_settings' ready."; else $results[] = "❌ Error 'studio_settings': " . $conn->error;
 
-// Insert Initial Data if empty
+
 $conn->query("INSERT IGNORE INTO studio_settings (id, province, city, full_address) VALUES (1, 'Jawa Tengah', 'Purwokerto', 'Dusun Sokawera, Rempoah, Baturaden, Banyumas Regency, Central Java 53126')");
 
-// 5. Add profile pic columns if missing
+
 $checkColUser = $conn->query("SHOW COLUMNS FROM users LIKE 'profile_pic'");
 if ($checkColUser->num_rows == 0) {
     if ($conn->query("ALTER TABLE users ADD COLUMN profile_pic VARCHAR(255) DEFAULT NULL")) {
@@ -86,7 +86,7 @@ if ($checkWhy->num_rows === 0) {
     $results[] = "✨ Initial explanations data inserted.";
 }
 
-setcookie('force_refresh', '1', time() + 5, '/'); // Force refresh hint
+setcookie('force_refresh', '1', time() + 5, '/'); 
 ?>
 <!DOCTYPE html>
 <html lang="id">

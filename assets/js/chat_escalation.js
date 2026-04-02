@@ -1,7 +1,5 @@
 let currentConversationId = null;
 let messageCheckInterval = null;
-
-// Heartbeat for user online status
 async function sendHeartbeat() {
     try {
         await fetch('../api/user/heartbeat.php');
@@ -9,8 +7,6 @@ async function sendHeartbeat() {
 }
 setInterval(sendHeartbeat, 30000);
 sendHeartbeat();
-
-// Check Admin Status
 async function checkAdminStatus() {
     try {
         const response = await fetch('../api/chat/conversations.php?check_admin=1');
@@ -29,12 +25,9 @@ setInterval(checkAdminStatus, 60000);
 checkAdminStatus();
 
 window.escalateToAdmin = async function (userMessage) {
-    // Don't send the message again - AI already showed it
-    // Just create conversation if needed and mark as escalated
     if (!currentConversationId) {
-        // Create conversation silently without sending escalation message again
         const formData = new FormData();
-        formData.append('message', '__ESCALATION_FLAG__'); // Internal marker
+        formData.append('message', '__ESCALATION_FLAG__');
 
         const response = await fetch('../api/chat/send.php', {
             method: 'POST',
@@ -44,8 +37,6 @@ window.escalateToAdmin = async function (userMessage) {
         const data = await response.json();
         if (data.success) {
             currentConversationId = data.conversation_id;
-
-            // Mark as escalated
             await fetch('../api/chat/escalate.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
