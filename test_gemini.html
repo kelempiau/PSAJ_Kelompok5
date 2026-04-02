@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test Gemini AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background: #e91e63;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #c2185b;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            min-height: 100px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🤖 Test Gemini AI Connection</h1>
+        <p>Klik tombol di bawah untuk test koneksi ke Google Gemini API</p>
+        <button onclick="testGemini()">Test AI Sekarang</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function testGemini() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = "⏳ Menghubungi Google Gemini AI...";
+
+            try {
+                const API_KEY = "AIzaSyCvJPGGc0yq6Vl_Z_kMIT59ioU_cXRFHjA";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${API_KEY}`;
+
+                console.log("Testing API...");
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: "Halo! Test koneksi. Tolong balas dengan 1 kalimat singkat."
+                            }]
+                        }]
+                    })
+                });
+
+                console.log("Response status:", response.status);
+
+                const data = await response.json();
+                console.log("Response data:", data);
+
+                if (response.status === 200 && data.candidates && data.candidates[0]) {
+                    const aiReply = data.candidates[0].content.parts[0].text;
+                    resultDiv.innerHTML = `<div class="success">✅ <strong>SUKSES!</strong><br><br><strong>AI Reply:</strong><br>${aiReply}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ <strong>GAGAL</strong><br><br><strong>Response:</strong><br>${JSON.stringify(data, null, 2)}</div>`;
+                }
+
+            } catch (error) {
+                console.error("Error:", error);
+                resultDiv.innerHTML = `<div class="error">❌ <strong>ERROR</strong><br><br><strong>Detail:</strong><br>${error.message}<br><br><strong>Kemungkinan:</strong><br>1. API Key salah/expired<br>2. Koneksi internet bermasalah<br>3. Gemini API lagi down</div>`;
+            }
+        }
+    </script>
+</body>
+
+</html>
