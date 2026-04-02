@@ -1,5 +1,5 @@
 <?php
-// Set error reporting to see everything
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -21,7 +21,7 @@ function addColumn($conn, $table, $column, $definition) {
     }
 }
 
-// Run the migration
+
 addColumn($conn, 'users', 'profile_pic', 'VARCHAR(255) DEFAULT NULL');
 addColumn($conn, 'studio_settings', 'admin_profile_pic', 'VARCHAR(255) DEFAULT NULL');
 

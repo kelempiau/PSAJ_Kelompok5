@@ -1,7 +1,6 @@
 <?php
 require '../core/config.php';
 
-// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
     exit();
@@ -10,13 +9,11 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $username = $_SESSION['username'];
 
-// Strict Access Control: Admin cannot access user pages
 if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
     header("Location: ../admin/dashboard.php");
     exit();
 }
 
-// Fetch user's reservations
 $sql = "SELECT * FROM reservations WHERE user_id = ? ORDER BY created_at DESC";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
@@ -32,24 +29,40 @@ $result = $stmt->get_result();
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <?php include 'includes/loading_styles.php'; ?>
     <style>
-        /* ANTIGRAVITY AD PROTECTION */
         #sb98124, #sb98124_image, #sb98124_close, .tutup2,
-        div[id^="sb"][style*="display: block"], 
-        div[id^="sb"][style*="position: fixed"],
-        a[href*="infinityfree"] {
+        div[id*="sb"][style*="fixed"], 
+        div[class*="sb"][style*="fixed"],
+        a[href*="infinityfree"], 
+        center a[title*="Free Web Hosting"],
+        div[style*="z-index: 99999"], 
+        .disclaimer {
             display: none !important;
             opacity: 0 !important;
             pointer-events: none !important;
+            position: absolute !important;
+            left: -9999px !important;
             visibility: hidden !important;
-            z-index: -99999 !important;
         }
     </style>
     <script>
         (function(){
-            setInterval(function(){
-                var ads = document.querySelectorAll('#sb98124, #sb98124_image, .tutup2, div[id^="sb"][style*="fixed"]');
-                ads.forEach(function(el){ el.remove(); });
-            }, 500);
+            const cleanup = () => {
+                const selectors = [
+                    '#sb98124', '.tutup2', 'div[id^="sb"]', 
+                    'a[href*="infinityfree"]', 'center a[title*="Hosting"]',
+                    'div[style*="z-index: 99999"]', 'div[style*="position: fixed"][style*="99999"]'
+                ];
+                selectors.forEach(s => {
+                    document.querySelectorAll(s).forEach(el => {
+                        if (!el.innerText.includes("AI") && !el.id.includes("chat") && !el.className.includes("modal")) {
+                            el.remove();
+                        }
+                    });
+                });
+            };
+            cleanup();
+            setInterval(cleanup, 1000);
+            window.addEventListener('load', cleanup);
         })();
     </script>
     <style>
@@ -61,7 +74,7 @@ $result = $stmt->get_result();
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #ffd9e2 0%, #ffe6f0 100%);
+            background: linear-gradient(135deg, #fff0f3 0%, #ffb7c5 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -74,36 +87,46 @@ $result = $stmt->get_result();
         .header {
             background: white;
             padding: 25px 30px;
-            border-radius: 15px;
+            border-radius: 20px;
             margin-bottom: 30px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(255, 133, 161, 0.15);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border: 1px solid rgba(255,255,255,0.6);
         }
 
         .header h1 {
-            color: #5f162e;
+            color: #ea3671;
             font-size: 1.8rem;
+            font-weight: 700;
         }
 
         .btn {
-            padding: 10px 20px;
-            border-radius: 10px;
+            padding: 12px 24px;
+            border-radius: 12px;
             text-decoration: none;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: none;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
         }
 
         .btn-back {
-            background: #f0f0f0;
-            color: #333;
+            background: white;
+            color: #ea3671;
+            border: 1px solid #ffe6f0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
         .btn-back:hover {
-            background: #e0e0e0;
+            background: #fff0f3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 133, 161, 0.2);
         }
 
         .empty-state {
@@ -196,7 +219,7 @@ $result = $stmt->get_result();
 
         .booking-details {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
@@ -362,7 +385,21 @@ $result = $stmt->get_result();
                         <div class="detail-item">
                             <strong>💅 Layanan</strong>
                             <span><?= $booking['service_type'] ?></span>
+                            <?php 
+                                // Simple deduction of service price
+                                $addons_val = (isset($booking['addons']) && is_numeric($booking['addons'])) ? (float)$booking['addons'] : 0;
+                                $serv_price = (float)$booking['total_price'] - $addons_val;
+                                if ($serv_price > 0):
+                            ?>
+                                <small style="display: block; color: #ea3671; font-weight: 600;">Rp <?= number_format($serv_price, 0, ',', '.') ?></small>
+                            <?php endif; ?>
                         </div>
+                        <?php if ($booking['addons']): ?>
+                        <div class="detail-item">
+                            <strong>➕ Add Ons</strong>
+                            <span><?= $booking['addons'] ?></span>
+                        </div>
+                        <?php endif; ?>
                         <div class="detail-item">
                             <strong>💰 Total Harga</strong>
                             <span>Rp <?= number_format($booking['total_price'], 0, ',', '.') ?></span>
@@ -384,12 +421,6 @@ $result = $stmt->get_result();
                             <strong>🏦 Metode</strong>
                             <span style="text-transform: uppercase;"><?= $booking['payment_method'] ?></span>
                         </div>
-                        <?php if ($booking['addons']): ?>
-                        <div class="detail-item">
-                            <strong>➕ Add Ons</strong>
-                            <span><?= $booking['addons'] ?></span>
-                        </div>
-                        <?php endif; ?>
                     </div>
 
                     <?php if ($booking['refund_status']): ?>
@@ -405,7 +436,6 @@ $result = $stmt->get_result();
                     <?php endif; ?>
 
                     <div class="booking-actions">
-                        <!-- Receipt/Invoice Button -->
                         <?php if (($booking['payment_type'] === 'dp' || $booking['payment_type'] === 'dp_transfer') && $booking['balance_due'] > 0): ?>
                             <a href="lunasi.php?id=<?= $booking['id'] ?>" class="btn" style="background: #ea3671; color: white; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
                                 💳 Lunasi Sisa
@@ -441,7 +471,6 @@ $result = $stmt->get_result();
         <?php endif; ?>
     </div>
 
-    <!-- Refund Modal -->
     <div id="refundModal" class="modal">
         <div class="modal-content">
             <h3>Request Refund</h3>
@@ -468,7 +497,6 @@ $result = $stmt->get_result();
             document.getElementById('reason').value = '';
         }
 
-        // Close modal if click outside
         window.onclick = function(event) {
             const modal = document.getElementById('refundModal');
             if (event.target == modal) {
@@ -476,9 +504,7 @@ $result = $stmt->get_result();
             }
         }
 
-        // Generate and print receipt
         function printReceipt(bookingId) {
-            // Open receipt in new window
             window.open('receipt.php?id=' + bookingId, '_blank', 'width=800,height=600');
         }
     </script>

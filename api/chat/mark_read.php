@@ -4,14 +4,16 @@ require '../../core/config.php';
 header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'error' => 'Not authenticated']);
+    ob_clean();
+    echo "!!!JSON_START!!!" . json_encode(['success' => false, 'error' => 'Not authenticated']) . "!!!JSON_END!!!";
     exit;
 }
 
 $conversation_id = isset($_POST['conversation_id']) ? intval($_POST['conversation_id']) : 0;
 
 if ($conversation_id === 0) {
-    echo json_encode(['success' => false, 'error' => 'Conversation ID required']);
+    ob_clean();
+    echo "!!!JSON_START!!!" . json_encode(['success' => false, 'error' => 'Conversation ID required']) . "!!!JSON_END!!!";
     exit;
 }
 
@@ -22,7 +24,10 @@ $stmt = $conn->prepare("UPDATE messages SET is_read = TRUE WHERE conversation_id
 $stmt->bind_param("is", $conversation_id, $sender_type);
 
 if ($stmt->execute()) {
-    echo json_encode(['success' => true]);
+    $out = ['success' => true];
 } else {
-    echo json_encode(['success' => false, 'error' => 'Failed to mark as read']);
+    $out = ['success' => false, 'error' => 'Failed to mark as read'];
 }
+ob_clean();
+echo "!!!JSON_START!!!" . json_encode($out) . "!!!JSON_END!!!";
+exit;

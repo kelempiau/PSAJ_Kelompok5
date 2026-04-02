@@ -109,7 +109,7 @@ try {
                                                 <button onclick='editFaq(<?= json_encode($f) ?>)' class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Edit</button>
                                                 <button onclick="confirmDeleteFaq(<?= $f['id'] ?>)" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px; color: #ef4444;">Hapus</button>
                                                 
-                                                <!-- Hidden form for deletion -->
+                                                
                                                 <form id="delete-form-<?= $f['id'] ?>" method="POST" style="display:none;">
                                                     <input type="hidden" name="action" value="delete_faq">
                                                     <input type="hidden" name="faq_id" value="<?= $f['id'] ?>">
@@ -129,7 +129,7 @@ try {
         </div>
     </div>
 
-    <!-- MODAL FAQ -->
+    
     <div id="faqModal" class="modal-overlay" style="display: none;">
         <div class="modal-card" style="max-width: 600px;">
             <h3 id="modalTitle" style="text-align: center; margin-bottom: 24px;">Tambah FAQ</h3>

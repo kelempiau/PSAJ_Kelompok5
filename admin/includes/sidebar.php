@@ -1,5 +1,4 @@
 <div class="sidebar">
-    <!-- Logo & Search Removed per User Request -->
 
     <div class="sidebar-menu">
         <span class="menu-label">Main Menu</span>
@@ -62,24 +61,57 @@
     </div>
 </div>
 
-<!-- Settings Modal (Legacy Logic Kept, UI Updated) -->
-<div id="settingsModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; align-items:center; justify-content:center;">
-    <div class="card active" style="width:90%; max-width:400px; padding: 32px;">
-        <h3 style="margin-bottom: 24px;">⚙️ Admin Settings</h3>
+<?php
+
+if(!isset($settings['admin_profile_pic'])) {
+    $adminPicRes = $conn->query("SELECT admin_profile_pic FROM studio_settings WHERE id = 1");
+    $adminPicData = $adminPicRes ? $adminPicRes->fetch_assoc() : null;
+    $adminProfilePic = $adminPicData['admin_profile_pic'] ?? '';
+} else {
+    $adminProfilePic = $settings['admin_profile_pic'];
+}
+?>
+
+<div id="settingsModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; align-items:center; justify-content:center; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);">
+    <div class="card active" style="width:90%; max-width:400px; padding: 32px; border-radius: 20px;">
+        <h3 style="margin-bottom: 24px; text-align: center;">⚙️ Admin Settings</h3>
         
-        <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:20px; border-bottom:1px solid var(--border-color);">
-            <div style="display:flex; align-items:center; gap:12px;">
-                <span style="font-size:20px;">🌙</span>
-                <span style="font-weight:600;">Dark Mode Preview</span>
+        
+        <div style="padding-bottom: 24px; border-bottom: 1px solid var(--border-color); margin-bottom: 24px;">
+            <div style="width: 80px; height: 80px; border-radius: 24px; margin: 0 auto 16px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.1); background: var(--bg-main); border: 3px solid white;">
+                <?php if(!empty($adminProfilePic)): ?>
+                    <img src="../<?= $adminProfilePic ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                <?php else: ?>
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #eff6ff; color: #2563eb; font-size: 2rem;">👩‍💼</div>
+                <?php endif; ?>
             </div>
-            <label class="theme-switch">
-                <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
-                <span class="slider"></span>
-            </label>
+            
+            <form action="settings.php" method="POST" enctype="multipart/form-data" id="sidebarAdminPicForm">
+                <input type="hidden" name="action" value="update_admin_pic">
+                <div onclick="document.getElementById('sidebar_admin_pic_input').click()" style="text-align: center; cursor: pointer; padding: 8px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; transition: 0.2s;" onmouseover="this.style.borderColor='#2563eb'; this.style.background='#eff6ff';">
+                    <span style="font-size: 13px; font-weight: 700; color: #475569;">Ganti Foto Profil</span>
+                    <input type="file" name="admin_profile_pic" id="sidebar_admin_pic_input" style="display: none;" accept="image/*" onchange="this.form.submit()">
+                </div>
+            </form>
+        </div>
+        
+
+
+        <div style="padding: 20px 0; border-bottom: 1px solid var(--border-color);">
+            <h4 style="font-size: 14px; color: var(--text-muted); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                <span>🔑</span> Password Keamanan
+            </h4>
+            <div style="background: #fffafa; padding: 12px; border: 1px solid #fff0f3; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                <span style="font-size: 13px; font-weight: 600; color: #555; letter-spacing: 2px;" id="adminCurrentPassDisplay">••••••••</span>
+                <span style="cursor: pointer; font-size: 16px; opacity: 0.6;" onclick="toggleAdminPassReveal()">👁️</span>
+            </div>
+            <input type="hidden" id="adminRawPass" value="<?= htmlspecialchars($_SESSION['admin_temp_pass'] ?? '•••••••••••••') ?>">
+            
+            <button onclick="openAdminPassModal()" class="btn btn-primary" style="width: 100%; justify-content: center; font-size: 13px; padding: 10px; background: #2563eb;">Ubah Password</button>
         </div>
 
         <div style="padding: 20px 0; border-bottom: 1px solid var(--border-color);">
-            <button onclick="openResetModal()" class="btn btn-outline" style="width: 100%; justify-content: center; color: #ef4444; border-color: #fee2e2; gap: 10px;">
+            <button onclick="openResetModal()" class="btn btn-outline" style="width: 100%; justify-content: center; color: #ef4444; border-color: #fee2e2; gap: 10px; font-size: 13px;">
                 <span>🗑️</span> Reset Revenue & Booking
             </button>
         </div>
@@ -93,7 +125,43 @@
     </div>
 </div>
 
-<!-- Dangerous Action Modal (Reset Data) -->
+<div id="adminPassModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:10000; align-items:center; justify-content:center; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);">
+    <div class="card active" style="width:95%; max-width:380px; padding: 32px; border-radius: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.2);">
+        <h3 style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <span style="background: #eff6ff; padding: 8px; border-radius: 12px;">🔑</span> Ganti Password
+        </h3>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 24px;">Silakan masukkan password lama dan password baru Anda.</p>
+        
+        <form id="adminPassForm">
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 12px; font-weight: 700; color: #1e293b; margin-bottom: 8px;">Password Saat Ini</label>
+                <input type="password" name="current_password" placeholder="••••••••" required 
+                       style="width: 100%; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 14px; outline: none; background: #f8fafc; transition: 0.2s;" 
+                       onfocus="this.style.borderColor='#2563eb'; this.style.background='#fff';">
+            </div>
+            
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 12px; font-weight: 700; color: #1e293b; margin-bottom: 8px;">Password Baru</label>
+                <input type="password" name="new_password" placeholder="Min. 6 Karakter" required 
+                       style="width: 100%; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 14px; outline: none; background: #f8fafc;"
+                       onfocus="this.style.borderColor='#2563eb'; this.style.background='#fff';">
+            </div>
+
+            <div style="margin-bottom: 28px;">
+                <label style="display: block; font-size: 12px; font-weight: 700; color: #1e293b; margin-bottom: 8px;">Konfirmasi Password Baru</label>
+                <input type="password" name="confirm_password" placeholder="Ulangi Password Baru" required 
+                       style="width: 100%; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 14px; outline: none; background: #f8fafc;"
+                       onfocus="this.style.borderColor='#2563eb'; this.style.background='#fff';">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <button type="button" onclick="closeAdminPassModal()" class="btn btn-outline" style="justify-content: center; border-radius: 12px; padding: 12px;">Batal</button>
+                <button type="button" onclick="handleAdminPassChange()" class="btn btn-primary" style="justify-content: center; background: #2563eb; border-radius: 12px; color: white; border:none; padding: 12px;">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div id="resetConfirmModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 10000020; align-items: center; justify-content: center; color: #333;">
     <div style="background: white; padding: 40px; border-radius: 28px; text-align: center; max-width: 420px; width: 90%; box-shadow: 0 25px 70px rgba(0,0,0,0.4); border: 1px solid #e2e8f0;">
         <div style="font-size: 4rem; margin-bottom: 24px;">🔥</div>
@@ -109,7 +177,6 @@
     </div>
 </div>
 
-<!-- Modern Status Modal (Success/Info) -->
 <div id="statusModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 10000030; align-items: center; justify-content: center; color: #333;">
     <div style="background: white; padding: 40px; border-radius: 28px; text-align: center; max-width: 380px; width: 90%; box-shadow: 0 25px 70px rgba(0,0,0,0.3); border: 1px solid #e2e8f0;">
         <div id="statusIcon" style="font-size: 4rem; margin-bottom: 24px;">✅</div>
@@ -119,7 +186,6 @@
     </div>
 </div>
 
-<!-- Generic Delete/Action Confirmation Modal -->
 <div id="confirmModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000010; align-items: center; justify-content: center; color: #333;">
     <div style="background: white; padding: 30px; border-radius: 24px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); border: 1px solid #e2e8f0;">
         <div id="confirmIcon" style="font-size: 3rem; margin-bottom: 20px;">⚠️</div>
@@ -172,9 +238,15 @@ input:checked + .slider:before { transform: translateX(24px); }
 
 
 <script>
-// UI HANDLING
 function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
 function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
+
+function openAdminPassModal() {
+    document.getElementById('adminPassModal').style.display = 'flex';
+}
+function closeAdminPassModal() {
+    document.getElementById('adminPassModal').style.display = 'none';
+}
 
 function confirmLogout(url) {
     document.getElementById('settingsModal').style.display = 'none';
@@ -183,7 +255,6 @@ function confirmLogout(url) {
     });
 }
 
-// DARK MODE LOGIC
 function toggleDarkMode() {
     const isDark = document.getElementById('darkModeToggle').checked;
     if (isDark) {
@@ -195,7 +266,6 @@ function toggleDarkMode() {
     }
 }
 
-// INITIALIZE
 window.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('darkMode') === 'enabled') {
         document.body.classList.add('dark-mode');
@@ -203,10 +273,9 @@ window.addEventListener('DOMContentLoaded', () => {
         if(toggle) toggle.checked = true;
     }
     updateChatBadge();
-    setInterval(updateChatBadge, 5000); // Check every 5 seconds
+    setInterval(updateChatBadge, 5000);
 });
 
-// CHAT NOTIFICATION LOGIC
 async function updateChatBadge() {
     try {
         const response = await fetch('../api/chat/conversations.php');
@@ -229,16 +298,13 @@ async function updateChatBadge() {
             }
         }
     } catch (e) {
-        // Silent error
     }
 }
 
-// HEARTBEAT
 async function adminHeartbeat() { try { await fetch('../api/user/heartbeat.php'); } catch (e) {} }
 setInterval(adminHeartbeat, 30000);
 adminHeartbeat();
 
-// MENU SEARCH FILTER
 function filterMenu() {
     const input = document.getElementById('menuSearch');
     const filter = input.value.toLowerCase();
@@ -254,7 +320,6 @@ function filterMenu() {
         }
     });
 
-    // Hide labels if no links under them are visible
     labels.forEach(label => {
         let next = label.nextElementSibling;
         let hasVisible = false;
@@ -269,7 +334,6 @@ function filterMenu() {
     });
 }
 
-// DANGEROUS RESET LOGIC
 let resetTimer = null;
 let resetCountdown = 10;
 
@@ -290,7 +354,7 @@ function openResetModal() {
         if(resetCountdown <= 0) {
             clearInterval(resetTimer);
             btn.disabled = false;
-            btn.style.background = '#ef4444'; // Red for Hapus
+            btn.style.background = '#ef4444'; 
             btn.style.cursor = 'pointer';
             btn.innerText = "Iya, Hapus SEKARANG";
         }
@@ -334,7 +398,6 @@ async function executeResetData() {
     }
 }
 
-// STATUS MODAL LOGIC
 let statusModalCallback = null;
 function showStatusModal(title, text, icon, callback = null) {
     document.getElementById('statusTitle').innerText = title;
@@ -349,11 +412,62 @@ function closeStatusModal() {
     if(statusModalCallback) statusModalCallback();
 }
 
-// SHORTCUT ⌘ K
 window.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        document.getElementById('menuSearch').focus();
+        const searchInput = document.getElementById('menuSearch');
+        if (searchInput) searchInput.focus();
     }
 });
+
+function toggleAdminPassReveal() {
+    const display = document.getElementById('adminCurrentPassDisplay');
+    const raw = document.getElementById('adminRawPass');
+    if (!display || !raw) return;
+
+    if (display.innerText.includes('••••')) {
+        if (raw.value === '•••••••••••••') {
+            showStatusModal("🔒 Keamanan", "Password lama sudah terenkripsi. Silakan ganti baru jika ingin bisa dilihat.", "⚠️");
+        } else {
+            display.innerText = raw.value;
+            display.style.letterSpacing = 'normal';
+        }
+    } else {
+        display.innerText = "••••••••";
+        display.style.letterSpacing = '2px';
+    }
+}
+
+async function handleAdminPassChange() {
+    const form = document.getElementById('adminPassForm');
+    const formData = new FormData(form);
+    const submitBtn = event.target;
+    
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Memproses...";
+
+    try {
+        const response = await fetch('../api/admin/change_password.php', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            closeAdminPassModal();
+            showStatusModal("✨ Berhasil!", data.message, "✅", () => {
+                const rawInput = document.getElementById('adminRawPass');
+                if (rawInput) rawInput.value = data.new_pass;
+                form.reset();
+            });
+        } else {
+            showStatusModal("❌ Gagal", data.message, "⚠️");
+        }
+    } catch (e) {
+        showStatusModal("❌ Gagal", "Terjadi kesalahan koneksi.", "⚠️");
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Simpan";
+    }
+}
 </script>

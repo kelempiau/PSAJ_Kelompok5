@@ -1,9 +1,11 @@
 <?php
 require '../../core/config.php';
-header('Content-Type: application/json');
+header('Content-Type: text/plain');
+header('X-Chat-Engine-Version: 4.0.0');
 
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'error' => 'Not authenticated']);
+    ob_clean();
+    echo "!!!JSON_START!!!" . json_encode(['success' => false, 'error' => 'Not authenticated']) . "!!!JSON_END!!!";
     exit;
 }
 
@@ -14,7 +16,10 @@ $stmt->execute();
 $res = $stmt->get_result();
 
 if ($row = $res->fetch_assoc()) {
-    echo json_encode(['success' => true, 'is_escalated' => ($row['status'] === 'escalated'), 'conversation_id' => $row['id']]);
+    $out = ['success' => true, 'is_escalated' => ($row['status'] === 'escalated'), 'conversation_id' => $row['id']];
 } else {
-    echo json_encode(['success' => true, 'is_escalated' => false, 'conversation_id' => null]);
+    $out = ['success' => true, 'is_escalated' => false, 'conversation_id' => null];
 }
+ob_clean();
+echo "!!!JSON_START!!!" . json_encode($out) . "!!!JSON_END!!!";
+exit;

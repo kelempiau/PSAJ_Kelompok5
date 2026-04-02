@@ -1,26 +1,26 @@
 <?php
 require '../../core/config.php';
 
-header('Content-Type: application/json');
 
-// Check Admin Session
+header('Content-Type: text/plain');
+header('X-Chat-Engine-Version: 4.1.0-Admin');
+
+
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    echo json_encode(['success' => false, 'error' => 'Admin access required']);
+    ob_clean();
+    echo "!!!JSON_START!!!" . json_encode(['success' => false, 'error' => 'Admin access required']) . "!!!JSON_END!!!";
     exit;
 }
 
-// Auto-migration: Ensure last_seen column exists for online tracking
+
 try {
     $check_col = $conn->query("SHOW COLUMNS FROM users LIKE 'last_seen'");
     if ($check_col->num_rows == 0) {
         $conn->query("ALTER TABLE users ADD COLUMN last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
     }
-} catch (Exception $e) {
-    // Silent fail if already exists or other DB issues
-}
+} catch (Exception $e) {}
 
-// Fetch ALL users with role 'user' and their latest conversation/message status
-// We use a LEFT JOIN to ensure all users are listed, even without chat history
+
 $sql = "SELECT 
             u.id as user_id, 
             u.username, 
@@ -46,7 +46,8 @@ $sql = "SELECT
 $result = $conn->query($sql);
 
 if (!$result) {
-    echo json_encode(['success' => false, 'error' => 'Database error: ' . $conn->error]);
+    ob_clean();
+    echo "!!!JSON_START!!!" . json_encode(['success' => false, 'error' => 'Database error']) . "!!!JSON_END!!!";
     exit;
 }
 
@@ -54,22 +55,19 @@ $users = [];
 $current_time = time();
 
 while ($row = $result->fetch_assoc()) {
-    // Online within 5 minutes
     $last_seen = !empty($row['last_seen']) ? strtotime($row['last_seen']) : 0;
     $row['is_online'] = ($current_time - $last_seen) < 300;
-    
-    // Formatting values
     $row['username'] = $row['username'] ?: 'Guest ' . $row['user_id'];
-    // Logic for 🎥 preview is already handled in the SQL CASE statement above.
-    $row['last_message'] = $row['last_message'] ?: '<i>Belum ada pesan</i>';
+    $row['last_message'] = $row['last_message'] ?: 'Belum ada pesan';
     $users[] = $row;
 }
 
 ob_clean();
-echo json_encode([
+
+
+echo "!!!JSON_START!!!" . json_encode([
     'success' => true, 
     'conversations' => $users,
     'total_users' => count($users)
-]);
+]) . "!!!JSON_END!!!";
 exit;
-

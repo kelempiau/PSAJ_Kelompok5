@@ -5,17 +5,17 @@
     --chat-border: #e2e8f0;
 }
 
-/* Let admin-base.css handle the core layout */
+
 
 .conversations-container {
     display: flex;
     height: calc(100vh - 250px);
-    /* Adjusted height to avoid overflow */
+    
     background: var(--bg-card);
     margin: 24px;
-    /* Uniform margin around the container */
+    
     margin-top: 10px;
-    /* Specific top margin to reduce gap from context header if needed, or increase if clashing */
+    
     border-radius: 16px;
     overflow: hidden;
     border: 1px solid var(--border-color);
@@ -77,7 +77,7 @@
 
 .conversation-item.active .conv-name {
     color: var(--primary);
-    /* Teks menjadi biru gelap agar terbaca di bg biru muda */
+    
 }
 
 .conversation-item.active .conv-preview {
@@ -493,7 +493,7 @@
         flex-direction: column;
     }
 
-    /* Active State Logic */
+    
     .conversations-container.chat-active .conversations-sidebar {
         transform: translateX(-100%);
     }

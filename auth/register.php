@@ -8,22 +8,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $phone = $_POST['phone'];
+    $verification_token = bin2hex(random_bytes(16));
 
-    // Check if email or username already exists
+    
     $check = $conn->query("SELECT id FROM users WHERE email = '$email' OR username = '$username'");
     if ($check->num_rows > 0) {
         $message = "Username atau Email sudah terdaftar!";
     } else {
-        $sql = "INSERT INTO users (username, email, password, phone) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO users (username, email, password, phone, verification_token, is_verified) VALUES (?, ?, ?, ?, ?, 1)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssss", $username, $email, $password, $phone);
+        $stmt->bind_param("sssss", $username, $email, $password, $phone, $verification_token);
 
         if ($stmt->execute()) {
-            $_SESSION['username'] = $username;
-            $_SESSION['role'] = 'user';
-            $_SESSION['user_id'] = $conn->insert_id;
-            header("Location: ../index.php");
-            exit();
+            $message = "Registrasi Berhasil! ✨ Silakan login.";
+            header("refresh:2;url=login.php");
+            $success_register = true;
         } else {
             $message = "Terjadi kesalahan: " . $conn->error;
         }
@@ -36,8 +35,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Ney Dream</title>
+    <link rel="icon" type="image/png" href="../assets/img/neydream.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- Loading Screen -->
+    
     <link rel="stylesheet" href="../css/loading.css">
     <script defer src="../js/loading.js"></script>
     <style>
@@ -165,39 +165,86 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         .close-auth:hover {
             color: #ea3671;
+        }        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 12px;
+            color: #555;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
         }
 
-        @media (max-width: 480px) {
-            .auth-container {
-                padding: 40px 25px;
-            }
+        .google-btn:hover {
+            background: #f9f9f9;
+            border-color: #ddd;
+        }
 
-            h2 {
-                font-size: 1.6rem;
-            }
+        .google-btn img {
+            width: 20px;
+            margin-right: 12px;
+        }
+
+        .divider {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            color: #ccc;
+            font-size: 0.8rem;
+        }
+
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #eee;
+            margin: 0 10px;
         }
     </style>
 </head>
 <body>
     <?php include '../includes/loading.php'; ?>
     <div class="auth-container" style="position: relative;">
-        <!-- Close Button (X) -->
+        
         <a href="../index.php" class="close-auth" title="Kembali ke Beranda">✕</a>
 
         <h2>Join Us! ✨</h2>
         <p class="subtitle">Buat akun baru di Ney Dream</p>
         
         <?php if($message): ?>
-            <div class="alert"><?= $message ?></div>
+            <div class="alert" style="<?= isset($success_register) ? 'background:#e6fffa; color:#2c7a7b;' : '' ?>"><?= $message ?></div>
         <?php endif; ?>
         
-        <form method="POST">
-            <input type="text" name="username" placeholder="Username" required autofocus>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="tel" name="phone" placeholder="Nomor HP (08xx)" required>
-            <input type="password" name="password" placeholder="Password" required minlength="6">
+        <?php if(!isset($success_register)): ?>
+        <form method="POST" autocomplete="off">
+            <input type="text" name="username" placeholder="Username" required autofocus autocomplete="off">
+            <input type="email" name="email" placeholder="Email" required autocomplete="off">
+            <input type="tel" name="phone" placeholder="Nomor HP (08xx)" required autocomplete="off">
+            <input type="password" name="password" placeholder="Password" required minlength="6" autocomplete="new-password">
             <button type="submit">Daftar Sekarang</button>
         </form>
+
+        <div class="divider">atau daftar dengan</div>
+
+        <a href="google_auth.php" class="google-btn">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
+            Daftar dengan Google
+        </a>        <?php else: ?>
+            <div style="margin-top: 20px; text-align: center;">
+                <div style="background: #e6fffa; color: #2c7a7b; padding: 20px; border-radius: 15px; border: 1px solid #b2f5ea;">
+                    <p style="font-weight: 700; font-size: 1.1rem; margin-bottom: 5px;">Registrasi Berhasil! ✨</p>
+                    <p style="font-size: 0.9rem;">Akun Anda sudah siap. Mengarahkan ke halaman login...</p>
+                </div>
+                <a href="login.php" class="google-btn" style="margin-top: 20px;">Lanjut ke Login</a>
+            </div>
+        <?php endif; ?>
         
         <div class="link">
             Sudah punya akun? <a href="login.php">Masuk disini</a>

@@ -11,7 +11,7 @@ if (!isset($_GET['date'])) {
 $date = $_GET['date'];
 $time = $_GET['time'] ?? null;
 
-// If only checking specific time slot
+
 if ($time) {
     $checkRes = $conn->prepare("SELECT id FROM reservations WHERE reservation_date = ? AND reservation_time = ? AND status != 'cancelled'");
     $checkRes->bind_param("ss", $date, $time);
@@ -31,10 +31,10 @@ if ($time) {
         'message' => $isAvailable ? 'Slot tersedia' : 'Slot sudah direservasi'
     ]);
 } else {
-    // Get all unavailable times for a specific date
+    
     $unavailableTimes = [];
 
-    // Check reservations
+    
     $checkRes = $conn->prepare("SELECT reservation_time FROM reservations WHERE reservation_date = ? AND status != 'cancelled'");
     $checkRes->bind_param("s", $date);
     $checkRes->execute();
@@ -43,7 +43,7 @@ if ($time) {
         $unavailableTimes[] = $row['reservation_time'];
     }
 
-    // Check locked slots
+    
     $checkLock = $conn->prepare("SELECT time FROM locked_slots WHERE date = ?");
     $checkLock->bind_param("s", $date);
     $checkLock->execute();
@@ -52,18 +52,33 @@ if ($time) {
         $unavailableTimes[] = $row['time'];
     }
 
-    // --- ADD PAST DATE/TIME PROTECTION ---
+    
     $currentDate = date('Y-m-d');
     $currentTime = date('H:i');
-    $allSlots = ["09:00 WIB", "11:00 WIB", "13:00 WIB", "15:00 WIB", "17:00 WIB", "19:00 WIB"];
+    
+    
+    $allSlots = [];
+    $slotCheck = $conn->query("SHOW TABLES LIKE 'reservation_slots'");
+    if ($slotCheck && $slotCheck->num_rows > 0) {
+        $slotRes = $conn->query("SELECT slot_time FROM reservation_slots WHERE is_active = 1");
+        while ($s = $slotRes->fetch_assoc()) {
+            $allSlots[] = date('H:i', strtotime($s['slot_time'])) . " WIB";
+        }
+    }
+    
+    
+    if (empty($allSlots)) {
+        $allSlots = ["09:00 WIB", "11:00 WIB", "13:00 WIB", "15:00 WIB", "17:00 WIB", "19:00 WIB"];
+    }
 
     if ($date < $currentDate) {
-        // All slots are unavailable for past dates
-        $unavailableTimes = $allSlots;
+        
+        
+        $unavailableTimes = array_merge($unavailableTimes, $allSlots);
     } elseif ($date == $currentDate) {
-        // For today, check each slot against current time
+        
         foreach ($allSlots as $slot) {
-            $slotTime = explode(' ', $slot)[0]; // "09:00"
+            $slotTime = explode(' ', $slot)[0]; 
             if ($slotTime <= $currentTime) {
                 $unavailableTimes[] = $slot;
             }

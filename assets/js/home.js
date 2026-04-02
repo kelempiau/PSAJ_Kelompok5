@@ -1,34 +1,50 @@
-// Mobile Menu Logic
+
 document.addEventListener('DOMContentLoaded', () => {
     const hamburger = document.getElementById('hamburger');
     const mobileMenu = document.getElementById('mobileMenu');
     const mobileLinks = document.querySelectorAll('.mobile-link');
 
     if (hamburger && mobileMenu) {
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            mobileMenu.classList.toggle('active');
-        });
+        // Redundant listeners removed. Toggling is handled by toggleMobileMenu in index.php.
 
-        // Close menu when clicking mobile links
         mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+                if (href.startsWith('#')) {
+                    e.preventDefault();
+                    const targetId = href.substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        const navHeight = document.querySelector('nav').offsetHeight;
+                        window.scrollTo({
+                            top: targetElement.offsetTop - navHeight,
+                            behavior: 'smooth'
+                        });
+                    }
+                } else if (href.includes('#')) {
+                    const parts = href.split('#');
+                    if (window.location.pathname.endsWith(parts[0]) || parts[0] === 'index.php') {
+                        e.preventDefault();
+                        const targetId = parts[1];
+                        const targetElement = document.getElementById(targetId);
+                        if (targetElement) {
+                            const navHeight = document.querySelector('nav').offsetHeight;
+                            window.scrollTo({
+                                top: targetElement.offsetTop - navHeight,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                }
                 hamburger.classList.remove('active');
                 mobileMenu.classList.remove('active');
             });
         });
 
-        // Close menu when clicking outside (on overlay/hero area)
-        document.addEventListener('click', (e) => {
-            if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target) && mobileMenu.classList.contains('active')) {
-                hamburger.classList.remove('active');
-                mobileMenu.classList.remove('active');
-            }
-        });
+        // Event listener click dokumen redundant dihapus. Click overlay sudah menangani penutupan mobile menu di index.php
     }
 });
 
-// Smooth Scrolling & Active Link State
 window.addEventListener('scroll', () => {
     let current = '';
     const sections = document.querySelectorAll('section[id]');
@@ -44,7 +60,8 @@ window.addEventListener('scroll', () => {
     const navItems = document.querySelectorAll('.nav-center a, .mobile-link');
     navItems.forEach(a => {
         a.classList.remove('active');
-        if (a.getAttribute('href') === `#${current}`) {
+        const href = a.getAttribute('href');
+        if (href === `#${current}` || (href.includes('#') && href.split('#')[1] === current)) {
             a.classList.add('active');
         }
     });

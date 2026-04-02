@@ -4,7 +4,7 @@ require '../core/config.php';
 $message = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $identifier = $_POST['identifier']; // Username or Email
+    $identifier = $_POST['identifier']; 
     $password = $_POST['password'];
 
     $sql = "SELECT * FROM users WHERE email = ? OR username = ?";
@@ -15,8 +15,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
+        
         if (password_verify($password, $user['password'])) {
-            session_regenerate_id(true); // Prevent session fixation
+            session_regenerate_id(true); 
+            session_regenerate_id(true); 
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
@@ -41,8 +43,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Ney Dream</title>
+    <link rel="icon" type="image/png" href="../assets/img/neydream.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- Loading Screen -->
+    
     <link rel="stylesheet" href="../css/loading.css">
     <script defer src="../js/loading.js"></script>
     <style>
@@ -171,22 +174,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .close-auth:hover {
             color: #ea3671;
         }
-
-        @media (max-width: 480px) {
-            .auth-container {
-                padding: 40px 25px;
-            }
-
-            h2 {
-                font-size: 1.6rem;
-            }
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 12px;
+            color: #555;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
         }
-    </style>
+
+        .google-btn:hover {
+            background: #f9f9f9;
+            border-color: #ddd;
+        }
+
+        .google-btn img {
+            width: 20px;
+            margin-right: 12px;
+        }
+
+        .divider {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            color: #ccc;
+            font-size: 0.8rem;
+        }
+
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #eee;
+            margin: 0 10px;
+        }    </style>
 </head>
 <body>
     <?php include '../includes/loading.php'; ?>
     <div class="auth-container" style="position: relative;">
-        <!-- Close Button (X) -->
+        
         <a href="../index.php" class="close-auth" title="Kembali ke Beranda">✕</a>
 
         <h2>Welcome Back! 👋</h2>
@@ -201,7 +235,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit">Masuk</button>
         </form>
-        
+
+        <div class="divider">atau masuk dengan</div>
+
+        <a href="google_auth.php" class="google-btn">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
+            Masuk dengan Google
+        </a>        
         <div class="link">
             Belum punya akun? <a href="register.php">Daftar disini</a>
         </div>

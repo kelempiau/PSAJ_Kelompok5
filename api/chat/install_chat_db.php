@@ -5,7 +5,7 @@ header('Content-Type: text/html');
 
 echo "<h2>🛠️ Database Auto-Installer</h2>";
 
-// 1. Create Conversations Table
+
 $sql1 = "CREATE TABLE IF NOT EXISTS conversations (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -21,7 +21,7 @@ if ($conn->query($sql1)) {
     echo "❌ Gagal buat tabel 'conversations': " . $conn->error . "<br>";
 }
 
-// 2. Create Messages Table
+
 $sql2 = "CREATE TABLE IF NOT EXISTS messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
     conversation_id INT NOT NULL,

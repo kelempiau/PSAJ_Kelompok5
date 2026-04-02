@@ -6,7 +6,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// Handle POST actions for user management
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($_POST['action'] === 'delete_user') {
         $id = intval($_POST['user_id']);
@@ -87,9 +87,9 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
                             </tr>
                         </thead>
                         <tbody>
-                            <?php while($u = $users->fetch_assoc()): ?>
+                            <?php $no = $users->num_rows; while($u = $users->fetch_assoc()): ?>
                             <tr>
-                                <td>#<?= $u['id'] ?></td>
+                                <td>#<?= $no-- ?></td>
                                 <td>
                                     <div style="display: flex; align-items: center; gap: 12px;">
                                         <div class="item-avatar" style="width: 32px; height: 32px; font-size: 12px; font-weight: 700; background: var(--primary-light); color: var(--primary); overflow: hidden;">
@@ -106,24 +106,21 @@ $users = $conn->query("SELECT * FROM users ORDER BY created_at DESC");
                                     </div>
                                 </td>
                                 <td>
-                                    <form method="POST" style="display:inline;">
-                                        <input type="hidden" name="action" value="update_role">
-                                        <input type="hidden" name="user_id" value="<?= $u['id'] ?>">
-                                        <select name="role" onchange="this.form.submit()" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border-color); font-size: 12px; font-weight: 600;">
-                                            <option value="user" <?= $u['role'] == 'user' ? 'selected' : '' ?>>👤 User</option>
-                                            <option value="admin" <?= $u['role'] == 'admin' ? 'selected' : '' ?>>🛡️ Admin</option>
-                                        </select>
-                                    </form>
+                                    <?php if ($u['role'] === 'admin'): ?>
+                                        <span class="status-badge status-confirmed" style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700;">🛡️ Admin</span>
+                                    <?php else: ?>
+                                        <span class="status-badge" style="background: #f1f5f9; color: #64748b; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700;">👤 User</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td>
-                                    <?php if($u['role'] !== 'admin'): ?>
-                                    <form method="POST" style="display:inline;" onsubmit="return confirm('Hapus user ini?');">
+                                    <?php if($u['role'] !== 'admin' && $u['id'] != $_SESSION['user_id']): ?>
+                                    <form method="POST" style="display:inline;" onsubmit="return confirm('Hapus user ini? Semua data terkait (reservasi, feedback) juga akan terhapus!');">
                                         <input type="hidden" name="action" value="delete_user">
                                         <input type="hidden" name="user_id" value="<?= $u['id'] ?>">
                                         <button type="submit" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px; border-color: var(--primary-light); color: #ef4444;">Hapus</button>
                                     </form>
                                     <?php else: ?>
-                                         <span style="font-size: 11px; color: var(--text-muted); font-style: italic;">🛡️ Sistem</span>
+                                         <span style="font-size: 11px; color: var(--text-muted); font-style: italic;">🛡️ Anda (Admin)</span>
                                     <?php endif; ?>
                                 </td>
                             </tr>

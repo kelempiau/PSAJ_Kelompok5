@@ -11,7 +11,7 @@ if ($id > 0) {
     $stmt->execute();
     $data = $stmt->get_result()->fetch_assoc();
 } elseif (!empty($type)) {
-    // Legacy support for type names
+    
     $typeNameMap = [
         'nailart' => 'Nail Art',
         'extension' => 'Extension',
@@ -26,7 +26,7 @@ if ($id > 0) {
     $data = $stmt->get_result()->fetch_assoc();
 }
 
-// Convert comma-separated details to array
+
 if ($data && !empty($data['details'])) {
     $data['details_list'] = array_map('trim', explode(',', $data['details']));
 } else {

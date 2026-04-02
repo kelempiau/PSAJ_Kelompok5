@@ -13,13 +13,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if ($action === 'reset_all_transactions') {
         try {
-            // Disable foreign key checks just in case
+            
             $conn->query("SET FOREIGN_KEY_CHECKS = 0");
             
-            // Tables to clear
+            
             $tables = ['reservations', 'feedback'];
             
-            // Check if chat_messages exists (optional safety)
+            
             $checkChat = $conn->query("SHOW TABLES LIKE 'chat_messages'");
             if ($checkChat->num_rows > 0) {
                 $tables[] = 'chat_messages';
